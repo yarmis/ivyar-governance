@@ -1,0 +1,43 @@
+\documentclass[12pt]{article}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{geometry}
+
+\geometry{margin=1in}
+
+% --------------------------
+% Colors
+% --------------------------
+\definecolor{ivyarBlue}{HTML}{003B73}
+\definecolor{ivyarGray}{HTML}{4A4A4A}
+
+% --------------------------
+% Title formatting
+% --------------------------
+\titleformat{\section}
+  {\color{ivyarBlue}\normalfont\Large\bfseries}
+  {\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\color{ivyarGray}\normalfont\large\bfseries}
+  {\thesubsection}{1em}{}
+
+% --------------------------
+% Header & Footer
+% --------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textcolor{ivyarGray}{IVYAR Platform}}
+\rhead{\textcolor{ivyarGray}{Confidential}}
+\rfoot{\textcolor{ivyarGray}{\thepage}}
+
+% --------------------------
+% Document
+% --------------------------
+\begin{document}
+$body$
+\end{document}
