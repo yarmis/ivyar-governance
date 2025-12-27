@@ -1,0 +1,6 @@
+field_name,data_type,required,description
+aftermarket_brand,string,yes,Aftermarket brand
+aftermarket_part_number,string,yes,Part number
+oem_brand_ref,string,yes,Reference OEM brand
+oem_part_number_ref,string,yes,Reference OEM part
+category,string,yes,Category

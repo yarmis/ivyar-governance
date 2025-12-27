@@ -1,0 +1,6 @@
+field_name,data_type,required,description
+nsn,string,yes,NATO Stock Number
+oem_brand,string,yes,OEM brand
+oem_part_number,string,yes,OEM part number
+source,string,yes,manual or oem_catalog or distributor
+confidence,decimal,yes,Score 0 to 1

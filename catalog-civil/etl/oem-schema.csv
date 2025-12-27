@@ -1,0 +1,7 @@
+field_name,data_type,required,description
+oem_brand,string,yes,OEM brand name
+oem_part_number,string,yes,Part number
+title_short,string,yes,Short title
+category,string,yes,Category
+vehicle_brand,string,no,Vehicle brand
+vehicle_model,string,no,Vehicle model
