@@ -1,0 +1,66 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Civil Catalog API
+  version: 1.0.0
+  description: API for civil parts catalog management
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+paths:
+  /catalog/civil/parts:
+    get:
+      summary: Search civil parts
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+        - name: brand
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+
+  /catalog/civil/parts/{partNumber}:
+    get:
+      summary: Get part by number
+      parameters:
+        - name: partNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+
+  /catalog/civil/mapping:
+    get:
+      summary: Get OEM to NSN mappings
+      responses:
+        '200':
+          description: Success
+
+  /ml/analog-finder/query:
+    post:
+      summary: Find analog parts using ML
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                partNumber:
+                  type: string
+                brand:
+                  type: string
+      responses:
+        '200':
+          description: Success
