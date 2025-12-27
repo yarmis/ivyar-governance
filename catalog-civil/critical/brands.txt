@@ -1,5 +1,6 @@
 # IVYAR Critical Brands List
 # Last Updated: 2025-01-01
+# Format: BRAND_NAME | CATEGORY | PRIORITY
 
 # Automotive OEM
 BOSCH | Automotive | Critical
@@ -7,6 +8,7 @@ MANN-FILTER | Filters | Critical
 SACHS | Suspension | Critical
 LEMFORDER | Steering | Critical
 MAHLE | Engine Parts | Critical
+BEHR | Cooling | Critical
 HELLA | Lighting | Critical
 VALEO | Electrical | Critical
 DENSO | Electronics | Critical
@@ -14,13 +16,35 @@ NGK | Ignition | Critical
 GATES | Belts | Critical
 SKF | Bearings | Critical
 FAG | Bearings | Critical
+INA | Bearings | Critical
+CONTITECH | Belts | Critical
+FEBI | Multi-category | High
+SWAG | Multi-category | High
+MEYLE | Multi-category | High
 TRW | Brakes | Critical
 ATE | Brakes | Critical
 BREMBO | Brakes | Critical
+TEXTAR | Brakes | Critical
+ZIMMERMANN | Brakes | High
+SACHS | Clutch | Critical
 LUK | Clutch | Critical
 
 # Industrial
 SIEMENS | Industrial | Critical
 ABB | Industrial | Critical
+SCHNEIDER | Industrial | Critical
+EATON | Industrial | Critical
 PARKER | Hydraulics | Critical
+REXROTH | Hydraulics | Critical
 FESTO | Pneumatics | Critical
+SMC | Pneumatics | Critical
+
+# Defence-Adjacent
+HONEYWELL | Aerospace | Critical
+COLLINS | Aerospace | Critical
+SAFRAN | Aerospace | Critical
+THALES | Electronics | Critical
+
+# Communications
+MOTOROLA | Communications | Critical
+HARRIS | Communications | Critical
