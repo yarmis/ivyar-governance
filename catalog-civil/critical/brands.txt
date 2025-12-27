@@ -1,0 +1,26 @@
+# IVYAR Critical Brands List
+# Last Updated: 2025-01-01
+
+# Automotive OEM
+BOSCH | Automotive | Critical
+MANN-FILTER | Filters | Critical
+SACHS | Suspension | Critical
+LEMFORDER | Steering | Critical
+MAHLE | Engine Parts | Critical
+HELLA | Lighting | Critical
+VALEO | Electrical | Critical
+DENSO | Electronics | Critical
+NGK | Ignition | Critical
+GATES | Belts | Critical
+SKF | Bearings | Critical
+FAG | Bearings | Critical
+TRW | Brakes | Critical
+ATE | Brakes | Critical
+BREMBO | Brakes | Critical
+LUK | Clutch | Critical
+
+# Industrial
+SIEMENS | Industrial | Critical
+ABB | Industrial | Critical
+PARKER | Hydraulics | Critical
+FESTO | Pneumatics | Critical
