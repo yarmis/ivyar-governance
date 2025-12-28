@@ -70,3 +70,12 @@ This documentation is proprietary and confidential. Unauthorized distribution is
 - **Governance**: governance@ivyar.io
 - **Technical**: docs@ivyar.io
 - **Onboarding**: onboarding@ivyar.io
+
+
+---
+
+**Disclaimer:**
+IVYAR Platform (versions 1.0-11.0) is a conceptual and research-oriented project. All documents describe hypothetical architectures, AI models, and future-state governance scenarios. They do not represent political action, governmental authority, or real-world policy. The materials do not conflict with the U.S. Constitution and fall under protected freedoms of expression and academic inquiry.
+
+---
+IVYAR LLC | info@ivyar.org | ivyar.org
