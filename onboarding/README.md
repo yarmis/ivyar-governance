@@ -1,24 +1,28 @@
-# Onboarding Documentation
+# IVYAR Onboarding Suite
 
-This directory contains onboarding packages and integration guides for IVYAR Platform partners.
+## Purpose
 
-## Contents
+Get new users operational in 24 hours.
 
-| Document | Description | Audience |
-|----------|-------------|----------|
-| `government-onboarding-package.md` | Complete onboarding guide for government clients | Government |
-| `enterprise-onboarding-guide.md` | Enterprise integration guide | Enterprise |
-| `api-integration-quickstart.md` | Quick start guide for API integration | Developers |
-| `security-requirements.md` | Security requirements checklist | All |
+## Tracks
 
-## Onboarding Process
+| Track | Audience | Duration |
+|-------|----------|----------|
+| Operator | Logistics staff | 4 hours |
+| Analyst | Risk analysts | 6 hours |
+| Admin | System admins | 8 hours |
+| Ministry | Government users | 2 hours |
 
-1. **Initial Assessment** — Requirements gathering and compatibility check
-2. **Documentation Review** — Legal and compliance documentation
-3. **Technical Integration** — API setup and testing
-4. **Security Validation** — Security audit and penetration testing
-5. **Go-Live** — Production deployment and monitoring
+## Process
 
-## Support
+1. Welcome and Access (30 min)
+2. System Overview (1 hour)
+3. Role Training (2-4 hours)
+4. First Task (1 hour)
+5. Certification (30 min)
 
-For onboarding support: onboarding@ivyar.io
+## Success
+
+- Login successful
+- First search done
+- Dashboard understood
