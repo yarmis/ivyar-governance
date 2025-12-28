@@ -1,32 +1,22 @@
-# Portal Sitemap
+# IVYAR GOVERNANCE PORTAL - SITEMAP
 
 ## Main Sections
+- Home
+- Platform Versions (1.0 - 11.0)
+- Architecture and Agents
+- Civilization Layers
+- Presentations
+- Legal Framework
+- Master Book
 
-| Section | Path | Description |
-|---------|------|-------------|
-| Home | / | Main dashboard |
-| Executive | /executive | Leadership view |
-| Technical | /technical | Engineering view |
-| Operational | /operational | Operations view |
-| Risk | /risk | Risk dashboard |
-| Simulation | /simulation | Scenario testing |
-| Ministry | /ministry | Government view |
+## Versions
+1.0 Ministry Portal, 2.0 AI Analytics, 3.0 International Network, 4.0 Autonomous Procurement, 5.0 Multi-Agent System, 5.1 Cooperative Intelligence, 6.0 Global Governance, 7.0 Self-Governed AI State, GIS Standard, Cognitive Layer, 8.0 Civilization Infrastructure, 9.0 Global AI Treaty Network, 10.0 AI Constitutional Layer, 11.0 AI Civilization Federation
 
-## Module Links
+## Legal
+Ethical Charter, AI Governance Principles, Constitutional Compliance, Legal-Ethical Positioning, Legal Whitepaper
 
-| Module | Path |
-|--------|------|
-| Catalog Civil | /catalog-civil |
-| Governance Docs | /governance |
-| Validation Loop | /validation-loop |
-| Risk Engine | /readiness-risk-engine |
-| Tests | /tests |
-| Briefing | /ministerial-briefing |
+## Appendices
+Diagrams, Presentations, Roadmap 12.0 - 14.0
 
-## External Links
-
-| Link | URL |
-|------|-----|
-| GitHub | github.com/yarmis/ivyar-governance |
-| API Docs | api.ivyar.org/docs |
-| Support | support.ivyar.org |
+---
+IVYAR LLC
