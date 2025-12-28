@@ -1,0 +1,1 @@
+const t=document.getElementById("themeSwitch");if(t){const s=localStorage.getItem("ivyar-theme");if(s==="dark")document.body.classList.add("dark"),t.checked=true;t.addEventListener("change",()=>{document.body.classList.toggle("dark");localStorage.setItem("ivyar-theme",t.checked?"dark":"light")})}
