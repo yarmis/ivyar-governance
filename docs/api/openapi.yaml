@@ -1,0 +1,69 @@
+openapi: 3.1.0
+info:
+  title: IVYAR API
+  version: 1.0.0
+  description: Official API for IVYAR Platform
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+paths:
+  /search:
+    get:
+      summary: Search for parts
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Search results
+
+  /rfq:
+    post:
+      summary: Create RFQ
+      responses:
+        201:
+          description: RFQ created
+
+  /quotes/{rfqId}:
+    get:
+      summary: Get quotes for RFQ
+      parameters:
+        - name: rfqId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Quotes list
+
+  /po:
+    post:
+      summary: Create Purchase Order
+      responses:
+        201:
+          description: PO created
+
+  /vendors/{id}:
+    get:
+      summary: Get vendor details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Vendor details
+
+  /audit:
+    get:
+      summary: Audit log query
+      responses:
+        200:
+          description: Audit log results
