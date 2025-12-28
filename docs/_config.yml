@@ -1,0 +1,8 @@
+title: IVYAR Governance Portal
+description: Official documentation, architecture, and legal framework of IVYAR Platform.
+theme: just-the-docs
+logo: /assets/logo/ivyar-logo.svg
+color_scheme: light
+url: https://yarmis.github.io
+baseurl: /ivyar-governance
+nav_sort: case_sensitive

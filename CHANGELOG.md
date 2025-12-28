@@ -1,32 +1,23 @@
-# Changelog
+# IVYAR CHANGELOG
 
-All notable changes to this project will be documented in this file.
-
-## [1.0.0] — 2025-01-01
-
+## [1.1.0] - 2025-12-28
 ### Added
-- Initial governance repository structure
-- Master Service Agreement (MSA)
-- Data Processing Agreement (DPA)
-- Export Control Statement
-- Security Framework
-- Government Onboarding Package
-- Architecture Overview
-- GitHub Actions workflows
-  - Documentation quality checks
-  - PDF generator
-  - ZIP package builder
-  - Changelog automation
-  - Release notes generator
-- GitHub Pages governance portal
-- PDF styling template
+- IVYAR Governance Portal structure
+- GitHub Pages configuration
+- Multi-language support (EN/UA)
+- Onboarding guide for auditors and ministries
+- Portal CSS and logo
 
-### Security
-- SOC 2 Type II compliance documentation
-- ISO 27001 alignment
-- NIST 800-53 controls mapping
-- NATO NCI Agency security principles
+### Improved
+- Navigation structure
+- README index
+- File naming consistency
+
+## [1.0.0] - Initial Release
+- IVYAR Platform 1.0 - 11.0 documentation
+- Architecture diagrams
+- Presentations
+- Legal Framework
 
 ---
-
-*This changelog is automatically updated by the IVYAR Bot on merged pull requests.*
+IVYAR LLC
