@@ -1,0 +1,9 @@
+weights:
+  love_god: 0.40
+  love_neighbor: 0.35
+  golden_rule: 0.25
+
+thresholds:
+  block_if_any_rule_fails: true
+  soft_rewrite_if_minor_violation: true
+  require_explanation: true
