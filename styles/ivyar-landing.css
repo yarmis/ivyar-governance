@@ -1,0 +1,1155 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>IVYAR Autonomous Governance Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-main: #05060a;
+      --bg-alt: #0c0f18;
+      --bg-card: #101523;
+      --text-main: #ffffff;
+      --text-muted: #a5b0c7;
+      --accent: #00c2ff;
+      --accent-soft: rgba(0, 194, 255, 0.16);
+      --border-subtle: #22283a;
+      --danger: #ff4d6a;
+      --success: #27d980;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 14px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
+      --shadow-subtle: 0 1px 0 rgba(255, 255, 255, 0.04);
+      --max-width: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: radial-gradient(circle at top, #15192b 0, #05060a 55%);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Layout */
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 6, 10, 0.96),
+        rgba(5, 6, 10, 0.90),
+        rgba(5, 6, 10, 0.7),
+        rgba(5, 6, 10, 0.0)
+      );
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .nav-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: radial-gradient(circle at 20% 0%, #00c2ff, #0046ff);
+      box-shadow: 0 0 25px rgba(0, 194, 255, 0.65);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 650;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .nav-links a {
+      padding: 6px 8px;
+      border-radius: 999px;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 7px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.18s ease, border-color 0.18s ease,
+        box-shadow 0.18s ease, transform 0.08s ease-out;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-primary {
+      border-color: transparent;
+      background: linear-gradient(135deg, #00c2ff, #0069ff);
+      box-shadow: 0 14px 35px rgba(0, 150, 255, 0.55);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 18px 40px rgba(0, 150, 255, 0.7);
+    }
+
+    main {
+      flex: 1;
+    }
+
+    .section {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Hero */
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 40px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      align-items: center;
+    }
+
+    .hero-kicker {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      font-size: clamp(36px, 4vw, 46px);
+      line-height: 1.1;
+      font-weight: 660;
+      margin-bottom: 14px;
+    }
+
+    .hero-gradient {
+      background: radial-gradient(circle at 0 0, #00c2ff 0, transparent 60%),
+                  radial-gradient(circle at 100% 80%, #ff4d6a 0, transparent 55%);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 18px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-meta span {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(8, 13, 26, 0.9);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .hero-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-note strong {
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .hero-right {
+      position: relative;
+      min-height: 260px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .hero-panel {
+      position: relative;
+      flex: 1;
+      border-radius: 16px;
+      background: radial-gradient(circle at -10% -20%, #00c2ff 0, transparent 40%),
+                  radial-gradient(circle at 110% 120%, #ff4d6a 0, transparent 45%),
+                  #050814;
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .hero-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .hero-panel-title {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .hero-panel-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-panel-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 14px;
+      font-size: 11px;
+    }
+
+    .hero-metric-card {
+      background: rgba(1, 6, 18, 0.92);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 11px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 580;
+      margin-bottom: 2px;
+    }
+
+    .metric-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      background: rgba(39, 217, 128, 0.14);
+      color: var(--success);
+    }
+
+    .metric-pill.danger {
+      background: rgba(255, 77, 106, 0.16);
+      color: var(--danger);
+    }
+
+    .hero-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .hero-list-item span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .hero-list-item strong {
+      font-size: 11px;
+    }
+
+    /* Section titles */
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-kicker {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 5px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 480px;
+    }
+
+    /* Core platforms */
+
+    .cards-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 560;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+    }
+
+    /* Impact / carousel style */
+
+    .scroll-row {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+    }
+
+    .scroll-row::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .scroll-row::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scroll-row::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+    }
+
+    .impact-card {
+      min-width: 260px;
+      max-width: 320px;
+      background: radial-gradient(circle at 0 0, var(--accent-soft), transparent 55%),
+                  var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .impact-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .impact-title {
+      font-size: 14px;
+      font-weight: 560;
+    }
+
+    .impact-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Demo / partnership form */
+
+    .form-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 28px;
+    }
+
+    .form-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 16px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .form-label {
+      color: var(--text-muted);
+    }
+
+    .form-label span {
+      color: var(--danger);
+      margin-left: 3px;
+    }
+
+    .form-input,
+    .form-textarea {
+      background: #050814;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 8px 9px;
+      color: var(--text-main);
+      font: inherit;
+      outline: none;
+      resize: vertical;
+      min-height: 36px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(0, 194, 255, 0.4);
+      background: #050b18;
+    }
+
+    .form-textarea {
+      grid-column: 1 / -1;
+      min-height: 90px;
+    }
+
+    .form-footer {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .form-privacy {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .form-privacy a {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+    }
+
+    /* News / documents */
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .news-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 14px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .news-meta {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+
+    .news-title {
+      font-size: 13px;
+      font-weight: 560;
+    }
+
+    .news-link {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    /* Footer */
+
+    footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: radial-gradient(circle at top, #101528 0, #05060a 65%);
+      margin-top: 40px;
+    }
+
+    .footer-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 18px 20px 28px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .footer-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover {
+      color: #ffffff;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 10px;
+    }
+
+    .footer-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .footer-meta span {
+      opacity: 0.75;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-right {
+        order: -1;
+      }
+
+      .cards-grid-3,
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-inner {
+        flex-wrap: wrap;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .cards-grid-3,
+      .grid-3 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      form {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="nav-inner">
+        <div class="brand">
+          <div class="brand-logo"></div>
+          <div class="brand-text">
+            <div class="brand-title">IVYAR</div>
+            <div class="brand-subtitle">Autonomous Governance Fabric</div>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <a href="#platform">Platform</a>
+          <a href="#solutions">Solutions</a>
+          <a href="#impact">Impact</a>
+          <a href="#docs">Documentation</a>
+          <a href="#partners">Partners</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="btn" type="button">Sign in</button>
+          <button class="btn btn-primary" type="button">Request a demo</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="section hero" id="top">
+        <div>
+          <div class="hero-kicker">AI-powered automation for every decision</div>
+          <h1 class="hero-title hero-gradient">
+            Autonomous governance platform
+            for ministries, defense, and humanitarian missions
+          </h1>
+          <p class="hero-subtitle">
+            IVYAR orchestrates real-time decisions across supply chains, finance,
+            defense, and humanitarian corridors — with full audit trails,
+            ethical AI, and export compliance built-in.
+          </p>
+
+          <div class="hero-meta">
+            <span>Government-grade security</span>
+            <span>Multi-domain risk governance</span>
+            <span>Ethical AI engine</span>
+          </div>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button">
+              Request a demo
+            </button>
+            <button class="btn" type="button">
+              Explore platform
+            </button>
+          </div>
+
+          <div class="hero-note">
+            <strong>Preferred partners:</strong> ministries, national agencies,
+            critical infrastructure, humanitarian and defense organizations.
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="hero-panel">
+            <div class="hero-panel-header">
+              <div class="hero-panel-title">Live mission overview</div>
+              <div class="hero-panel-badge">
+                Governance AI
+                <span style="width:8px;height:8px;border-radius:999px;background:#27d980;"></span>
+              </div>
+            </div>
+            <div class="hero-panel-grid">
+              <div class="hero-metric-card">
+                <div class="metric-label">Critical operations stabilized</div>
+                <div class="metric-value">98.7%</div>
+                <div class="metric-pill">
+                  <span style="width:6px;height:6px;border-radius:999px;background:#27d980;"></span>
+                  +34% vs last 24h
+                </div>
+              </div>
+              <div class="hero-metric-card">
+                <div class="metric-label">Compliance alerts resolved</div>
+                <div class="metric-value">1 284</div>
+                <div class="metric-pill danger">
+                  <span style="width:6px;height:6px;border-radius:999px;background:#ff4d6a;"></span>
+                  0 unresolved critical
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;font-size:11px;color:var(--text-muted);margin-bottom:6px;">
+              Active domains
+            </div>
+            <div class="hero-list">
+              <div class="hero-list-item">
+                <span>Defense exports & logistics</span>
+                <strong>Fully compliant</strong>
+              </div>
+              <div class="hero-list-item">
+                <span>Humanitarian corridors</span>
+                <strong>Green / Stable</strong>
+              </div>
+              <div class="hero-list-item">
+                <span>State-level finance & grants</span>
+                <strong>Under audit</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORE PLATFORMS -->
+      <section class="section" id="platform">
+        <div class="section-header">
+          <div>
+            <div class="section-kicker">Core platforms</div>
+            <div class="section-title">
+              One architecture. Multiple mission-critical platforms.
+            </div>
+          </div>
+          <div class="section-desc">
+            IVYAR unifies data, workflows, and AI into an ontology-driven fabric
+            for governments, defense, and humanitarian partners.
+          </div>
+        </div>
+
+        <div class="cards-grid-3">
+          <article class="card">
+            <div class="card-kicker">/01 • IVYAR AIP</div>
+            <div class="card-title">Autonomous Intelligence Platform</div>
+            <div class="card-desc">
+              Coordinate human and AI agents across ministries, commands, and
+              international partners. From real-time risk scoring to
+              automated decision proposals.
+            </div>
+            <div class="pill-row">
+              <div class="pill">Decision orchestration</div>
+              <div class="pill">Multi-agent AI</div>
+              <div class="pill">Governance policies</div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-kicker">/02 • IVYAR Foundry</div>
+            <div class="card-title">Ontology-powered governance engine</div>
+            <div class="card-desc">
+              Integrate ministry, defense, and humanitarian data into a single
+              ontology — with versioned policies, lineage, and full audit
+              transparency.
+            </div>
+            <div class="pill-row">
+              <div class="pill">Data integration</div>
+              <div class="pill">Compliance logic</div>
+              <div class="pill">Audit trails</div>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-kicker">/03 • IVYAR Apollo</div>
+            <div class="card-title">Autonomous deployment & monitoring</div>
+            <div class="card-desc">
+              Deploy IVYAR components into sovereign, classified, and
+              air-gapped environments. Monitor drift, resilience, and
+              mission SLAs globally.
+            </div>
+            <div class="pill-row">
+              <div class="pill">Air-gapped ready</div>
+              <div class="pill">Zero-downtime</div>
+              <div class="pill">Multi-cloud</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SOLUTIONS / IMPACT -->
+      <section class="section" id="impact">
+        <div class="section-header">
+          <div>
+            <div class="section-kicker">Impact</div>
+            <div class="section-title">
+              From factory floors to front lines.
+            </div>
+          </div>
+          <div class="section-desc">
+            IVYAR is designed for national-scale missions: defense
+            modernization, humanitarian operations, financial governance,
+            and inter-ministerial coordination.
+          </div>
+        </div>
+
+        <div class="scroll-row">
+          <article class="impact-card">
+            <div class="impact-tag">Defense logistics</div>
+            <div class="impact-title">
+              Export-controlled defense supply chain, fully auditable.
+            </div>
+            <div class="impact-desc">
+              Automate routing, licensing, and partner clearances while
+              preserving full legal traceability across borders.
+            </div>
+          </article>
+
+          <article class="impact-card">
+            <div class="impact-tag">Humanitarian</div>
+            <div class="impact-title">
+              Aid corridors that adapt in real time.
+            </div>
+            <div class="impact-desc">
+              Coordinate NGOs, ministries, and donors with unified visibility
+              into needs, risks, and delivery outcomes.
+            </div>
+          </article>
+
+          <article class="impact-card">
+            <div class="impact-tag">Finance</div>
+            <div class="impact-title">
+              Transparent state-level financial governance.
+            </div>
+            <div class="impact-desc">
+              Model grants, contracts, and funds under a single ethical and
+              legal governance layer.
+            </div>
+          </article>
+
+          <article class="impact-card">
+            <div class="impact-tag">Academy</div>
+            <div class="impact-title">
+              Simulation-first training for future officers.
+            </div>
+            <div class="impact-desc">
+              Run IVYAR scenarios for ministers, commanders, and auditors with
+              realistic, explainable outcomes.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- DEMO / PARTNERSHIP FORM -->
+      <section class="section" id="contact">
+        <div class="section-header">
+          <div>
+            <div class="section-kicker">Contact & partnerships</div>
+            <div class="section-title">
+              Request a demo or explore partnership.
+            </div>
+          </div>
+          <div class="section-desc">
+            Tell us about your mission. We will connect you with the right IVYAR
+            team — defense, humanitarian, finance, or academy.
+          </div>
+        </div>
+
+        <div class="form-layout">
+          <div>
+            <p class="form-note">
+              IVYAR is available for governments, allied defense partners,
+              humanitarian organizations, and critical infrastructure.
+            </p>
+            <p class="form-note">
+              Share a brief description of your current challenges, systems in
+              place, and timelines. We focus on missions where auditability,
+              ethics, and sovereignty are non-negotiable.
+            </p>
+          </div>
+
+          <form>
+            <div class="form-field">
+              <label class="form-label">First name<span>*</span></label>
+              <input class="form-input" type="text" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Last name<span>*</span></label>
+              <input class="form-input" type="text" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Business email<span>*</span></label>
+              <input class="form-input" type="email" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Phone number</label>
+              <input class="form-input" type="tel" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Job title<span>*</span></label>
+              <input class="form-input" type="text" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Organization / institution<span>*</span></label>
+              <input class="form-input" type="text" />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label">Country / region<span>*</span></label>
+              <input class="form-input" type="text" />
+            </div>
+            <div class="form-field">
+              <label class="form-label">Primary domain</label>
+              <input class="form-input" type="text" placeholder="Defense, humanitarian, finance, academy..." />
+            </div>
+
+            <div class="form-field form-textarea">
+              <label class="form-label">Tell us about your project<span>*</span></label>
+            </div>
+            <textarea class="form-textarea" placeholder="Context, objectives, constraints, current systems, urgency..."></textarea>
+
+            <div class="form-footer">
+              <div class="form-privacy">
+                By submitting, you agree to our
+                <a href="#">Privacy Policy</a> and
+                <a href="#">Ethical AI Principles</a>.
+              </div>
+              <button class="btn btn-primary" type="submit">
+                Submit request
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- NEWS / DOCUMENTS -->
+      <section class="section" id="docs">
+        <div class="section-header">
+          <div>
+            <div class="section-kicker">Documents & briefings</div>
+            <div class="section-title">
+              Governance papers, technical docs, and academy materials.
+            </div>
+          </div>
+          <div class="section-desc">
+            Explore IVYAR governance whitepapers, legal frameworks, and
+            simulation curricula for ministries, auditors, and partners.
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <article class="news-card">
+            <div class="news-meta">Whitepaper • Governance</div>
+            <div class="news-title">
+              IVYAR 11.0 — AI Civilization Federation Framework
+            </div>
+            <div class="news-link">Read executive brief →</div>
+          </article>
+
+          <article class="news-card">
+            <div class="news-meta">Legal • Ethics</div>
+            <div class="news-title">
+              Gospel Golden Rules Ethical AI Engine (GGR-EAE)
+            </div>
+            <div class="news-link">View legal & theological annex →</div>
+          </article>
+
+          <article class="news-card">
+            <div class="news-meta">Academy • Curriculum</div>
+            <div class="news-title">
+              IVYAR Academy — Simulation scenarios for ministers and commanders
+            </div>
+            <div class="news-link">Explore curriculum index →</div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div>
+            <div class="footer-col-title">IVYAR Institute</div>
+            <div class="footer-links">
+              <span>
+                Building sovereign AI governance infrastructure for governments,
+                defense, and humanitarian missions.
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Governance</div>
+            <div class="footer-links">
+              <a href="#">Ethical AI principles</a>
+              <a href="#">Legal & compliance</a>
+              <a href="#">Audit & transparency</a>
+            </div>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Academy</div>
+            <div class="footer-links">
+              <a href="#">IVYAR Academy</a>
+              <a href="#">Simulation engine</a>
+              <a href="#">Certifications</a>
+            </div>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Resources</div>
+            <div class="footer-links">
+              <a href="#">Documentation</a>
+              <a href="#">Developer portal</a>
+              <a href="#">Ministry portal</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <div class="footer-meta">
+            <span>© 2025 IVYAR Institute.</span>
+            <span>All rights reserved.</span>
+          </div>
+          <div class="footer-meta">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Cookies</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
