@@ -8,9 +8,180 @@
   <link rel="stylesheet" href="assets/css/light.css" id="theme-light" />
   <link rel="stylesheet" href="assets/css/dark.css" id="theme-dark" disabled />
   <link rel="stylesheet" href="assets/css/print.css" media="print" />
+  <style>
+    /* Cover Page Styles */
+    .cover-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #0a1628 0%, #1a2d4a 50%, #0a1628 100%);
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .cover-page h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      margin: 0 0 20px;
+      color: #FFD500;
+      text-shadow: 0 2px 10px rgba(255, 213, 0, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 10px;
+      color: #ffffff;
+      letter-spacing: 2px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page h3 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin: 0 0 40px;
+      color: #a0b4cc;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page .edition {
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin: 0 0 30px;
+      padding: 12px 30px;
+      border: 2px solid #FFD500;
+      color: #FFD500;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page .meta {
+      font-size: 0.9rem;
+      color: #8899aa;
+      margin: 10px 0;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page .version {
+      font-size: 0.85rem;
+      color: #667788;
+      margin-top: 40px;
+      letter-spacing: 2px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page .scroll-hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #667788;
+      font-size: 0.8rem;
+      animation: bounce 2s infinite;
+      z-index: 1;
+    }
+    
+    .cover-page .scroll-hint::after {
+      content: '↓';
+      display: block;
+      font-size: 1.5rem;
+      margin-top: 5px;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+    
+    /* Shield Icon */
+    .cover-page .shield-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cover-page .shield-icon svg {
+      fill: #FFD500;
+      filter: drop-shadow(0 4px 15px rgba(255, 213, 0, 0.4));
+    }
+    
+    @media (max-width: 768px) {
+      .cover-page h1 { font-size: 1.8rem; letter-spacing: 2px; }
+      .cover-page h2 { font-size: 1.1rem; }
+      .cover-page h3 { font-size: 1rem; }
+      .cover-page .edition { font-size: 0.85rem; padding: 10px 20px; }
+      .cover-page .meta { font-size: 0.8rem; }
+    }
+    
+    @media print {
+      .cover-page {
+        min-height: auto;
+        background: #ffffff !important;
+        color: #000000 !important;
+        page-break-after: always;
+      }
+      .cover-page h1 { color: #000000 !important; text-shadow: none; }
+      .cover-page h2, .cover-page h3 { color: #333333 !important; }
+      .cover-page .edition { border-color: #000000; color: #000000; }
+      .cover-page .scroll-hint { display: none; }
+    }
+  </style>
   <script type="module" src="assets/js/mermaid-init.js"></script>
 </head>
 <body class="light">
+
+  <!-- COVER PAGE -->
+  <div class="cover-page">
+    <div class="shield-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM10 17L6 13L7.41 11.59L10 14.17L16.59 7.58L18 9L10 17Z"/>
+      </svg>
+    </div>
+    <h1>IVYAR GOVERNANCE PLATFORM</h1>
+    <h2>MILITARY PROCUREMENT — ETHICS, LAW & AUDIT BRIEFING</h2>
+    <h3>ВІЙСЬКОВІ ЗАКУПІВЛІ — ЕТИКА, ПРАВО ТА АУДИТ</h3>
+    <p class="edition">OFFICIAL MINISTERIAL EDITION<br>ОФІЦІЙНЕ МІНІСТЕРСЬКЕ ВИДАННЯ</p>
+    <p class="meta">
+      Prepared for: Ministry-level stakeholders, oversight bodies, international partners<br>
+      Підготовлено для: міністерських структур, наглядових органів, міжнародних партнерів
+    </p>
+    <p class="meta">
+      Prepared by: IVYAR Governance & Compliance Division<br>
+      Підготовлено: Департамент Governance та Compliance IVYAR
+    </p>
+    <p class="version">Version 2.0 — 2025</p>
+    <div class="scroll-hint">Scroll to continue</div>
+  </div>
 
   <!-- HEADER -->
   <header class="portal-header">
