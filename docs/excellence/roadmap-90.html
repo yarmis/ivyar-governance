@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IVYAR 90-Day Roadmap</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --card: #1a1a24;
+      --cyan: #00E0FF;
+      --gold: #F5B400;
+      --green: #27d980;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+      --border: #2a2a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+    
+    h1 { font-size: 32px; text-align: center; margin-bottom: 8px; color: var(--cyan); }
+    .subtitle { text-align: center; color: var(--muted); margin-bottom: 48px; }
+    
+    .timeline { position: relative; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+      transform: translateX(-50%);
+    }
+    
+    .phase {
+      display: flex;
+      margin-bottom: 48px;
+      position: relative;
+    }
+    
+    .phase:nth-child(odd) { flex-direction: row; }
+    .phase:nth-child(even) { flex-direction: row-reverse; }
+    
+    .phase-content {
+      width: 45%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    
+    .phase-marker {
+      position: absolute;
+      left: 50%;
+      top: 32px;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      background: var(--bg);
+      border: 3px solid var(--cyan);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cyan);
+      z-index: 1;
+    }
+    
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .phase-title { font-size: 20px; font-weight: 600; }
+    .phase-days {
+      font-size: 12px;
+      color: var(--gold);
+      background: rgba(245, 180, 0, 0.1);
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+    
+    .phase-list { list-style: none; }
+    .phase-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .phase-list li:last-child { border-bottom: none; }
+    .phase-list li::before {
+      content: '→';
+      color: var(--cyan);
+    }
+    
+    .target-box {
+      margin-top: 48px;
+      background: var(--bg2);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+    
+    .target-title { font-size: 14px; color: var(--gold); letter-spacing: 2px; margin-bottom: 16px; }
+    .target-value { font-size: 48px; font-weight: 700; color: var(--cyan); }
+    .target-label { font-size: 14px; color: var(--muted); margin-top: 8px; }
+    
+    .back { display: inline-block; margin-top: 32px; color: var(--cyan); text-decoration: none; font-size: 14px; }
+    .back:hover { text-decoration: underline; }
+    
+    @media (max-width: 768px) {
+      .timeline::before { left: 24px; }
+      .phase { flex-direction: column !important; padding-left: 60px; }
+      .phase-content { width: 100%; }
+      .phase-marker { left: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>90-Day Roadmap</h1>
+    <p class="subtitle">Path to Excellence Level 5</p>
+    
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-content">
+          <div class="phase-header">
+            <div class="phase-title">Standardization</div>
+            <div class="phase-days">Days 0–30</div>
+          </div>
+          <ul class="phase-list">
+            <li>Complete documentation for all modules</li>
+            <li>Process standardization across domains</li>
+            <li>Compliance verification and certification</li>
+            <li>Security hardening and penetration testing</li>
+            <li>Academy curriculum finalization</li>
+            <li>Evidence chain validation</li>
+          </ul>
+        </div>
+        <div class="phase-marker">1</div>
+      </div>
+      
+      <div class="phase">
+        <div class="phase-content">
+          <div class="phase-header">
+            <div class="phase-title">Autonomy</div>
+            <div class="phase-days">Days 31–60</div>
+          </div>
+          <ul class="phase-list">
+            <li>AI agent deployment across modules</li>
+            <li>Automated decision flow activation</li>
+            <li>Self-monitoring systems implementation</li>
+            <li>Drift detection and correction active</li>
+            <li>Compliance automation complete</li>
+            <li>Risk Engine 3.0 full deployment</li>
+          </ul>
+        </div>
+        <div class="phase-marker">2</div>
+      </div>
+      
+      <div class="phase">
+        <div class="phase-content">
+          <div class="phase-header">
+            <div class="phase-title">Institutional Breakthrough</div>
+            <div class="phase-days">Days 61–90</div>
+          </div>
+          <ul class="phase-list">
+            <li>Ministry portal integrations live</li>
+            <li>International partnership agreements</li>
+            <li>Full audit capability certified</li>
+            <li>Excellence Index reaches 4.5+</li>
+            <li>Civilization-grade status achieved</li>
+            <li>Global expansion preparation</li>
+          </ul>
+        </div>
+        <div class="phase-marker">3</div>
+      </div>
+    </div>
+    
+    <div class="target-box">
+      <div class="target-title">TARGET EXCELLENCE INDEX</div>
+      <div class="target-value">4.8 / 5</div>
+      <div class="target-label">Civilization Level</div>
+    </div>
+    
+    <a href="index.html" class="back">← Back to Excellence Framework</a>
+  </div>
+</body>
+</html>

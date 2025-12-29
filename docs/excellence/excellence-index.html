@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IVYAR Excellence Index</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --card: #1a1a24;
+      --cyan: #00E0FF;
+      --gold: #F5B400;
+      --green: #27d980;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+      --border: #2a2a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    
+    h1 { font-size: 32px; text-align: center; margin-bottom: 8px; color: var(--cyan); }
+    .subtitle { text-align: center; color: var(--muted); margin-bottom: 48px; }
+    
+    .index-display {
+      background: linear-gradient(135deg, var(--bg2) 0%, var(--card) 100%);
+      border: 2px solid var(--cyan);
+      border-radius: 24px;
+      padding: 48px;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    
+    .index-value {
+      font-size: 96px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--cyan), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .index-label {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
+    
+    .index-bar-container {
+      margin: 32px auto;
+      max-width: 500px;
+    }
+    
+    .index-bar {
+      height: 16px;
+      background: var(--bg);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .index-fill {
+      height: 100%;
+      width: 82.8%;
+      background: linear-gradient(90deg, var(--cyan), var(--gold));
+      border-radius: 8px;
+      animation: fill 1.5s ease-out;
+    }
+    
+    @keyframes fill {
+      from { width: 0; }
+      to { width: 82.8%; }
+    }
+    
+    .index-markers {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 12px 24px;
+      background: rgba(39, 217, 128, 0.15);
+      border: 1px solid var(--green);
+      border-radius: 24px;
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 24px;
+    }
+    
+    .formula-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+    
+    .formula-title {
+      font-size: 14px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    
+    .formula {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: var(--cyan);
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    
+    .criteria-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .criteria-name {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    
+    .criteria-score {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    
+    .target-section {
+      background: var(--bg2);
+      border: 2px dashed var(--gold);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    
+    .target-title {
+      font-size: 14px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+    
+    .target-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    
+    .target-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    
+    .back { display: inline-block; margin-top: 32px; color: var(--cyan); text-decoration: none; font-size: 14px; }
+    .back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Excellence Index</h1>
+    <p class="subtitle">Official IVYAR Performance Metric</p>
+    
+    <div class="index-display">
+      <div class="index-value">4.14</div>
+      <div class="index-label">Current Excellence Score</div>
+      
+      <div class="index-bar-container">
+        <div class="index-bar">
+          <div class="index-fill"></div>
+        </div>
+        <div class="index-markers">
+          <span>0</span>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+        </div>
+      </div>
+      
+      <div class="status-badge">High Institutional Level</div>
+    </div>
+    
+    <div class="formula-section">
+      <div class="formula-title">Calculation Formula</div>
+      <div class="formula">
+Excellence Index = (Maturity + Scalability + Auditability + Ethics + Autonomy + Institutional + Operations) / 7
+      </div>
+      
+      <div class="criteria-grid">
+        <div class="criteria-card">
+          <div class="criteria-name">Maturity</div>
+          <div class="criteria-score">4.5</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-name">Scalability</div>
+          <div class="criteria-score">4.0</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-name">Auditability</div>
+          <div class="criteria-score">4.5</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-name">Ethics</div>
+          <div class="criteria-score">4.5</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-name">Autonomy</div>
+          <div class="criteria-score">3.5</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-name">Institutional</div>
+          <div class="criteria-score">4.0</div>
+        </div>
+        <div class="criteria-card">
+          <div class="criteria-name">Operations</div>
+          <div class="criteria-score">4.0</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="target-section">
+      <div class="target-title">Target Excellence Level</div>
+      <div class="target-value">4.8 / 5</div>
+      <div class="target-desc">Civilization-Grade Infrastructure</div>
+    </div>
+    
+    <a href="index.html" class="back">← Back to Excellence Framework</a>
+  </div>
+</body>
+</html>
