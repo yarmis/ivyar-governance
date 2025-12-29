@@ -1,7 +1,7 @@
-# НАВІГАЦІЯ DOCUMENTATION HUB 2.0
+# DOCUMENTATION HUB 2.0 NAVIGATION
 
-## Основні розділи
-- Версії 1.0-11.0: versions/index.md
+## Main Sections
+- Versions 1.0-11.0: versions/index.md
 - Academy 2.0: academy/overview.md
 - Simulation Engine: simulation/overview.md
 - Gospel Ethics: ethics/overview.md
@@ -9,12 +9,12 @@
 - Governance: governance/architecture.md
 - Playbook 2.0: governance/playbook.md
 
-## Додаткові матеріали
-- Глосарій: glossary.md
-- Методичні матеріали
-- Екзамени Level 1-3
+## Additional Materials
+- Glossary: glossary.md
+- Teaching Materials
+- Exams Level 1-3
 
-## Рекомендований маршрут
+## Recommended Path
 1. Start Here
 2. Governance Architecture
 3. Gospel Ethics

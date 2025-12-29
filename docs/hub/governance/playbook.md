@@ -1,33 +1,35 @@
-# IVYAR GOVERNANCE PLAYBOOK 1.0
+# IVYAR GOVERNANCE PLAYBOOK 2.0
 
 ## Executive Summary
 Official governance framework for IVYAR institution.
 
 ## Governance Philosophy
-Ethical, transparent, constitutional, conceptual.
+Ethical, transparent, constitutional, conceptual, Gospel-based.
 
 ## Architecture
-1.0-11.0 evolution from ministry to civilization federation.
+1.0-11.0 evolution: Ministry -> Multi-Agent -> Civilization -> Federation
 
 ## Roles
-Governance Agent, Ethics Agent, Legal Agent.
+- Governance Agent: decisions, policy
+- Ethics Agent: Gospel rules evaluation
+- Legal Agent: compliance, constraints
+- Logistics Agent: resources, operations
+- Treaty Agent: agreements, coordination
+- Civilization Agent: 8.0-11.0 layers
 
 ## Decision-Making Framework
-Input -> Ethics Check -> Legal Check -> Decision -> Metrics
+Input -> Ethics Check -> Legal Check -> Governance Decision -> Metrics -> Reflection
 
-## Ethics Integration
-Gospel Golden Rules applied to all decisions.
-
-## Legal Integration
-Constitutional compliance required.
-
-## Simulation Integration
-All governance flows testable in Simulation Engine.
+## Integration
+- Gospel Ethics Engine (mandatory)
+- Legal Framework (mandatory)
+- Simulation Engine (training)
+- Academy 2.0 (education)
 
 ## Maturity Model
-Level 1: Foundations
-Level 2: Professional
-Level 3: Civilization
+Level 1: Foundations (basics)
+Level 2: Professional (governance + ethics)
+Level 3: Civilization (8.0-11.0 + treaties)
 
 ---
 IVYAR LLC

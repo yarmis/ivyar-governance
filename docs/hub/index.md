@@ -1,21 +1,20 @@
-# IVYAR DOCUMENTATION HUB 1.0
+# IVYAR DOCUMENTATION HUB 2.0
 
 Офіційний портал інституції IVYAR.
 
-## Основні розділи
+## Місія
+Single Source of Truth для екосистеми IVYAR.
+
+## Структура
 - Версійність (1.0-11.0)
 - Academy 2.0
 - Simulation Engine 2.0
 - Gospel Ethics Engine
 - Legal Framework
-- Governance Architecture
-- Governance Playbook 1.0
+- Governance Playbook 2.0
 
-## Місія
-Єдине місце для студентів, викладачів, партнерів та дослідників.
-
-## Призначення
-Бібліотека, архів, методологічний центр, навігаційне ядро.
+## Аудиторія
+Студенти, викладачі, дослідники, партнери.
 
 ---
 IVYAR LLC
