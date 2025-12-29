@@ -3,81 +3,359 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IVYAR Governance Portal</title>
+  <title>IVYAR Governance Platform</title>
   <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --card: #1a1a24;
+      --cyan: #00E0FF;
+      --gold: #F5B400;
+      --green: #27d980;
+      --red: #ff4d6a;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+      --border: #2a2a3a;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-      margin: 0;
-      padding: 40px;
-      background: #f5f7fa;
-      color: #333;
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    
+    /* Header */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 10, 15, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .container { max-width: 900px; margin: 0 auto; }
-    h1 { color: #003B73; margin-bottom: 10px; font-size: 2.5em; }
-    .subtitle { color: #666; margin-bottom: 40px; font-size: 1.1em; }
-    .section { 
-      background: white; 
-      padding: 30px; 
-      border-radius: 12px; 
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    .header-content { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 24px; font-weight: 700; color: var(--gold); letter-spacing: 2px; }
+    nav a { color: var(--muted); text-decoration: none; margin-left: 24px; font-size: 14px; transition: color 0.2s; }
+    nav a:hover { color: var(--cyan); }
+    
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0 60px;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
     }
-    .section h2 { color: #003B73; margin-bottom: 20px; font-size: 1.4em; }
-    .section ul { list-style: none; }
-    .section li { margin-bottom: 12px; }
-    .section a { 
-      color: #003B73; 
-      text-decoration: none; 
-      font-weight: 500;
-      display: inline-flex;
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(0, 224, 255, 0.1);
+      border: 1px solid var(--cyan);
+      border-radius: 20px;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 20px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+    
+    /* Stats */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 48px;
+      padding: 32px;
+      background: var(--card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 36px; font-weight: 700; color: var(--cyan); }
+    .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    
+    /* Sections */
+    section { padding: 64px 0; }
+    .section-title { font-size: 14px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+    .section-heading { font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 40px; }
+    
+    /* Portal Grid */
+    .portal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .portal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .portal-card:hover { border-color: var(--cyan); transform: translateY(-4px); }
+    .portal-card-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(0, 224, 255, 0.1);
+      border-radius: 12px;
+      display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
     }
-    .section a:hover { text-decoration: underline; }
-    .badge {
-      background: #e8f4fd;
-      color: #003B73;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.75em;
+    .portal-card h3 { font-size: 20px; margin-bottom: 8px; }
+    .portal-card p { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+    .portal-card-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
-    footer { 
-      text-align: center; 
-      margin-top: 40px; 
-      color: #999; 
-      font-size: 0.9em;
+    .status-live { background: rgba(39, 217, 128, 0.15); color: var(--green); }
+    .status-new { background: rgba(245, 180, 0, 0.15); color: var(--gold); }
+    
+    /* Modules */
+    .modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .module-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .module-card h4 { font-size: 14px; margin-bottom: 4px; }
+    .module-card p { font-size: 12px; color: var(--muted); }
+    
+    /* Quick Links */
+    .quick-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+    .quick-link {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.2s;
+    }
+    .quick-link:hover { border-color: var(--cyan); }
+    .quick-link-icon { font-size: 32px; }
+    .quick-link h4 { font-size: 16px; margin-bottom: 4px; }
+    .quick-link p { font-size: 13px; color: var(--muted); }
+    
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-logo { font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 2px; margin-bottom: 16px; }
+    .footer-tagline { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 24px; }
+    .footer-links a { color: var(--muted); text-decoration: none; font-size: 13px; }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy { font-size: 12px; color: #666; }
+    
+    @media (max-width: 900px) {
+      .portal-grid { grid-template-columns: 1fr; }
+      .modules-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats { flex-direction: column; gap: 24px; }
+      .hero h1 { font-size: 32px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>IVYAR Governance Portal</h1>
-    <p class="subtitle">Official documentation for ministries, OEM partners, and international programs.</p>
-    
-    <div class="section">
-      <h2>📁 Documentation Sections</h2>
-      <ul>
-        <li><a href="legal/">Legal Documents</a> <span class="badge">MSA, DPA, Export Control</span></li>
-        <li><a href="governance/">Governance Framework</a> <span class="badge">Security, Audit, Oversight</span></li>
-        <li><a href="onboarding/">Government Onboarding</a> <span class="badge">Setup Guides</span></li>
-        <li><a href="pdf/">PDF Library</a> <span class="badge">All Documents</span></li>
-      </ul>
-    </div>
 
-    <div class="section">
-      <h2>🔗 Quick Links</h2>
-      <ul>
-        <li><a href="https://github.com/yarmis/ivyar-governance">GitHub Repository</a></li>
-        <li><a href="https://github.com/yarmis/ivyar-governance/blob/main/CHANGELOG.md">Changelog</a></li>
-        <li><a href="https://github.com/yarmis/ivyar-governance/releases">Releases</a></li>
-      </ul>
-    </div>
-
-    <footer>
-      <p>IVYAR LLC — International Defence & Humanitarian Platform</p>
-      <p>Contact: gov-support@ivyar.org</p>
-    </footer>
+<header>
+  <div class="container header-content">
+    <div class="logo">IVYAR</div>
+    <nav>
+      <a href="#portals">Portals</a>
+      <a href="#modules">Modules</a>
+      <a href="excellence/">Excellence</a>
+      <a href="governance/military-procurement/portal/military-procurement.html">Procurement</a>
+    </nav>
   </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">Governance Platform v1.0</div>
+    <h1>IVYAR Governance Portal</h1>
+    <p>AI-powered autonomous governance infrastructure for nations, ministries, and international operations</p>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">4.14</div>
+        <div class="stat-label">Excellence Index</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">11</div>
+        <div class="stat-label">Governance Layers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">8</div>
+        <div class="stat-label">Active Modules</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">35</div>
+        <div class="stat-label">Documents</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="portals">
+  <div class="container">
+    <div class="section-title">Access Points</div>
+    <h2 class="section-heading">Governance Portals</h2>
+    
+    <div class="portal-grid">
+      <a href="excellence/" class="portal-card">
+        <div class="portal-card-icon">📊</div>
+        <h3>Excellence Framework</h3>
+        <p>8 domains, 7 criteria, heatmap visualization, 90-day roadmap to civilization-grade governance.</p>
+        <span class="portal-card-status status-live">Live</span>
+      </a>
+      
+      <a href="governance/military-procurement/portal/military-procurement.html" class="portal-card">
+        <div class="portal-card-icon">🛡️</div>
+        <h3>Military Procurement</h3>
+        <p>Defense procurement governance with export control, compliance engine, and evidence chains.</p>
+        <span class="portal-card-status status-live">Live</span>
+      </a>
+      
+      <a href="docs/" class="portal-card">
+        <div class="portal-card-icon">📚</div>
+        <h3>Documentation Hub</h3>
+        <p>Complete governance documentation: vision, architecture, policies, modules, and releases.</p>
+        <span class="portal-card-status status-new">New</span>
+      </a>
+    </div>
+    
+    <div class="quick-links">
+      <a href="excellence/heatmap.html" class="quick-link">
+        <div class="quick-link-icon">🗺️</div>
+        <div>
+          <h4>Effectiveness Heatmap</h4>
+          <p>Domain performance visualization</p>
+        </div>
+      </a>
+      <a href="excellence/roadmap-90.html" class="quick-link">
+        <div class="quick-link-icon">📅</div>
+        <div>
+          <h4>90-Day Roadmap</h4>
+          <p>Implementation timeline</p>
+        </div>
+      </a>
+      <a href="excellence/excellence-index.html" class="quick-link">
+        <div class="quick-link-icon">📈</div>
+        <div>
+          <h4>Excellence Index</h4>
+          <p>4.14/5 — High Institutional Level</p>
+        </div>
+      </a>
+      <a href="excellence/framework.html" class="quick-link">
+        <div class="quick-link-icon">📋</div>
+        <div>
+          <h4>Full Framework</h4>
+          <p>Complete excellence documentation</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="modules" style="background: var(--bg2);">
+  <div class="container">
+    <div class="section-title">Platform Capabilities</div>
+    <h2 class="section-heading">Active Modules</h2>
+    
+    <div class="modules-grid">
+      <div class="module-card">
+        <h4>Defense & Export</h4>
+        <p>ITAR, EAR, EU Dual-Use</p>
+      </div>
+      <div class="module-card">
+        <h4>Humanitarian</h4>
+        <p>Aid coordination</p>
+      </div>
+      <div class="module-card">
+        <h4>Finance</h4>
+        <p>Donor transparency</p>
+      </div>
+      <div class="module-card">
+        <h4>Academy</h4>
+        <p>Simulation & training</p>
+      </div>
+      <div class="module-card">
+        <h4>Compliance Engine</h4>
+        <p>LegalGuard 3.0</p>
+      </div>
+      <div class="module-card">
+        <h4>Risk Engine</h4>
+        <p>Real-time scoring</p>
+      </div>
+      <div class="module-card">
+        <h4>Ethics Engine</h4>
+        <p>GGR-EAE</p>
+      </div>
+      <div class="module-card">
+        <h4>Evidence Chain</h4>
+        <p>Immutable audit</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">International Alignment</div>
+    <h2 class="section-heading">Multi-Stakeholder Governance</h2>
+    
+    <div class="portal-grid">
+      <div class="portal-card" style="cursor: default;">
+        <div class="portal-card-icon">🇺🇦</div>
+        <h3>For Ukraine</h3>
+        <p>Readiness dashboards, export control compliance, donor transparency mechanisms.</p>
+      </div>
+      <div class="portal-card" style="cursor: default;">
+        <div class="portal-card-icon">🛡️</div>
+        <h3>For NATO</h3>
+        <p>NATO codification, readiness metrics, standardized audit trails.</p>
+      </div>
+      <div class="portal-card" style="cursor: default;">
+        <div class="portal-card-icon">🌍</div>
+        <h3>For Donors</h3>
+        <p>Fund tracking, asset monitoring, impact reporting, full transparency.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-logo">IVYAR</div>
+    <div class="footer-tagline">AI-Governance Infrastructure for Nations</div>
+    <div class="footer-tagline">Ethical • Transparent • Auditable</div>
+    <div class="footer-links">
+      <a href="excellence/">Excellence Framework</a>
+      <a href="governance/military-procurement/portal/military-procurement.html">Military Procurement</a>
+      <a href="mailto:governance@ivyar.org">Contact</a>
+    </div>
+    <div class="footer-copy">© 2025 IVYAR LLC. All rights reserved.</div>
+  </div>
+</footer>
+
 </body>
 </html>
