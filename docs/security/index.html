@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IVYAR Security Framework — Complete Security Overview</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --card: #1a1a24;
+      --cyan: #00E0FF;
+      --gold: #F5B400;
+      --green: #27d980;
+      --red: #ff4d6a;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+      --border: #2a2a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 10, 15, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .logo { font-size: 24px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-decoration: none; }
+    nav a { color: var(--muted); text-decoration: none; margin-left: 24px; font-size: 14px; }
+    nav a:hover { color: var(--cyan); }
+    
+    .hero {
+      text-align: center;
+      padding: 64px 0 48px;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(39, 217, 128, 0.1);
+      border: 1px solid var(--green);
+      border-radius: 20px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--cyan);
+    }
+    .hero p { font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+    
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 40px;
+      padding: 28px;
+      background: var(--card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-size: 32px; font-weight: 700; color: var(--green); }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    
+    section { padding: 64px 0; }
+    .section-title { font-size: 14px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; text-align: center; }
+    .section-heading { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 40px; }
+    
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .security-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .security-card:hover {
+      border-color: var(--cyan);
+      transform: translateY(-4px);
+    }
+    .security-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--green);
+    }
+    
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .card-number {
+      width: 36px;
+      height: 36px;
+      background: rgba(0, 224, 255, 0.1);
+      border: 1px solid var(--cyan);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    .card-title { font-size: 18px; font-weight: 600; }
+    
+    .card-desc { font-size: 14px; color: var(--muted); margin-bottom: 16px; line-height: 1.6; }
+    
+    .card-checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green);
+      background: rgba(39, 217, 128, 0.1);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    
+    .card-status {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 10px;
+      background: rgba(39, 217, 128, 0.15);
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    
+    .compliance-section {
+      background: var(--bg2);
+      padding: 48px 0;
+    }
+    .compliance-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .compliance-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .compliance-card h4 { font-size: 14px; color: var(--cyan); margin-bottom: 4px; }
+    .compliance-card p { font-size: 11px; color: var(--muted); }
+    
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-logo { font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 2px; margin-bottom: 16px; }
+    .footer-text { font-size: 12px; color: var(--muted); }
+    
+    @media (max-width: 768px) {
+      .security-grid { grid-template-columns: 1fr; }
+      .compliance-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats { flex-direction: column; gap: 16px; }
+      .hero h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <a href="../index.html" class="logo">IVYAR</a>
+    <nav>
+      <a href="../index.html">Portal</a>
+      <a href="../excellence/">Excellence</a>
+      <a href="../governance/military-procurement/portal/military-procurement.html">Procurement</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">All Controls Verified</div>
+    <h1>Security Framework</h1>
+    <p>Comprehensive security controls for enterprise-grade governance infrastructure</p>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">8</div>
+        <div class="stat-label">Security Domains</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">32</div>
+        <div class="stat-label">Controls Verified</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Critical Issues</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Compliance</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-title">Security Controls</div>
+    <h2 class="section-heading">8 Security Domains</h2>
+    
+    <div class="security-grid">
+      <a href="access-control.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">1</div>
+          <div class="card-title">Access Control</div>
+        </div>
+        <p class="card-desc">Role-based access, token verification, zero-trust architecture, and secure authentication.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ RBAC</span>
+          <span class="check-item">✓ MFA</span>
+          <span class="check-item">✓ JWT</span>
+          <span class="check-item">✓ SSO</span>
+        </div>
+      </a>
+      
+      <a href="input-validation.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">2</div>
+          <div class="card-title">Input Validation</div>
+        </div>
+        <p class="card-desc">Comprehensive sanitization, injection protection, and format validation on all inputs.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ XSS</span>
+          <span class="check-item">✓ SQLi</span>
+          <span class="check-item">✓ CSRF</span>
+          <span class="check-item">✓ Schema</span>
+        </div>
+      </a>
+      
+      <a href="api-security.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">3</div>
+          <div class="card-title">API Security</div>
+        </div>
+        <p class="card-desc">HTTPS enforcement, CORS configuration, rate limiting, and endpoint protection.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ TLS 1.3</span>
+          <span class="check-item">✓ CORS</span>
+          <span class="check-item">✓ Rate Limit</span>
+          <span class="check-item">✓ OpenAPI</span>
+        </div>
+      </a>
+      
+      <a href="logging-audit.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">4</div>
+          <div class="card-title">Logging & Audit</div>
+        </div>
+        <p class="card-desc">Secure logging, audit trails, evidence preservation, and immutable storage.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ Redacted</span>
+          <span class="check-item">✓ Immutable</span>
+          <span class="check-item">✓ Rotated</span>
+          <span class="check-item">✓ 7yr Retention</span>
+        </div>
+      </a>
+      
+      <a href="sast.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">5</div>
+          <div class="card-title">Static Analysis (SAST)</div>
+        </div>
+        <p class="card-desc">Automated code scanning, vulnerability detection, and CI/CD security integration.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ 0 Critical</span>
+          <span class="check-item">✓ 0 High</span>
+          <span class="check-item">✓ Automated</span>
+          <span class="check-item">✓ CI/CD</span>
+        </div>
+      </a>
+      
+      <a href="dast.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">6</div>
+          <div class="card-title">Dynamic Analysis (DAST)</div>
+        </div>
+        <p class="card-desc">Runtime security testing, port scanning, and server configuration verification.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ UI Scan</span>
+          <span class="check-item">✓ API Scan</span>
+          <span class="check-item">✓ Port Scan</span>
+          <span class="check-item">✓ Config</span>
+        </div>
+      </a>
+      
+      <a href="secrets-config.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">7</div>
+          <div class="card-title">Secrets & Configuration</div>
+        </div>
+        <p class="card-desc">Secure vault storage, no repository secrets, and CI/CD pipeline protection.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ Vault</span>
+          <span class="check-item">✓ No Leaks</span>
+          <span class="check-item">✓ Rotation</span>
+          <span class="check-item">✓ .env Safe</span>
+        </div>
+      </a>
+      
+      <a href="release-security.html" class="security-card">
+        <span class="card-status">Verified</span>
+        <div class="card-header">
+          <div class="card-number">8</div>
+          <div class="card-title">Release Security</div>
+        </div>
+        <p class="card-desc">Security notes, risk assessment, countermeasures, and authorized release signing.</p>
+        <div class="card-checks">
+          <span class="check-item">✓ Documented</span>
+          <span class="check-item">✓ Risk Assessed</span>
+          <span class="check-item">✓ Tested</span>
+          <span class="check-item">✓ Signed</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="compliance-section">
+  <div class="container">
+    <div class="section-title">Standards</div>
+    <h2 class="section-heading">Compliance Alignment</h2>
+    
+    <div class="compliance-grid">
+      <div class="compliance-card">
+        <h4>OWASP Top 10</h4>
+        <p>All vulnerabilities addressed</p>
+      </div>
+      <div class="compliance-card">
+        <h4>ISO 27001</h4>
+        <p>Information security ready</p>
+      </div>
+      <div class="compliance-card">
+        <h4>SOC 2 Type II</h4>
+        <p>Trust principles covered</p>
+      </div>
+      <div class="compliance-card">
+        <h4>GDPR</h4>
+        <p>Data protection compliant</p>
+      </div>
+      <div class="compliance-card">
+        <h4>NIST CSF</h4>
+        <p>Framework aligned</p>
+      </div>
+      <div class="compliance-card">
+        <h4>CIS Controls</h4>
+        <p>Benchmarks implemented</p>
+      </div>
+      <div class="compliance-card">
+        <h4>FedRAMP</h4>
+        <p>Planned certification</p>
+      </div>
+      <div class="compliance-card">
+        <h4>NATO Standards</h4>
+        <p>Defense-grade ready</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-logo">IVYAR</div>
+    <div class="footer-text">Security Framework v1.0 — December 2025</div>
+    <div class="footer-text" style="margin-top: 8px;">© 2025 IVYAR LLC. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>
