@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IVYAR Security Governance Policy</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --card: #1a1a24;
+      --cyan: #00E0FF;
+      --gold: #F5B400;
+      --green: #27d980;
+      --red: #ff4d6a;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+      --border: #2a2a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 10, 15, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .logo { font-size: 24px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-decoration: none; }
+    nav a { color: var(--muted); text-decoration: none; margin-left: 24px; font-size: 14px; }
+    nav a:hover { color: var(--cyan); }
+    
+    .hero {
+      text-align: center;
+      padding: 48px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: rgba(245, 180, 0, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 { font-size: 36px; color: var(--cyan); margin-bottom: 16px; }
+    .hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+    
+    .section {
+      margin-bottom: 48px;
+    }
+    .section-number {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 224, 255, 0.1);
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      text-align: center;
+      line-height: 32px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-right: 12px;
+    }
+    .section h2 {
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+    }
+    .section p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    
+    .list {
+      list-style: none;
+      margin: 16px 0;
+    }
+    .list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .list li:last-child { border-bottom: none; }
+    .list li::before {
+      content: '→';
+      color: var(--cyan);
+    }
+    
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .principle {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .principle h4 { font-size: 12px; color: var(--cyan); margin-bottom: 4px; }
+    .principle p { font-size: 10px; color: var(--muted); }
+    
+    .framework-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .step {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      background: rgba(0, 224, 255, 0.15);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .step h4 { font-size: 11px; color: var(--text); }
+    
+    .blocker-card {
+      background: rgba(255, 77, 106, 0.1);
+      border: 1px solid var(--red);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+    }
+    .blocker-card h3 {
+      font-size: 14px;
+      color: var(--red);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .blocker-list {
+      list-style: none;
+    }
+    .blocker-list li {
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .blocker-list li::before {
+      content: '✕';
+      color: var(--red);
+      font-weight: 700;
+    }
+    
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .evidence-item {
+      background: var(--bg2);
+      border: 1px solid var(--green);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .evidence-item p { font-size: 11px; color: var(--green); }
+    
+    .cycle-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .cycle-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .responsibility-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .responsibility-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .responsibility-card h4 { font-size: 12px; color: var(--cyan); margin-bottom: 6px; }
+    .responsibility-card p { font-size: 10px; color: var(--muted); }
+    
+    .integration-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .integration-tag {
+      background: rgba(0, 224, 255, 0.1);
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--cyan);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .nav-links a { color: var(--cyan); text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { text-decoration: underline; }
+    
+    footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer-text { font-size: 12px; color: var(--muted); }
+    
+    @media (max-width: 768px) {
+      .principles-grid, .framework-steps, .evidence-grid, .responsibility-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <a href="../index.html" class="logo">IVYAR</a>
+    <nav>
+      <a href="../index.html">Portal</a>
+      <a href="index.html">Security</a>
+      <a href="../excellence/">Excellence</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge">Official Policy</div>
+    <h1>Security Governance Policy</h1>
+    <p>Official security policy for IVYAR Governance Framework defining rules, processes, and responsibilities for all modules, pages, APIs, and releases.</p>
+  </div>
+  
+  <!-- Section 1 -->
+  <div class="section">
+    <h2><span class="section-number">1</span> Policy Purpose</h2>
+    <p>This policy defines the rules, processes, and responsibilities for ensuring security across all modules, pages, APIs, and releases within the IVYAR system. The Security Framework is a mandatory standard for all teams, partners, and integrations.</p>
+  </div>
+  
+  <!-- Section 2 -->
+  <div class="section">
+    <h2><span class="section-number">2</span> Scope of Application</h2>
+    <p>This policy applies to:</p>
+    <ul class="list">
+      <li>All new developments (UI, API, integrations)</li>
+      <li>All code changes</li>
+      <li>All portal releases</li>
+      <li>All external contractors and partners</li>
+      <li>All environments (development, testing, production)</li>
+    </ul>
+  </div>
+  
+  <!-- Section 3 -->
+  <div class="section">
+    <h2><span class="section-number">3</span> Security Principles</h2>
+    <p>IVYAR adheres to the following core security principles:</p>
+    <div class="principles-grid">
+      <div class="principle">
+        <h4>Least Privilege</h4>
+        <p>Minimum necessary permissions</p>
+      </div>
+      <div class="principle">
+        <h4>Defense in Depth</h4>
+        <p>Multi-layered protection</p>
+      </div>
+      <div class="principle">
+        <h4>Zero Trust</h4>
+        <p>Trust is never assumed</p>
+      </div>
+      <div class="principle">
+        <h4>Auditability</h4>
+        <p>Every action has a trail</p>
+      </div>
+      <div class="principle">
+        <h4>Transparency</h4>
+        <p>Security is visible and verifiable</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Section 4 -->
+  <div class="section">
+    <h2><span class="section-number">4</span> Security Framework as Process</h2>
+    <p>The Security Framework is not a static document — it is a process that is triggered with every system change. Each module passes through 8 verification checks:</p>
+    <div class="framework-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Access Control</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Input Validation</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>API Security</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Logging & Audit</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <h4>SAST</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <h4>DAST</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <h4>Secrets & Config</h4>
+      </div>
+      <div class="step">
+        <div class="step-num">8</div>
+        <h4>Release Security</h4>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Section 5 -->
+  <div class="section">
+    <h2><span class="section-number">5</span> Security Gate Before Release</h2>
+    <p>No release can be published if any of the following conditions are not met. These are <strong>blocking requirements</strong>, not recommendations:</p>
+    <div class="blocker-card">
+      <h3>⛔ Release Blockers</h3>
+      <ul class="blocker-list">
+        <li>Access Control not verified</li>
+        <li>Secrets found in repository</li>
+        <li>SAST has critical/high findings</li>
+        <li>DAST detected open ports or vulnerabilities</li>
+        <li>Logging does not meet audit requirements</li>
+        <li>Release Security Note not completed</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Section 6 -->
+  <div class="section">
+    <h2><span class="section-number">6</span> Security Framework as Evidence</h2>
+    <p>Each of the 8 security pages serves as official evidence of compliance for:</p>
+    <div class="evidence-grid">
+      <div class="evidence-item">
+        <p>Ministry Requirements</p>
+      </div>
+      <div class="evidence-item">
+        <p>International Standards</p>
+      </div>
+      <div class="evidence-item">
+        <p>Partner Audits</p>
+      </div>
+      <div class="evidence-item">
+        <p>Donor Requirements</p>
+      </div>
+      <div class="evidence-item">
+        <p>Defense Protocols</p>
+      </div>
+    </div>
+    <p>The Security Framework is part of the official verification package.</p>
+  </div>
+  
+  <!-- Section 7 -->
+  <div class="section">
+    <h2><span class="section-number">7</span> Cyclic Application</h2>
+    <p>The Security Framework is applied:</p>
+    <div class="cycle-list">
+      <div class="cycle-item">Before every release</div>
+      <div class="cycle-item">After every change</div>
+      <div class="cycle-item">During every audit</div>
+      <div class="cycle-item">After every incident</div>
+      <div class="cycle-item">Upon policy updates</div>
+    </div>
+    <p>This is a living mechanism that operates continuously.</p>
+  </div>
+  
+  <!-- Section 8 -->
+  <div class="section">
+    <h2><span class="section-number">8</span> Responsibility Matrix</h2>
+    <div class="responsibility-grid">
+      <div class="responsibility-card">
+        <h4>Security Owner</h4>
+        <p>Approves policy (IVYAR)</p>
+      </div>
+      <div class="responsibility-card">
+        <h4>Developer</h4>
+        <p>Executes security checks</p>
+      </div>
+      <div class="responsibility-card">
+        <h4>Auditor</h4>
+        <p>Confirms compliance</p>
+      </div>
+      <div class="responsibility-card">
+        <h4>Ministry</h4>
+        <p>Receives Security Package</p>
+      </div>
+      <div class="responsibility-card">
+        <h4>CI/CD</h4>
+        <p>Auto-blocks on violations</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Section 9 -->
+  <div class="section">
+    <h2><span class="section-number">9</span> Portal Integration</h2>
+    <p>The Security Governance Policy and 8 Security Pages are integrated into:</p>
+    <div class="integration-tags">
+      <div class="integration-tag">Governance Framework</div>
+      <div class="integration-tag">Release Governance</div>
+      <div class="integration-tag">Audit Package</div>
+      <div class="integration-tag">Ministerial Review</div>
+      <div class="integration-tag">Onboarding Documentation</div>
+    </div>
+  </div>
+  
+  <div class="nav-links">
+    <a href="../index.html">← Back to Portal</a>
+    <a href="index.html">Security Framework →</a>
+    <a href="access-control.html">Access Control →</a>
+  </div>
+  
+  <footer>
+    <p class="footer-text">IVYAR Security Governance Policy v1.0 — December 2025</p>
+    <p class="footer-text" style="margin-top: 8px;">© 2025 IVYAR LLC. All rights reserved.</p>
+  </footer>
+</div>
+
+</body>
+</html>
