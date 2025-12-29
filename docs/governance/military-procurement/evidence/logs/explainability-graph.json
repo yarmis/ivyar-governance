@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "type": "explainability-graph",
+  "nodes": [
+    {
+      "id": "request",
+      "type": "input",
+      "label": "Request / Запит"
+    },
+    {
+      "id": "legal_guard",
+      "type": "check",
+      "label": "LegalGuard 3.0"
+    },
+    {
+      "id": "risk_engine",
+      "type": "check",
+      "label": "Risk Engine 3.0"
+    },
+    {
+      "id": "ethical_engine",
+      "type": "check",
+      "label": "Ethical Engine"
+    },
+    {
+      "id": "decision",
+      "type": "output",
+      "label": "Decision / Рішення"
+    }
+  ],
+  "edges": [
+    {"from": "request", "to": "legal_guard"},
+    {"from": "legal_guard", "to": "risk_engine"},
+    {"from": "risk_engine", "to": "ethical_engine"},
+    {"from": "ethical_engine", "to": "decision"}
+  ],
+  "decisions": []
+}

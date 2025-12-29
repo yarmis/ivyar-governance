@@ -1,0 +1,69 @@
+/* IVYAR Military Procurement - Dark Theme */
+
+body.dark {
+  background: #0D0D0D;
+  color: #F2F2F2;
+}
+
+.dark .portal-header {
+  background: #101010;
+  border-bottom: 1px solid #2A2A2A;
+}
+
+.dark .portal-header .logo { color: #FFFFFF; }
+.dark .main-nav a { color: #4DA3FF; }
+.dark .theme-btn {
+  background: #151515;
+  border: 1px solid #2A2A2A;
+  color: #EEEEEE;
+}
+
+.dark .breadcrumbs { color: #AAAAAA; }
+.dark .breadcrumbs a { color: #4DA3FF; }
+.dark .breadcrumbs .current { color: #FFFFFF; }
+
+.dark .sidebar-nav a { color: #DDDDDD; }
+.dark .sidebar-nav a:hover { color: #4DA3FF; }
+
+.dark .tagline { color: #AAAAAA; }
+
+.dark .page-section { border-bottom: 1px solid #2A2A2A; }
+
+.dark .card {
+  border: 1px solid #2A2A2A;
+  background: #151515;
+}
+.dark .card:hover {
+  background: #182235;
+  border-color: #4DA3FF;
+}
+
+.dark .doc-table th, .dark .doc-table td {
+  border: 1px solid #333333;
+}
+.dark .doc-table th {
+  background: #181818;
+  color: #F2F2F2;
+}
+
+.dark .accordion-header {
+  background: #151515;
+  color: #F2F2F2;
+  border: 1px solid #2A2A2A;
+}
+.dark .accordion-body {
+  background: #101010;
+  border: 1px solid #2A2A2A;
+  border-top: none;
+}
+
+.dark .mermaid {
+  background: #151515;
+  border: 1px solid #2A2A2A;
+}
+
+.dark .portal-footer {
+  background: #101010;
+  border-top: 1px solid #2A2A2A;
+  color: #AAAAAA;
+}

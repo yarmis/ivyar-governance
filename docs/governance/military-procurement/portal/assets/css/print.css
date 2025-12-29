@@ -1,0 +1,73 @@
+/* IVYAR Military Procurement - Print Styles */
+
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    font-size: 11pt;
+  }
+
+  .portal-header,
+  .portal-footer,
+  .main-nav,
+  .breadcrumbs,
+  .theme-btn,
+  .sidebar-nav,
+  .lang-switch,
+  .controls {
+    display: none !important;
+  }
+
+  .layout {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  .page-content,
+  .page-section,
+  #military-procurement {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  h1, h2, h3 {
+    color: #000000 !important;
+    page-break-after: avoid;
+  }
+
+  .card-grid {
+    display: block !important;
+  }
+
+  .card {
+    border: 1px solid #999999 !important;
+    margin-bottom: 12px !important;
+    page-break-inside: avoid;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  .accordion-header {
+    display: block !important;
+    background: #EEEEEE !important;
+    color: #000000 !important;
+    border: 1px solid #999999 !important;
+  }
+
+  .accordion-body {
+    display: block !important;
+    border: 1px solid #999999 !important;
+    border-top: none !important;
+  }
+
+  .mermaid {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+}

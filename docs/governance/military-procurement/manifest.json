@@ -1,0 +1,48 @@
+{
+  "package": "ivyar-military-procurement",
+  "version": "1.0",
+  "status": "ministry-ready",
+  "generated_at": "2025-12-28T22:00:00Z",
+  "publisher": "IVYAR LLC",
+  "contact": "governance@ivyar.org",
+  "description": {
+    "en": "Military Procurement Governance Package — Legal, Ethical, Compliance & Audit Framework",
+    "ua": "Пакет управління військовими закупівлями — Юридичні, Етичні, Compliance та Аудит рамки"
+  },
+  "files": [
+    {"path": "portal/military-procurement.html", "type": "html", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/css/layout.css", "type": "css", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/css/light.css", "type": "css", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/css/dark.css", "type": "css", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/css/print.css", "type": "css", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/js/accordion.js", "type": "js", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/js/theme.js", "type": "js", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/js/mermaid-init.js", "type": "js", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/svg/icon-law.svg", "type": "svg", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/svg/icon-shield.svg", "type": "svg", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/svg/icon-audit.svg", "type": "svg", "sha256": "TO_BE_FILLED"},
+    {"path": "portal/assets/svg/icon-governance.svg", "type": "svg", "sha256": "TO_BE_FILLED"},
+    {"path": "docs/legal-framework.md", "type": "md", "sha256": "TO_BE_FILLED"},
+    {"path": "docs/ethical-framework.md", "type": "md", "sha256": "TO_BE_FILLED"},
+    {"path": "docs/compliance-engine-3.0.md", "type": "md", "sha256": "TO_BE_FILLED"},
+    {"path": "docs/evidence-chain.md", "type": "md", "sha256": "TO_BE_FILLED"},
+    {"path": "docs/audit-interface.md", "type": "md", "sha256": "TO_BE_FILLED"},
+    {"path": "docs/international-alignment.md", "type": "md", "sha256": "TO_BE_FILLED"}
+  ],
+  "evidence": {
+    "manifest": "evidence/manifest/evidence-manifest.json",
+    "logs": [
+      "evidence/logs/events.log",
+      "evidence/logs/decisions.log",
+      "evidence/logs/explainability-graph.json"
+    ],
+    "exports": [
+      "evidence/exports/evidence-checksums.sha256"
+    ]
+  },
+  "compliance": {
+    "legal_frameworks": ["ITAR", "EAR", "EU Dual-Use", "National Law"],
+    "ethical_frameworks": ["Gospel Golden Rules", "Humanitarian Principles"],
+    "audit_support": ["Internal", "Ministerial", "International"]
+  }
+}

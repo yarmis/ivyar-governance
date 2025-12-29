@@ -1,0 +1,4 @@
+id,timestamp,type,actor,action,result,hash
+# Evidence Chain Index - Template
+# This file contains the index of all evidence chain entries
+# Format: id,timestamp,type,actor,action,result,hash

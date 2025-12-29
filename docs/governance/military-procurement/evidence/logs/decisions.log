@@ -1,0 +1,5 @@
+# IVYAR Evidence Chain - Decisions Log
+# Format: JSON Lines (one decision per line)
+# This is a template file - actual decisions will be appended during operation
+
+{"id":"template","timestamp":"2025-12-28T22:00:00Z","type":"init","status":"template"}

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>IVYAR Governance Portal – Military Procurement Governance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/light.css" id="theme-light" />
+  <link rel="stylesheet" href="assets/css/dark.css" id="theme-dark" disabled />
+  <link rel="stylesheet" href="assets/css/print.css" media="print" />
+  <script type="module" src="assets/js/mermaid-init.js"></script>
+</head>
+<body class="light">
+
+  <!-- HEADER -->
+  <header class="portal-header">
+    <div class="logo">IVYAR Governance Portal</div>
+    <nav class="main-nav">
+      <a href="/governance">Governance</a>
+      <a href="/compliance">Compliance</a>
+      <a href="/military-procurement" class="active">Military Procurement</a>
+      <a href="/academy">Academy</a>
+      <a href="/docs">Documentation</a>
+    </nav>
+    <div class="controls">
+      <div class="lang-switch">
+        <a href="?lang=ua">UA</a> | <a href="?lang=en">EN</a>
+      </div>
+      <button type="button" class="theme-btn" onclick="toggleTheme()">Theme</button>
+    </div>
+  </header>
+
+  <!-- BREADCRUMBS -->
+  <nav class="breadcrumbs">
+    <a href="/governance">Governance</a> ›
+    <a href="/governance/military-procurement">Military Procurement</a> ›
+    <span class="current">Overview</span>
+  </nav>
+
+  <div class="layout">
+    <!-- SIDEBAR NAV -->
+    <aside class="sidebar-nav">
+      <nav>
+        <ul>
+          <li><a href="#overview">Overview / Огляд</a></li>
+          <li><a href="#roles">Roles & Responsibilities</a></li>
+          <li><a href="#legal">Legal Framework</a></li>
+          <li><a href="#ethical">Ethical Framework</a></li>
+          <li><a href="#compliance">Compliance Engine 3.0</a></li>
+          <li><a href="#processes">Processes / Процеси</a></li>
+          <li><a href="#evidence">Evidence Chain</a></li>
+          <li><a href="#audit">Audit Interface</a></li>
+          <li><a href="#academy">Academy & Training</a></li>
+          <li><a href="#international">International Alignment</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="page-content">
+      <section id="military-procurement" class="page-section">
+
+        <!-- OVERVIEW -->
+        <section id="overview" class="page-section">
+          <h1>Military Procurement Governance</h1>
+          <p class="tagline">Institutional framework for ethical, legal and auditable military procurement — IVYAR Governance Platform.</p>
+
+          <h2>Overview / Огляд</h2>
+          <p><strong>EN:</strong> This section defines the legal, ethical, and governance framework for military procurement and describes the role of IVYAR as an institutional system of transparency, compliance, and audit.</p>
+          <p><strong>UA:</strong> Цей розділ визначає юридичні, етичні та governance‑рамки військових закупівель, а також описує роль IVYAR як інституційної системи прозорості, відповідності та аудиту.</p>
+
+          <div class="card-grid">
+            <div class="card">
+              <h3>Purpose / Мета</h3>
+              <p><strong>EN:</strong> Ensure that military procurement decisions are lawful, ethical, auditable, and aligned with international obligations.</p>
+              <p><strong>UA:</strong> Забезпечити, щоб рішення щодо військових закупівель були законними, етичними, аудитними та узгодженими з міжнародними зобов'язаннями.</p>
+            </div>
+            <div class="card">
+              <h3>Scope / Охоплення</h3>
+              <p><strong>EN:</strong> Applies to state‑mandated military procurement processes where IVYAR is used as a governance and compliance layer.</p>
+              <p><strong>UA:</strong> Застосовується до військових закупівель, що здійснюються уповноваженими державними суб'єктами.</p>
+            </div>
+            <div class="card">
+              <h3>Role of IVYAR</h3>
+              <p><strong>EN:</strong> IVYAR does not buy, sell, or broker military goods. It provides governance, compliance, ethics, and audit infrastructure.</p>
+              <p><strong>UA:</strong> IVYAR не здійснює купівлю, продаж чи посередництво. Він забезпечує інфраструктуру governance та аудиту.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROLES -->
+        <section id="roles" class="page-section">
+          <h2>Roles & Responsibilities / Ролі та відповідальності</h2>
+          <table class="doc-table">
+            <thead>
+              <tr><th>Actor</th><th>Role (EN)</th><th>Роль (UA)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>State Authorities</td><td>Decision‑making, mandate, and execution of procurement.</td><td>Прийняття рішень, мандат та реалізація закупівель.</td></tr>
+              <tr><td>IVYAR Platform</td><td>Governance, legal and ethical compliance, logging, explainability, and audit support.</td><td>Governance, юридична та етична відповідність, логування та підтримка аудиту.</td></tr>
+              <tr><td>OEM & Partners</td><td>Provide documentation, certifications, and declarations.</td><td>Надають документацію, сертифікати та декларації.</td></tr>
+              <tr><td>Auditors</td><td>Perform independent review of processes and decisions.</td><td>Здійснюють незалежну перевірку процесів та рішень.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- LEGAL FRAMEWORK -->
+        <section id="legal" class="page-section">
+          <h2>Legal Framework / Юридичні рамки</h2>
+          <table class="doc-table">
+            <thead><tr><th>Invariant</th><th>Description (EN)</th><th>Опис (UA)</th></tr></thead>
+            <tbody>
+              <tr><td>National Legislation</td><td>Comply with applicable national law and defence procurement regulations.</td><td>Відповідність національному законодавству.</td></tr>
+              <tr><td>International Treaties</td><td>Respect for binding international agreements.</td><td>Дотримання міжнародних договорів.</td></tr>
+              <tr><td>Export Control</td><td>ITAR, EAR, EU Dual‑Use compliance.</td><td>Експортний контроль (ITAR, EAR, EU Dual‑Use).</td></tr>
+              <tr><td>Sanctions</td><td>Respect for international sanctions lists.</td><td>Дотримання санкційних списків.</td></tr>
+              <tr><td>Prohibition of Circumvention</td><td>No bypassing of legal requirements.</td><td>Заборона обходу регуляцій.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- ETHICAL FRAMEWORK -->
+        <section id="ethical" class="page-section">
+          <h2>Ethical Framework / Етичні рамки</h2>
+          <table class="doc-table">
+            <thead><tr><th>Principle</th><th>Meaning (EN)</th><th>Зміст (UA)</th></tr></thead>
+            <tbody>
+              <tr><td>Do No Harm</td><td>Minimize unintended harm to civilians.</td><td>Мінімізувати шкоду цивільним.</td></tr>
+              <tr><td>Proportionality</td><td>Capabilities proportionate to legitimate defence needs.</td><td>Пропорційність оборонним потребам.</td></tr>
+              <tr><td>Transparency</td><td>Explainable to oversight bodies.</td><td>Пояснюваність для органів нагляду.</td></tr>
+              <tr><td>Responsibility</td><td>Actors remain accountable.</td><td>Суб'єкти залишаються відповідальними.</td></tr>
+              <tr><td>Gospel Golden Rules</td><td>Treat others with fairness and dignity.</td><td>Справедливість та гідність.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- COMPLIANCE ENGINE 3.0 -->
+        <section id="compliance" class="page-section">
+          <h2>Compliance Engine 3.0 — Military Procurement Module</h2>
+          
+          <div class="accordion">
+            <button class="accordion-header">LegalGuard 3.0</button>
+            <div class="accordion-body">
+              <p><strong>EN:</strong> Checks actions against national law, export control and sanctions.</p>
+              <p><strong>UA:</strong> Перевіряє відповідність законодавству, експортному контролю та санкціям.</p>
+            </div>
+
+            <button class="accordion-header">Risk Engine 3.0</button>
+            <div class="accordion-body">
+              <p><strong>EN:</strong> Evaluates legal, ethical, reputational and international risks.</p>
+              <p><strong>UA:</strong> Оцінює юридичні, етичні та міжнародні ризики.</p>
+            </div>
+
+            <button class="accordion-header">Ethical Engine</button>
+            <div class="accordion-body">
+              <p><strong>EN:</strong> Tests decisions against ethical invariants and Gospel Golden Rules.</p>
+              <p><strong>UA:</strong> Перевіряє рішення на відповідність етичним інваріантам.</p>
+            </div>
+
+            <button class="accordion-header">Drift Detector</button>
+            <div class="accordion-body">
+              <p><strong>EN:</strong> Detects deviations from policies and standards over time.</p>
+              <p><strong>UA:</strong> Виявляє відхилення від політик та стандартів.</p>
+            </div>
+
+            <button class="accordion-header">Evidence Chain</button>
+            <div class="accordion-body">
+              <p><strong>EN:</strong> Builds immutable log of events and decisions for audits.</p>
+              <p><strong>UA:</strong> Формує незмінний лог подій та рішень для аудитів.</p>
+            </div>
+
+            <button class="accordion-header">Audit Interface</button>
+            <div class="accordion-body">
+              <p><strong>EN:</strong> Provides views and exports for audit missions.</p>
+              <p><strong>UA:</strong> Надає представлення та експорти для аудиторських місій.</p>
+            </div>
+          </div>
+
+          <h3>Decision Governance Flow</h3>
+          <div class="mermaid">
+            flowchart TD
+              A[Request / Запит] --> B[LegalGuard 3.0]
+              B --> C{Legal OK?}
+              C -->|No| X[Block / Відмова]
+              C -->|Yes| D[Risk Engine]
+              D --> E{Risk acceptable?}
+              E -->|No| Y[Mitigation]
+              E -->|Yes| F[Ethical Engine]
+              F --> G{Ethically acceptable?}
+              G -->|No| Z[Escalation]
+              G -->|Yes| H[Approval]
+              H --> I[Evidence Chain]
+          </div>
+        </section>
+
+        <!-- PROCESSES -->
+        <section id="processes" class="page-section">
+          <h2>Processes / Процеси</h2>
+          <ul>
+            <li><strong>Document verification</strong> — all documents registered and checked via LegalGuard.</li>
+            <li><strong>Risk assessment</strong> — risk scores generated and attached to case.</li>
+            <li><strong>Ethical review</strong> — concerns documented, escalated when needed.</li>
+            <li><strong>Evidence Chain formation</strong> — all events added to immutable log.</li>
+            <li><strong>Audit preparation</strong> — packages prepared for review.</li>
+          </ul>
+        </section>
+
+        <!-- EVIDENCE CHAIN -->
+        <section id="evidence" class="page-section">
+          <h2>Evidence Chain</h2>
+          <table class="doc-table">
+            <thead><tr><th>Element</th><th>Role (EN)</th><th>Роль (UA)</th></tr></thead>
+            <tbody>
+              <tr><td>Event Log</td><td>Captures all key actions and status changes.</td><td>Фіксує всі ключові дії та зміни статусів.</td></tr>
+              <tr><td>Explainability Graph</td><td>Shows how rules led to a decision.</td><td>Показує, як правила привели до рішення.</td></tr>
+              <tr><td>ZIP/Manifest Export</td><td>Bundles evidence with checksums for audit.</td><td>Формує пакет доказів з контрольними сумами.</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- AUDIT INTERFACE -->
+        <section id="audit" class="page-section">
+          <h2>Audit Interface</h2>
+          <div class="card-grid">
+            <div class="card"><h3>Internal Audit</h3><p>Policy adherence, process consistency.</p></div>
+            <div class="card"><h3>Ministerial Review</h3><p>High‑level summaries, risk profiles.</p></div>
+            <div class="card"><h3>International Missions</h3><p>Cooperation with partners and oversight bodies.</p></div>
+          </div>
+        </section>
+
+        <!-- ACADEMY -->
+        <section id="academy" class="page-section">
+          <h2>Academy & Training</h2>
+          <ul>
+            <li>Introductory courses on legal and ethical invariants.</li>
+            <li>Simulation exercises using realistic scenarios.</li>
+            <li>Certification tracks for operators and auditors.</li>
+          </ul>
+        </section>
+
+        <!-- INTERNATIONAL -->
+        <section id="international" class="page-section">
+          <h2>International Alignment</h2>
+          <ul>
+            <li>Clear mapping to export control and sanctions regimes.</li>
+            <li>Transparent audit trails for international partners.</li>
+            <li>Shared ethical language grounded in Gospel Golden Rules.</li>
+          </ul>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="portal-footer">
+    <p>IVYAR Governance Platform — Ethical. Transparent. Auditable.</p>
+    <p>© 2025 IVYAR LLC</p>
+  </footer>
+
+  <script src="assets/js/accordion.js"></script>
+  <script src="assets/js/theme.js"></script>
+</body>
+</html>

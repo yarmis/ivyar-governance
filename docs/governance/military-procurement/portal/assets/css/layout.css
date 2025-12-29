@@ -1,0 +1,204 @@
+/* IVYAR Military Procurement - Layout */
+
+:root {
+  --blue: #005BBB;
+  --yellow: #FFD500;
+  --border-light: #DDDDDD;
+  --border-dark: #2A2A2A;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+a { color: var(--blue); }
+
+/* Header */
+.portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.portal-header .logo {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.main-nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.main-nav a.active {
+  text-decoration: underline;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.lang-switch a {
+  font-size: 13px;
+  text-decoration: none;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  font-size: 13px;
+  margin: 8px 24px 16px;
+}
+
+.breadcrumbs a { text-decoration: none; }
+.breadcrumbs .current { font-weight: 600; }
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 0 24px 32px;
+}
+
+.sidebar-nav {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li { margin-bottom: 6px; }
+.sidebar-nav a {
+  display: block;
+  padding: 6px 0;
+  text-decoration: none;
+}
+
+.page-content {
+  max-width: 960px;
+  width: 100%;
+}
+
+.page-section {
+  padding: 16px 0 24px;
+}
+
+.page-section h1 { font-size: 26px; margin: 0 0 8px; }
+.page-section h2 { font-size: 20px; margin: 16px 0 8px; }
+.page-section h3 { font-size: 16px; margin: 12px 0 6px; }
+
+p { margin: 4px 0 10px; font-size: 14px; }
+.tagline { font-size: 13px; margin-bottom: 10px; }
+
+/* Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin: 12px 0 16px;
+}
+
+.card {
+  padding: 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.card h3 { margin-top: 0; margin-bottom: 6px; }
+.card:hover { transform: translateY(-2px); }
+
+/* Tables */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.doc-table th, .doc-table td {
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.doc-table th { font-weight: 600; }
+
+/* Accordion */
+.accordion { margin: 12px 0 8px; }
+
+.accordion-header {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  margin: 4px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.accordion-body {
+  display: none;
+  padding: 8px 12px 10px;
+  border-radius: 0 0 4px 4px;
+  font-size: 13px;
+}
+
+/* Mermaid */
+.mermaid {
+  margin: 16px 0;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 12px;
+}
+
+/* Footer */
+.portal-footer {
+  padding: 16px 24px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .portal-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .main-nav { display: flex; flex-wrap: wrap; row-gap: 4px; }
+  .main-nav a { margin-left: 0; margin-right: 16px; }
+  .breadcrumbs { margin: 8px 16px; font-size: 12px; }
+  .layout { grid-template-columns: 1fr; padding: 0 16px 24px; }
+  .sidebar-nav { position: static; max-height: none; margin-bottom: 12px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .doc-table { display: block; overflow-x: auto; white-space: nowrap; }
+}

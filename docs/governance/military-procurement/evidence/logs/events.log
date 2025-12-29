@@ -1,0 +1,5 @@
+# IVYAR Evidence Chain - Events Log
+# Format: [TIMESTAMP] [ACTOR] [ACTION] [TARGET] [RESULT] [HASH]
+# This is a template file - actual events will be appended during operation
+
+[2025-12-28T22:00:00Z] [SYSTEM] [INIT] [evidence-chain] [SUCCESS] [sha256:template]
