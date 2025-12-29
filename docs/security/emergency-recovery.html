@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IVYAR Emergency Recovery Procedure</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --card: #1a1a24;
+      --cyan: #00E0FF;
+      --gold: #F5B400;
+      --green: #27d980;
+      --red: #ff4d6a;
+      --orange: #ff8c00;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+      --border: #2a2a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px; }
+    header { padding: 20px 0; border-bottom: 1px solid var(--border); background: rgba(10, 10, 15, 0.95); position: sticky; top: 0; z-index: 100; }
+    .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .logo { font-size: 24px; font-weight: 700; color: var(--gold); letter-spacing: 2px; text-decoration: none; }
+    nav a { color: var(--muted); text-decoration: none; margin-left: 24px; font-size: 14px; }
+    nav a:hover { color: var(--cyan); }
+    
+    .hero { text-align: center; padding: 48px 0; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+    .hero-badge { display: inline-block; padding: 8px 20px; background: rgba(255, 140, 0, 0.1); border: 1px solid var(--orange); border-radius: 20px; color: var(--orange); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+    .hero h1 { font-size: 36px; color: var(--cyan); margin-bottom: 16px; }
+    .hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+    
+    .section { margin-bottom: 48px; }
+    .section-number { display: inline-block; width: 32px; height: 32px; background: rgba(0, 224, 255, 0.1); border: 1px solid var(--cyan); border-radius: 8px; text-align: center; line-height: 32px; font-size: 14px; font-weight: 700; color: var(--cyan); margin-right: 12px; }
+    .section h2 { font-size: 22px; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; }
+    .section p { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+    
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+    .card h3 { font-size: 16px; color: var(--gold); margin-bottom: 12px; }
+    
+    .list { list-style: none; margin: 16px 0; }
+    .list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--muted); display: flex; align-items: flex-start; gap: 10px; }
+    .list li:last-child { border-bottom: none; }
+    .list li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+    
+    .emergency-card { background: rgba(255, 77, 106, 0.1); border: 2px solid var(--red); border-radius: 12px; padding: 24px; margin: 24px 0; }
+    .emergency-card h3 { font-size: 16px; color: var(--red); margin-bottom: 12px; }
+    
+    .severity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+    .severity-card { border-radius: 12px; padding: 20px; text-align: center; }
+    .severity-card.critical { background: rgba(255, 77, 106, 0.15); border: 2px solid var(--red); }
+    .severity-card.high { background: rgba(255, 140, 0, 0.15); border: 2px solid var(--orange); }
+    .severity-card.medium { background: rgba(255, 176, 32, 0.15); border: 2px solid var(--gold); }
+    .severity-card h4 { font-size: 16px; margin-bottom: 8px; }
+    .severity-card.critical h4 { color: var(--red); }
+    .severity-card.high h4 { color: var(--orange); }
+    .severity-card.medium h4 { color: var(--gold); }
+    .severity-card p { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .severity-card .time { font-size: 13px; font-weight: 600; }
+    
+    .timeline { margin: 24px 0; }
+    .timeline-item { display: flex; gap: 16px; margin-bottom: 16px; }
+    .timeline-marker { width: 40px; height: 40px; background: rgba(0, 224, 255, 0.1); border: 2px solid var(--cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--cyan); flex-shrink: 0; }
+    .timeline-content { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .timeline-content h4 { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .timeline-content p { font-size: 12px; color: var(--muted); }
+    .timeline-content .time-badge { display: inline-block; padding: 2px 8px; background: var(--bg2); border-radius: 4px; font-size: 10px; color: var(--cyan); margin-top: 8px; }
+    
+    .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 16px 0; }
+    .contact-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .contact-card h4 { font-size: 13px; color: var(--cyan); margin-bottom: 8px; }
+    .contact-card p { font-size: 12px; color: var(--muted); }
+    
+    .checklist { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 16px 0; }
+    .checklist h3 { font-size: 16px; color: var(--gold); margin-bottom: 16px; }
+    .checklist-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+    .checklist-item:last-child { border-bottom: none; }
+    .checkbox { width: 20px; height: 20px; border: 2px solid var(--cyan); border-radius: 4px; flex-shrink: 0; }
+    
+    .nav-links { display: flex; gap: 24px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .nav-links a { color: var(--cyan); text-decoration: none; font-size: 14px; }
+    .nav-links a:hover { text-decoration: underline; }
+    
+    footer { margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); text-align: center; }
+    .footer-text { font-size: 12px; color: var(--muted); }
+    
+    @media (max-width: 768px) { 
+      .severity-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <a href="../index.html" class="logo">IVYAR</a>
+    <nav>
+      <a href="../index.html">Portal</a>
+      <a href="index.html">Security</a>
+      <a href="admin-access-policy.html">Admin Access</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge">Emergency Protocol</div>
+    <h1>Emergency Recovery Procedure</h1>
+    <p>Critical incident response and disaster recovery procedures for IVYAR platform</p>
+  </div>
+  
+  <!-- Section 1 -->
+  <div class="section">
+    <h2><span class="section-number">1</span> Purpose & Activation</h2>
+    <p>This procedure defines the steps for responding to critical incidents and recovering IVYAR systems in emergency situations. It covers security breaches, data loss, infrastructure failures, and other catastrophic events requiring immediate action.</p>
+    
+    <div class="emergency-card">
+      <h3>🚨 Activation Triggers</h3>
+      <ul class="list">
+        <li>Confirmed security breach or data exfiltration</li>
+        <li>Complete system outage exceeding 15 minutes</li>
+        <li>Ransomware or malware detection</li>
+        <li>Physical security incident at data center</li>
+        <li>Key compromise or suspected key theft</li>
+        <li>Natural disaster affecting primary infrastructure</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Section 2 -->
+  <div class="section">
+    <h2><span class="section-number">2</span> Severity Classification</h2>
+    <div class="severity-grid">
+      <div class="severity-card critical">
+        <h4>CRITICAL</h4>
+        <p>Complete system compromise, data breach, key theft</p>
+        <div class="time">Response: 15 min</div>
+      </div>
+      <div class="severity-card high">
+        <h4>HIGH</h4>
+        <p>Partial outage, suspected intrusion, data corruption</p>
+        <div class="time">Response: 1 hour</div>
+      </div>
+      <div class="severity-card medium">
+        <h4>MEDIUM</h4>
+        <p>Performance degradation, isolated failures</p>
+        <div class="time">Response: 4 hours</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Section 3 -->
+  <div class="section">
+    <h2><span class="section-number">3</span> Emergency Response Team</h2>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h4>Incident Commander</h4>
+        <p>Overall coordination, decision authority, external communications</p>
+      </div>
+      <div class="contact-card">
+        <h4>Security Lead</h4>
+        <p>Threat assessment, forensics, containment decisions</p>
+      </div>
+      <div class="contact-card">
+        <h4>Infrastructure Lead</h4>
+        <p>System recovery, failover activation, restoration</p>
+      </div>
+      <div class="contact-card">
+        <h4>Communications Lead</h4>
+        <p>Stakeholder notifications, ministry liaison, public relations</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Section 4 -->
+  <div class="section">
+    <h2><span class="section-number">4</span> Immediate Response (First 15 Minutes)</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-marker">1</div>
+        <div class="timeline-content">
+          <h4>Activate Emergency Channel</h4>
+          <p>Initiate secure communication channel for response team. All members must acknowledge within 5 minutes.</p>
+          <span class="time-badge">0-2 min</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">2</div>
+        <div class="timeline-content">
+          <h4>Initial Assessment</h4>
+          <p>Determine scope and severity. Identify affected systems and data. Classify incident level.</p>
+          <span class="time-badge">2-5 min</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">3</div>
+        <div class="timeline-content">
+          <h4>Containment Decision</h4>
+          <p>Decide on isolation measures: network segmentation, service shutdown, access revocation.</p>
+          <span class="time-badge">5-10 min</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-marker">4</div>
+        <div class="timeline-content">
+          <h4>Execute Containment</h4>
+          <p>Implement isolation. Preserve evidence. Enable enhanced logging.</p>
+          <span class="time-badge">10-15 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Section 5 -->
+  <div class="section">
+    <h2><span class="section-number">5</span> Investigation Phase (15 min - 4 hours)</h2>
+    <ul class="list">
+      <li>Forensic imaging of affected systems</li>
+      <li>Log collection and analysis</li>
+      <li>Attack vector identification</li>
+      <li>Scope determination (what was accessed/exfiltrated)</li>
+      <li>Timeline reconstruction</li>
+      <li>Threat actor attribution (if possible)</li>
+    </ul>
+  </div>
+  
+  <!-- Section 6 -->
+  <div class="section">
+    <h2><span class="section-number">6</span> Recovery Procedures</h2>
+    
+    <div class="card">
+      <h3>System Recovery</h3>
+      <ul class="list">
+        <li>Verify backup integrity before restoration</li>
+        <li>Restore from last known good backup</li>
+        <li>Apply all security patches before reconnection</li>
+        <li>Reset all credentials and access tokens</li>
+        <li>Gradual service restoration with monitoring</li>
+      </ul>
+    </div>
+    
+    <div class="card">
+      <h3>Key Recovery (if compromised)</h3>
+      <ul class="list">
+        <li>Activate Master Key reconstruction protocol</li>
+        <li>Convene 3 of 5 key custodians</li>
+        <li>Generate new master key in air-gapped environment</li>
+        <li>Re-encrypt all data with new key</li>
+        <li>Distribute new key shares to custodians</li>
+      </ul>
+    </div>
+    
+    <div class="card">
+      <h3>Data Recovery</h3>
+      <ul class="list">
+        <li>Assess data integrity from backups</li>
+        <li>Restore from encrypted offsite backups</li>
+        <li>Validate data consistency</li>
+        <li>Document any data loss</li>
+        <li>Notify affected parties if personal data impacted</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Section 7 -->
+  <div class="section">
+    <h2><span class="section-number">7</span> Communication Protocol</h2>
+    <ul class="list">
+      <li><strong>Internal:</strong> Immediate notification to leadership team</li>
+      <li><strong>Ministry:</strong> Within 4 hours for CRITICAL incidents</li>
+      <li><strong>Regulators:</strong> Within 72 hours if personal data breach (GDPR)</li>
+      <li><strong>Partners:</strong> As needed based on impact assessment</li>
+      <li><strong>Public:</strong> Only with executive and legal approval</li>
+    </ul>
+  </div>
+  
+  <!-- Section 8 -->
+  <div class="section">
+    <h2><span class="section-number">8</span> Recovery Checklist</h2>
+    <div class="checklist">
+      <h3>Pre-Restoration Verification</h3>
+      <div class="checklist-item"><div class="checkbox"></div> Threat eliminated and contained</div>
+      <div class="checklist-item"><div class="checkbox"></div> Root cause identified</div>
+      <div class="checklist-item"><div class="checkbox"></div> Backup integrity verified</div>
+      <div class="checklist-item"><div class="checkbox"></div> All credentials rotated</div>
+      <div class="checklist-item"><div class="checkbox"></div> Security patches applied</div>
+      <div class="checklist-item"><div class="checkbox"></div> Enhanced monitoring enabled</div>
+      <div class="checklist-item"><div class="checkbox"></div> Recovery environment tested</div>
+      <div class="checklist-item"><div class="checkbox"></div> Incident Commander approval</div>
+    </div>
+    
+    <div class="checklist">
+      <h3>Post-Recovery Validation</h3>
+      <div class="checklist-item"><div class="checkbox"></div> All services operational</div>
+      <div class="checklist-item"><div class="checkbox"></div> Data integrity confirmed</div>
+      <div class="checklist-item"><div class="checkbox"></div> Security controls verified</div>
+      <div class="checklist-item"><div class="checkbox"></div> Monitoring baseline established</div>
+      <div class="checklist-item"><div class="checkbox"></div> Stakeholders notified of recovery</div>
+      <div class="checklist-item"><div class="checkbox"></div> Documentation completed</div>
+    </div>
+  </div>
+  
+  <!-- Section 9 -->
+  <div class="section">
+    <h2><span class="section-number">9</span> Post-Incident Review</h2>
+    <ul class="list">
+      <li>Conduct post-mortem within 72 hours of resolution</li>
+      <li>Document lessons learned</li>
+      <li>Update procedures based on findings</li>
+      <li>Implement preventive measures</li>
+      <li>Schedule follow-up review in 30 days</li>
+      <li>Update training materials</li>
+    </ul>
+  </div>
+  
+  <!-- Section 10 -->
+  <div class="section">
+    <h2><span class="section-number">10</span> Testing & Drills</h2>
+    <ul class="list">
+      <li>Quarterly tabletop exercises</li>
+      <li>Annual full-scale disaster recovery drill</li>
+      <li>Monthly backup restoration tests</li>
+      <li>Semi-annual key recovery ceremony rehearsal</li>
+      <li>Documentation of all drill results and improvements</li>
+    </ul>
+  </div>
+  
+  <div class="nav-links">
+    <a href="../index.html">← Back to Portal</a>
+    <a href="admin-access-policy.html">Admin Access Policy →</a>
+    <a href="master-key-policy.html">Master Key Policy →</a>
+    <a href="admin-onboarding.html">Admin Onboarding →</a>
+  </div>
+  
+  <footer>
+    <p class="footer-text">IVYAR Emergency Recovery Procedure v1.0 — December 2025</p>
+    <p class="footer-text" style="margin-top: 8px;">Classification: RESTRICTED — Emergency Response Team Only</p>
+    <p class="footer-text" style="margin-top: 8px;">© 2025 IVYAR LLC. All rights reserved.</p>
+  </footer>
+</div>
+
+</body>
+</html>
