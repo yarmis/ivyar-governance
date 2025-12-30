@@ -1,0 +1,216 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Dashboards API
+  version: 1.0.0
+  description: API for IVYAR dashboard data and configuration
+
+servers:
+  - url: https://api.ivyar.org/v1
+    description: Production
+  - url: https://staging-api.ivyar.org/v1
+    description: Staging
+
+security:
+  - bearerAuth: []
+
+paths:
+  /dashboards:
+    get:
+      summary: List available dashboards
+      tags: [Dashboards]
+      responses:
+        200:
+          description: List of dashboards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dashboard'
+
+  /dashboards/{dashboardId}/data:
+    get:
+      summary: Get dashboard data
+      tags: [Dashboards]
+      parameters:
+        - name: dashboardId
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [fleet-readiness, repair-queue, coverage-analytics, supply-chain, executive-summary]
+        - name: filters
+          in: query
+          schema:
+            type: object
+            additionalProperties: true
+        - name: timeRange
+          in: query
+          schema:
+            type: string
+            enum: [1h, 24h, 7d, 30d, 90d, custom]
+      responses:
+        200:
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardData'
+
+  /dashboards/{dashboardId}/export:
+    post:
+      summary: Export dashboard
+      tags: [Dashboards]
+      parameters:
+        - name: dashboardId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                format:
+                  type: string
+                  enum: [pdf, xlsx, png, csv]
+                filters:
+                  type: object
+      responses:
+        200:
+          description: Export file
+          content:
+            application/pdf: {}
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet: {}
+            image/png: {}
+            text/csv: {}
+
+  /widgets/{widgetId}/data:
+    get:
+      summary: Get widget data
+      tags: [Widgets]
+      parameters:
+        - name: widgetId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: params
+          in: query
+          schema:
+            type: object
+      responses:
+        200:
+          description: Widget data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WidgetData'
+
+  /reports:
+    get:
+      summary: List scheduled reports
+      tags: [Reports]
+      responses:
+        200:
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Report'
+    post:
+      summary: Schedule new report
+      tags: [Reports]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportSchedule'
+      responses:
+        201:
+          description: Report scheduled
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Dashboard:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        refreshInterval:
+          type: integer
+        widgets:
+          type: array
+          items:
+            type: string
+
+    DashboardData:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        summary:
+          type: object
+        widgets:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/WidgetData'
+
+    WidgetData:
+      type: object
+      properties:
+        type:
+          type: string
+        data:
+          type: object
+        metadata:
+          type: object
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        schedule:
+          type: string
+        recipients:
+          type: array
+          items:
+            type: string
+        format:
+          type: string
+
+    ReportSchedule:
+      type: object
+      required: [name, dashboardId, schedule, recipients]
+      properties:
+        name:
+          type: string
+        dashboardId:
+          type: string
+        schedule:
+          type: string
+          description: Cron expression
+        recipients:
+          type: array
+          items:
+            type: string
+        format:
+          type: string
+          enum: [pdf, xlsx]
