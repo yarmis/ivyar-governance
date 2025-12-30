@@ -1,0 +1,254 @@
+{
+  "rules": [
+    {
+      "id": "PART-001",
+      "name": "Part Number Format Validation",
+      "description": "Part numbers must follow standardized format",
+      "category": "part_certification",
+      "severity": "high",
+      "standard": {
+        "code": "STANAG-4107",
+        "name": "Mutual Acceptance of Government Quality Assurance",
+        "version": "Ed. 7",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["part"],
+      "validator": "field_format",
+      "parameters": {
+        "field": "part_number",
+        "pattern": "^[A-Z0-9]{2,5}-[A-Z0-9]{2,10}(-[A-Z0-9]{1,5})?$",
+        "message": "Part number must match format: XX-XXXXXX or XX-XXXXXX-XX"
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "block" }
+      ],
+      "remediation": {
+        "steps": [
+          "Review part number format requirements",
+          "Update part number to match standard format",
+          "Resubmit for validation"
+        ],
+        "documentation_url": "/docs/part-numbering-standard",
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["format", "mandatory"]
+    },
+    {
+      "id": "PART-002",
+      "name": "NSN Cross-Reference Required",
+      "description": "NATO parts must have valid NSN cross-reference",
+      "category": "part_certification",
+      "severity": "high",
+      "standard": {
+        "code": "STANAG-3150",
+        "name": "NATO Codification System",
+        "version": "Ed. 8",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["part"],
+      "conditions": [
+        {
+          "field": "domain",
+          "operator": "equals",
+          "value": "military"
+        }
+      ],
+      "validator": "cross_reference",
+      "parameters": {
+        "field": "nsn",
+        "reference_type": "nato_nsn",
+        "format": "^[0-9]{4}-[0-9]{2}-[0-9]{3}-[0-9]{4}$",
+        "validation_api": "/api/nsn/validate"
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "alert", "target": "logistics_team" }
+      ],
+      "remediation": {
+        "steps": [
+          "Verify part is correctly classified as military",
+          "Request NSN assignment through NMCRL",
+          "Update part record with assigned NSN"
+        ],
+        "documentation_url": "/docs/nsn-assignment",
+        "contact": "logistics@ivyar.org",
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["nsn", "nato", "mandatory"]
+    },
+    {
+      "id": "PART-003",
+      "name": "Safety Critical Part Certification",
+      "description": "Safety critical parts require valid certification",
+      "category": "safety_critical",
+      "severity": "critical",
+      "standard": {
+        "code": "MIL-STD-882E",
+        "name": "System Safety",
+        "version": "2012",
+        "organization": "US DoD"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["part"],
+      "conditions": [
+        {
+          "field": "safety_critical",
+          "operator": "equals",
+          "value": true
+        }
+      ],
+      "validator": "certification_check",
+      "parameters": {
+        "required_certifications": ["safety_certification", "quality_certification"],
+        "certification_validity": 365,
+        "approved_certifiers": ["NATO", "MIL", "ISO"]
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "block" },
+        { "type": "escalate", "target": "safety_officer" }
+      ],
+      "remediation": {
+        "steps": [
+          "Obtain safety certification from approved authority",
+          "Upload certification document",
+          "Request safety officer review"
+        ],
+        "documentation_url": "/docs/safety-certification",
+        "contact": "safety@ivyar.org",
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["safety", "critical", "mandatory"]
+    },
+    {
+      "id": "PART-004",
+      "name": "Part Description Required",
+      "description": "All parts must have description in primary and local language",
+      "category": "documentation",
+      "severity": "medium",
+      "standard": {
+        "code": "IVYAR-DOC-001",
+        "name": "Documentation Standards",
+        "version": "1.0",
+        "organization": "IVYAR"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["part"],
+      "validator": "required_field",
+      "parameters": {
+        "fields": ["description", "description_uk"],
+        "min_length": 10
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "notify", "target": "part_owner" }
+      ],
+      "remediation": {
+        "steps": [
+          "Add English description (min 10 characters)",
+          "Add Ukrainian description (min 10 characters)",
+          "Include technical specifications if applicable"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["documentation", "localization"]
+    },
+    {
+      "id": "PART-005",
+      "name": "Analog Confidence Threshold",
+      "description": "Analog parts must meet minimum confidence threshold",
+      "category": "part_certification",
+      "severity": "high",
+      "standard": {
+        "code": "IVYAR-ANALOG-001",
+        "name": "Analog Matching Standards",
+        "version": "1.0",
+        "organization": "IVYAR"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["part"],
+      "conditions": [
+        {
+          "field": "is_analog",
+          "operator": "equals",
+          "value": true
+        }
+      ],
+      "validator": "field_range",
+      "parameters": {
+        "field": "analog_confidence",
+        "min": 0.75,
+        "max": 1.0,
+        "message": "Analog confidence must be at least 75%"
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "alert", "target": "engineering_team" }
+      ],
+      "remediation": {
+        "steps": [
+          "Review analog matching criteria",
+          "Verify technical specifications match",
+          "Request engineering approval for lower confidence"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["analog", "quality"]
+    },
+    {
+      "id": "PART-006",
+      "name": "Repair Coverage Required",
+      "description": "Parts must have defined repair level coverage",
+      "category": "repair_procedure",
+      "severity": "medium",
+      "standard": {
+        "code": "STANAG-4174",
+        "name": "Allied Materiel Maintenance Publications",
+        "version": "Ed. 4",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["part"],
+      "validator": "required_field",
+      "parameters": {
+        "fields": ["repair_coverage"],
+        "nested_required": ["r1_field", "r2_base", "r3_depot", "r4_factory"]
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "notify", "target": "logistics_team" }
+      ],
+      "remediation": {
+        "steps": [
+          "Define repair level coverage for part",
+          "Consult maintenance manual for guidance",
+          "Update part record with repair coverage"
+        ],
+        "documentation_url": "/docs/repair-levels",
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["repair", "maintenance"]
+    }
+  ]
+}

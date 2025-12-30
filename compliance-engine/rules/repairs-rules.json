@@ -1,0 +1,259 @@
+{
+  "rules": [
+    {
+      "id": "REPAIR-001",
+      "name": "Repair Level Authorization",
+      "description": "Repairs must be authorized for the specified level",
+      "category": "repair_procedure",
+      "severity": "critical",
+      "standard": {
+        "code": "ALP-4",
+        "name": "Allied Logistics Publication - Maintenance",
+        "version": "Ed. 3",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["repair"],
+      "validator": "approval_chain",
+      "parameters": {
+        "level_approvers": {
+          "R1": ["operator", "technician"],
+          "R2": ["technician", "supervisor"],
+          "R3": ["supervisor", "manager"],
+          "R4": ["manager", "director"]
+        },
+        "require_signature": true
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "block" },
+        { "type": "notify", "target": "supervisor" }
+      ],
+      "remediation": {
+        "steps": [
+          "Verify repair level is correctly assigned",
+          "Obtain authorization from appropriate approver",
+          "Document approval in repair record"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["authorization", "mandatory"]
+    },
+    {
+      "id": "REPAIR-002",
+      "name": "Safety Parts Verification",
+      "description": "Safety critical parts used in repairs require verification",
+      "category": "safety_critical",
+      "severity": "critical",
+      "standard": {
+        "code": "MIL-STD-882E",
+        "name": "System Safety",
+        "version": "2012",
+        "organization": "US DoD"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["repair"],
+      "conditions": [
+        {
+          "field": "parts_used.safety_critical",
+          "operator": "contains",
+          "value": true
+        }
+      ],
+      "validator": "custom_function",
+      "parameters": {
+        "function": "verifySafetyParts",
+        "require_dual_verification": true,
+        "require_serial_number": true
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "block" },
+        { "type": "escalate", "target": "safety_officer" }
+      ],
+      "remediation": {
+        "steps": [
+          "Record serial numbers of safety critical parts",
+          "Obtain dual verification signature",
+          "Complete safety checklist"
+        ],
+        "documentation_url": "/docs/safety-verification",
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["safety", "critical", "mandatory"]
+    },
+    {
+      "id": "REPAIR-003",
+      "name": "Repair Procedure Compliance",
+      "description": "Repairs must follow approved procedures",
+      "category": "repair_procedure",
+      "severity": "high",
+      "standard": {
+        "code": "STANAG-4174",
+        "name": "Allied Materiel Maintenance Publications",
+        "version": "Ed. 4",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["repair"],
+      "validator": "cross_reference",
+      "parameters": {
+        "field": "procedure_id",
+        "reference_type": "approved_procedure",
+        "must_exist": true,
+        "must_be_current": true
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "alert", "target": "quality_team" }
+      ],
+      "remediation": {
+        "steps": [
+          "Identify correct procedure for repair",
+          "Verify procedure is current version",
+          "Link procedure to repair record"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["procedure", "quality"]
+    },
+    {
+      "id": "REPAIR-004",
+      "name": "Technician Certification",
+      "description": "Technicians must be certified for repair level",
+      "category": "training",
+      "severity": "high",
+      "standard": {
+        "code": "IVYAR-CERT-001",
+        "name": "Technician Certification Requirements",
+        "version": "1.0",
+        "organization": "IVYAR"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["repair"],
+      "validator": "certification_check",
+      "parameters": {
+        "user_field": "assigned_to",
+        "required_certifications": {
+          "R1": ["basic_maintenance"],
+          "R2": ["intermediate_maintenance", "platform_specific"],
+          "R3": ["advanced_maintenance", "platform_specific", "depot_certification"],
+          "R4": ["master_technician", "factory_certification"]
+        },
+        "certification_validity": 365
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "alert", "target": "training_coordinator" }
+      ],
+      "remediation": {
+        "steps": [
+          "Verify technician certification status",
+          "Assign certified technician or escalate",
+          "Schedule certification training if needed"
+        ],
+        "documentation_url": "/docs/certification-requirements",
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["certification", "training"]
+    },
+    {
+      "id": "REPAIR-005",
+      "name": "Parts Traceability",
+      "description": "All parts used must be traceable",
+      "category": "audit",
+      "severity": "high",
+      "standard": {
+        "code": "STANAG-4107",
+        "name": "Mutual Acceptance of Government Quality Assurance",
+        "version": "Ed. 7",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["repair"],
+      "validator": "custom_function",
+      "parameters": {
+        "function": "verifyPartsTraceability",
+        "required_fields": ["part_id", "quantity", "batch_number"],
+        "optional_fields": ["serial_number", "supplier"]
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "notify", "target": "quality_team" }
+      ],
+      "remediation": {
+        "steps": [
+          "Record part identification details",
+          "Include batch/lot numbers",
+          "Add serial numbers for serialized parts"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["traceability", "quality"]
+    },
+    {
+      "id": "REPAIR-006",
+      "name": "Repair Completion Documentation",
+      "description": "Completed repairs require full documentation",
+      "category": "documentation",
+      "severity": "medium",
+      "standard": {
+        "code": "IVYAR-DOC-002",
+        "name": "Repair Documentation Standards",
+        "version": "1.0",
+        "organization": "IVYAR"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["repair"],
+      "conditions": [
+        {
+          "field": "status",
+          "operator": "equals",
+          "value": "completed"
+        }
+      ],
+      "validator": "required_field",
+      "parameters": {
+        "fields": [
+          "completed_at",
+          "completed_by",
+          "labor_hours",
+          "parts_used",
+          "final_notes",
+          "quality_check"
+        ]
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "block" }
+      ],
+      "remediation": {
+        "steps": [
+          "Complete all required documentation fields",
+          "Record labor hours and parts used",
+          "Perform and document quality check"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["documentation", "completion"]
+    }
+  ]
+}

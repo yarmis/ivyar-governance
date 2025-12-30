@@ -1,0 +1,157 @@
+{
+  "rules": [
+    {
+      "id": "FLEET-001",
+      "name": "Vehicle Registration Required",
+      "description": "All vehicles must have valid registration",
+      "category": "documentation",
+      "severity": "high",
+      "standard": {
+        "code": "STANAG-2406",
+        "name": "Land Forces Logistic Doctrine",
+        "version": "Ed. 3",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["vehicle"],
+      "validator": "required_field",
+      "parameters": {
+        "fields": ["registration", "platform", "unit", "location"]
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "alert", "target": "fleet_manager" }
+      ],
+      "remediation": {
+        "steps": [
+          "Verify vehicle registration details",
+          "Update vehicle record with missing information",
+          "Notify unit commander if registration missing"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["registration", "mandatory"]
+    },
+    {
+      "id": "FLEET-002",
+      "name": "Maintenance Schedule Compliance",
+      "description": "Vehicles must adhere to maintenance schedule",
+      "category": "repair_procedure",
+      "severity": "high",
+      "standard": {
+        "code": "ALP-4",
+        "name": "Allied Logistics Publication - Maintenance",
+        "version": "Ed. 3",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["vehicle"],
+      "validator": "date_validity",
+      "parameters": {
+        "field": "next_maintenance",
+        "max_overdue_days": 30,
+        "warning_days": 14
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "alert", "target": "maintenance_scheduler" },
+        { "type": "notify", "target": "unit_commander" }
+      ],
+      "remediation": {
+        "steps": [
+          "Review maintenance schedule",
+          "Schedule maintenance appointment",
+          "Document reason if delayed"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["maintenance", "schedule"]
+    },
+    {
+      "id": "FLEET-003",
+      "name": "Readiness Reporting",
+      "description": "Vehicle readiness must be reported within SLA",
+      "category": "fleet_readiness",
+      "severity": "medium",
+      "standard": {
+        "code": "STANAG-2406",
+        "name": "Land Forces Logistic Doctrine",
+        "version": "Ed. 3",
+        "organization": "NATO"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["vehicle"],
+      "validator": "date_validity",
+      "parameters": {
+        "field": "last_status_update",
+        "max_age_hours": 24
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "notify", "target": "fleet_manager" }
+      ],
+      "remediation": {
+        "steps": [
+          "Update vehicle status",
+          "Verify status accuracy",
+          "Configure automatic status updates"
+        ],
+        "auto_fix_available": true
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["readiness", "reporting"]
+    },
+    {
+      "id": "FLEET-004",
+      "name": "Critical Vehicle Status Escalation",
+      "description": "Critical status vehicles require immediate attention",
+      "category": "fleet_readiness",
+      "severity": "critical",
+      "standard": {
+        "code": "IVYAR-FLEET-001",
+        "name": "Fleet Management Standards",
+        "version": "1.0",
+        "organization": "IVYAR"
+      },
+      "enabled": true,
+      "version": "1.0.0",
+      "applies_to": ["vehicle"],
+      "conditions": [
+        {
+          "field": "status",
+          "operator": "equals",
+          "value": "critical"
+        }
+      ],
+      "validator": "custom_function",
+      "parameters": {
+        "function": "verifyCriticalEscalation",
+        "max_time_without_action": 4,
+        "required_notifications": ["unit_commander", "fleet_manager", "logistics_chief"]
+      },
+      "on_violation": [
+        { "type": "log" },
+        { "type": "escalate", "target": "command" }
+      ],
+      "remediation": {
+        "steps": [
+          "Assess critical vehicle immediately",
+          "Create priority repair ticket",
+          "Notify command chain"
+        ],
+        "auto_fix_available": false
+      },
+      "effective_date": "2025-01-01",
+      "created_by": "system",
+      "tags": ["critical", "escalation"]
+    }
+  ]
+}
