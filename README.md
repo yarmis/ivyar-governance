@@ -126,3 +126,21 @@ const result = calculator.calculate({
 **IVYAR Governance Platform v2.1.0**  
 *Ministry of Defense of Ukraine*  
 🇺🇦 Slava Ukraini!
+
+## Medical Program
+
+Healthcare management module with full integration to Pension Fund and Insurance Engine.
+
+### Features
+- Appointment scheduling with telemedicine
+- Medical records management
+- Prescription drug coverage
+- Mental health programs (PTSD, substance abuse)
+- Rehabilitation services
+- Disability assessment coordination
+
+### Documentation
+- [Medical Program Policy](./medical-program/policies/MEDICAL_PROGRAM_POLICY.md)
+- [API Reference](./medical-program/api/)
+- [UI Design](./medical-program/ui/)
+
