@@ -1,0 +1,26 @@
+{
+  "vehicles": [
+    {
+      "id": "HIL-234",
+      "registration": "AA1234BB",
+      "platform": "Toyota Hilux AN120",
+      "platform_type": "LTV",
+      "status": "operational",
+      "unit": "72-brigade",
+      "location": "Base Alpha",
+      "year": 2019,
+      "mileage_km": 45000
+    },
+    {
+      "id": "HTV-012",
+      "registration": "AA5678CC",
+      "platform": "MAN TGS 8x8",
+      "platform_type": "HTV",
+      "status": "in_repair",
+      "unit": "72-brigade",
+      "location": "R3 Depot",
+      "year": 2018,
+      "mileage_km": 120000
+    }
+  ]
+}

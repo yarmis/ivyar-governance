@@ -1,0 +1,24 @@
+{
+  "repairs": [
+    {
+      "id": "REP-001",
+      "ticket_number": "REP-2025-001",
+      "vehicle_id": "HIL-234",
+      "issue": "Brake pad replacement",
+      "level": "R2",
+      "status": "completed",
+      "priority": "medium",
+      "workshop": "Base Alpha Workshop"
+    },
+    {
+      "id": "REP-002",
+      "ticket_number": "REP-2025-002",
+      "vehicle_id": "HTV-012",
+      "issue": "Transmission failure",
+      "level": "R3",
+      "status": "active",
+      "priority": "high",
+      "workshop": "R3 Depot"
+    }
+  ]
+}

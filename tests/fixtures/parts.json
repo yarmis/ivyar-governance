@@ -1,0 +1,33 @@
+{
+  "parts": [
+    {
+      "part_number": "04465-0K380",
+      "brand": "Toyota",
+      "description": "Brake Pad Kit Front",
+      "category": "brakes",
+      "domain": "automotive",
+      "safety_critical": true,
+      "specifications": {
+        "material": "Ceramic",
+        "thickness_mm": 12.5,
+        "width_mm": 142
+      }
+    },
+    {
+      "part_number": "15601-87703",
+      "brand": "Toyota",
+      "description": "Oil Filter",
+      "category": "filters",
+      "domain": "automotive",
+      "safety_critical": false
+    },
+    {
+      "part_number": "90915-YZZD4",
+      "brand": "Toyota",
+      "description": "Oil Filter Element",
+      "category": "filters",
+      "domain": "automotive",
+      "safety_critical": false
+    }
+  ]
+}
