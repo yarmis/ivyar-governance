@@ -1,0 +1,91 @@
+{
+  "search": {
+    "title": "Part Search",
+    "placeholder": "Search parts by number, name, or description...",
+    "placeholder_short": "Search parts...",
+    "scan_barcode": "Scan Barcode",
+    "voice_search": "Voice Search",
+    "recent_searches": "Recent Searches",
+    "clear_history": "Clear History",
+    "results_count": "{{count}} results",
+    "results_count_one": "{{count}} result",
+    "no_results": "No parts found",
+    "no_results_hint": "Try different keywords or adjust filters",
+    "search_tips": "Search Tips",
+    "tip_part_number": "Enter exact part number for precise results",
+    "tip_description": "Use keywords from part description",
+    "tip_nsn": "NSN format: XXXX-XX-XXX-XXXX"
+  },
+  "details": {
+    "title": "Part Details",
+    "part_number": "Part Number",
+    "brand": "Brand",
+    "description": "Description",
+    "category": "Category",
+    "domain": "Domain",
+    "nsn": "NSN",
+    "specifications": "Specifications",
+    "fitment": "Fitment",
+    "platforms": "Compatible Platforms",
+    "repair_coverage": "Repair Coverage",
+    "cross_references": "Cross References",
+    "documents": "Documents",
+    "images": "Images",
+    "safety_warning": "Safety Critical Part",
+    "safety_warning_desc": "This part is safety-critical. Follow all safety procedures during installation."
+  },
+  "analogs": {
+    "title": "Analog Parts",
+    "find_analogs": "Find Analogs",
+    "original_part": "Original Part",
+    "alternatives": "Alternatives",
+    "confidence": "Confidence",
+    "type": "Type",
+    "type_oem": "OEM",
+    "type_oem_reman": "OEM Remanufactured",
+    "type_aftermarket_certified": "Certified Aftermarket",
+    "type_aftermarket": "Aftermarket",
+    "min_confidence": "Minimum Confidence",
+    "no_analogs": "No analogs found",
+    "compare": "Compare",
+    "differences": "Differences"
+  },
+  "filters": {
+    "title": "Filters",
+    "brand": "Brand",
+    "category": "Category",
+    "platform": "Platform",
+    "repair_level": "Repair Level",
+    "safety_critical": "Safety Critical Only",
+    "in_stock": "In Stock Only",
+    "clear_filters": "Clear Filters",
+    "apply_filters": "Apply Filters"
+  },
+  "categories": {
+    "brakes": "Brakes",
+    "engine": "Engine",
+    "transmission": "Transmission",
+    "suspension": "Suspension",
+    "electrical": "Electrical",
+    "filters": "Filters",
+    "hydraulics": "Hydraulics",
+    "armor": "Armor",
+    "body": "Body & Frame",
+    "cooling": "Cooling System",
+    "fuel": "Fuel System",
+    "exhaust": "Exhaust"
+  },
+  "domains": {
+    "automotive": "Automotive",
+    "heavy_equipment": "Heavy Equipment",
+    "engine": "Engine Systems",
+    "electrical": "Electrical Systems",
+    "hydraulics": "Hydraulics",
+    "armor": "Armor & Protection"
+  },
+  "warnings": {
+    "safety_critical": "⚠️ Safety Critical Component",
+    "requires_certification": "Requires certified technician for installation",
+    "check_compatibility": "Verify compatibility before ordering"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "title": "Техніка",
+  "list": {
+    "title": "Список техніки",
+    "all": "Вся техніка",
+    "map_view": "Карта",
+    "list_view": "Список"
+  },
+  "status": {
+    "operational": "Справна",
+    "in_repair": "На ремонті",
+    "pending": "Очікує ремонту",
+    "critical": "Критичний стан"
+  },
+  "platform_type": {
+    "ltv": "Легка тактична техніка",
+    "mtv": "Середня тактична техніка",
+    "htv": "Важка тактична техніка",
+    "apc": "БТР",
+    "ifv": "БМП",
+    "mbt": "Танк"
+  },
+  "details": {
+    "title": "Деталі техніки",
+    "registration": "Реєстрація",
+    "platform": "Платформа",
+    "type": "Тип",
+    "status": "Статус",
+    "unit": "Підрозділ",
+    "location": "Розташування",
+    "mileage": "Пробіг",
+    "hours": "Мотогодини",
+    "last_maintenance": "Останнє ТО",
+    "next_maintenance": "Наступне ТО",
+    "repair_history": "Історія ремонтів"
+  },
+  "readiness": {
+    "title": "Готовність техніки",
+    "overall": "Загальна готовність",
+    "target": "Ціль",
+    "trend_up": "Зростає",
+    "trend_down": "Знижується",
+    "trend_stable": "Стабільно",
+    "by_platform": "За платформами",
+    "by_unit": "За підрозділами",
+    "by_location": "За розташуванням"
+  },
+  "summary": {
+    "total": "Всього техніки",
+    "operational": "Справна",
+    "in_repair": "На ремонті",
+    "pending": "Очікує ремонту",
+    "critical": "Критичний стан"
+  },
+  "filters": {
+    "status": "Статус",
+    "platform": "Платформа",
+    "unit": "Підрозділ",
+    "location": "Розташування"
+  }
+}

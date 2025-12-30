@@ -1,0 +1,45 @@
+{
+  "title": "AI Advisor",
+  "chat": {
+    "placeholder": "Ask about parts, repairs, or procedures...",
+    "send": "Send",
+    "voice_input": "Voice Input",
+    "thinking": "Thinking...",
+    "error": "Sorry, something went wrong. Please try again."
+  },
+  "suggestions": {
+    "title": "Suggested Questions",
+    "find_part": "Find brake pads for Hilux",
+    "analog": "What are alternatives to {{part}}?",
+    "repair": "How to replace fuel filter?",
+    "troubleshoot": "Engine overheating diagnosis"
+  },
+  "actions": {
+    "view_part": "View Part",
+    "find_analogs": "Find Analogs",
+    "create_repair": "Create Repair",
+    "view_procedure": "View Procedure",
+    "copy": "Copy Response"
+  },
+  "feedback": {
+    "title": "Was this helpful?",
+    "helpful": "Yes, helpful",
+    "not_helpful": "Not helpful",
+    "report": "Report Issue",
+    "thanks": "Thanks for your feedback!"
+  },
+  "context": {
+    "vehicle": "Current vehicle: {{vehicle}}",
+    "repair": "Current repair: {{ticket}}"
+  },
+  "warnings": {
+    "safety": "⚠️ Safety Warning",
+    "compliance": "📋 Compliance Note",
+    "info": "ℹ️ Information"
+  },
+  "history": {
+    "title": "Conversation History",
+    "clear": "Clear History",
+    "no_history": "No previous conversations"
+  }
+}

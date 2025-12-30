@@ -1,0 +1,42 @@
+{
+  "title": "Reparaturen",
+  "list": {
+    "title": "Reparaturliste",
+    "active": "Aktiv",
+    "waiting": "Wartend",
+    "completed": "Abgeschlossen"
+  },
+  "status": {
+    "waiting": "Wartend",
+    "active": "In Bearbeitung",
+    "on_hold": "Pausiert",
+    "completed": "Abgeschlossen",
+    "cancelled": "Storniert"
+  },
+  "priority": {
+    "critical": "Kritisch",
+    "high": "Hoch",
+    "medium": "Mittel",
+    "low": "Niedrig"
+  },
+  "level": {
+    "r1": "R1 - Feld",
+    "r2": "R2 - Basis",
+    "r3": "R3 - Depot",
+    "r4": "R4 - Werk"
+  },
+  "details": {
+    "title": "Reparaturdetails",
+    "ticket_number": "Ticket-Nr.",
+    "vehicle": "Fahrzeug",
+    "issue": "Problem",
+    "status": "Status",
+    "progress": "Fortschritt"
+  },
+  "actions": {
+    "new_repair": "Neue Reparatur",
+    "start": "Starten",
+    "complete": "Abschließen",
+    "escalate": "Eskalieren"
+  }
+}

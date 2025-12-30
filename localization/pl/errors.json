@@ -1,0 +1,13 @@
+{
+  "general": {
+    "unknown": "Wystąpił nieoczekiwany błąd",
+    "network": "Błąd sieci. Sprawdź połączenie.",
+    "timeout": "Upłynął limit czasu. Spróbuj ponownie.",
+    "server": "Błąd serwera. Spróbuj później.",
+    "not_found": "Nie znaleziono zasobu"
+  },
+  "auth": {
+    "invalid_credentials": "Nieprawidłowy e-mail lub hasło",
+    "session_expired": "Sesja wygasła. Zaloguj się ponownie."
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "title": "Fleet",
+  "list": {
+    "title": "Vehicle List",
+    "all": "All Vehicles",
+    "map_view": "Map View",
+    "list_view": "List View"
+  },
+  "status": {
+    "operational": "Operational",
+    "in_repair": "In Repair",
+    "pending": "Pending",
+    "critical": "Critical"
+  },
+  "platform_type": {
+    "ltv": "Light Tactical Vehicle",
+    "mtv": "Medium Tactical Vehicle",
+    "htv": "Heavy Tactical Vehicle",
+    "apc": "Armored Personnel Carrier",
+    "ifv": "Infantry Fighting Vehicle",
+    "mbt": "Main Battle Tank"
+  },
+  "details": {
+    "title": "Vehicle Details",
+    "registration": "Registration",
+    "platform": "Platform",
+    "type": "Type",
+    "status": "Status",
+    "unit": "Unit",
+    "location": "Location",
+    "mileage": "Mileage",
+    "hours": "Operating Hours",
+    "last_maintenance": "Last Maintenance",
+    "next_maintenance": "Next Maintenance",
+    "repair_history": "Repair History"
+  },
+  "readiness": {
+    "title": "Fleet Readiness",
+    "overall": "Overall Readiness",
+    "target": "Target",
+    "trend_up": "Improving",
+    "trend_down": "Declining",
+    "trend_stable": "Stable",
+    "by_platform": "By Platform",
+    "by_unit": "By Unit",
+    "by_location": "By Location"
+  },
+  "summary": {
+    "total": "Total Vehicles",
+    "operational": "Operational",
+    "in_repair": "In Repair",
+    "pending": "Pending Repair",
+    "critical": "Critical"
+  },
+  "filters": {
+    "status": "Status",
+    "platform": "Platform",
+    "unit": "Unit",
+    "location": "Location"
+  }
+}

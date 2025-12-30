@@ -1,0 +1,46 @@
+{
+  "general": {
+    "unknown": "An unexpected error occurred",
+    "network": "Network error. Please check your connection.",
+    "timeout": "Request timed out. Please try again.",
+    "server": "Server error. Please try again later.",
+    "not_found": "Resource not found",
+    "forbidden": "You don't have permission to perform this action",
+    "unauthorized": "Please login to continue"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalid": "Invalid value",
+    "too_short": "Too short (min {{min}} characters)",
+    "too_long": "Too long (max {{max}} characters)",
+    "invalid_email": "Invalid email address",
+    "invalid_phone": "Invalid phone number",
+    "passwords_mismatch": "Passwords do not match"
+  },
+  "auth": {
+    "invalid_credentials": "Invalid email or password",
+    "account_locked": "Account locked. Contact administrator.",
+    "session_expired": "Session expired. Please login again.",
+    "mfa_required": "Two-factor authentication required",
+    "mfa_invalid": "Invalid verification code"
+  },
+  "parts": {
+    "not_found": "Part not found",
+    "already_exists": "Part with this number already exists",
+    "invalid_nsn": "Invalid NSN format"
+  },
+  "repairs": {
+    "not_found": "Repair not found",
+    "cannot_update": "Cannot update completed repair",
+    "invalid_status": "Invalid status transition"
+  },
+  "fleet": {
+    "vehicle_not_found": "Vehicle not found",
+    "already_in_repair": "Vehicle already has active repair"
+  },
+  "offline": {
+    "action_queued": "Action saved. Will sync when online.",
+    "data_outdated": "Data may be outdated. Sync when online.",
+    "cannot_perform": "This action requires internet connection"
+  }
+}

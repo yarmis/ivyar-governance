@@ -1,0 +1,15 @@
+{
+  "title": "Asystent AI",
+  "chat": {
+    "placeholder": "Zapytaj o części, naprawy lub procedury...",
+    "send": "Wyślij",
+    "thinking": "Myślę...",
+    "error": "Przepraszamy, coś poszło nie tak. Spróbuj ponownie."
+  },
+  "feedback": {
+    "title": "Czy to było pomocne?",
+    "helpful": "Tak, pomocne",
+    "not_helpful": "Nieprzydatne",
+    "thanks": "Dziękujemy za opinię!"
+  }
+}

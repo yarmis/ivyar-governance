@@ -1,0 +1,91 @@
+{
+  "search": {
+    "title": "Пошук запчастин",
+    "placeholder": "Пошук за номером, назвою або описом...",
+    "placeholder_short": "Пошук запчастин...",
+    "scan_barcode": "Сканувати штрихкод",
+    "voice_search": "Голосовий пошук",
+    "recent_searches": "Останні пошуки",
+    "clear_history": "Очистити історію",
+    "results_count": "{{count}} результатів",
+    "results_count_one": "{{count}} результат",
+    "no_results": "Запчастини не знайдено",
+    "no_results_hint": "Спробуйте інші ключові слова або змініть фільтри",
+    "search_tips": "Поради з пошуку",
+    "tip_part_number": "Введіть точний номер для точних результатів",
+    "tip_description": "Використовуйте ключові слова з опису",
+    "tip_nsn": "Формат NSN: XXXX-XX-XXX-XXXX"
+  },
+  "details": {
+    "title": "Деталі запчастини",
+    "part_number": "Номер запчастини",
+    "brand": "Бренд",
+    "description": "Опис",
+    "category": "Категорія",
+    "domain": "Домен",
+    "nsn": "NSN",
+    "specifications": "Характеристики",
+    "fitment": "Сумісність",
+    "platforms": "Сумісні платформи",
+    "repair_coverage": "Рівні ремонту",
+    "cross_references": "Перехресні посилання",
+    "documents": "Документи",
+    "images": "Зображення",
+    "safety_warning": "Критична для безпеки",
+    "safety_warning_desc": "Ця запчастина критична для безпеки. Дотримуйтесь усіх процедур безпеки при встановленні."
+  },
+  "analogs": {
+    "title": "Аналоги",
+    "find_analogs": "Знайти аналоги",
+    "original_part": "Оригінальна запчастина",
+    "alternatives": "Альтернативи",
+    "confidence": "Впевненість",
+    "type": "Тип",
+    "type_oem": "OEM",
+    "type_oem_reman": "OEM відновлена",
+    "type_aftermarket_certified": "Сертифікований афтермаркет",
+    "type_aftermarket": "Афтермаркет",
+    "min_confidence": "Мінімальна впевненість",
+    "no_analogs": "Аналоги не знайдено",
+    "compare": "Порівняти",
+    "differences": "Відмінності"
+  },
+  "filters": {
+    "title": "Фільтри",
+    "brand": "Бренд",
+    "category": "Категорія",
+    "platform": "Платформа",
+    "repair_level": "Рівень ремонту",
+    "safety_critical": "Тільки критичні для безпеки",
+    "in_stock": "Тільки в наявності",
+    "clear_filters": "Очистити фільтри",
+    "apply_filters": "Застосувати фільтри"
+  },
+  "categories": {
+    "brakes": "Гальма",
+    "engine": "Двигун",
+    "transmission": "Трансмісія",
+    "suspension": "Підвіска",
+    "electrical": "Електрика",
+    "filters": "Фільтри",
+    "hydraulics": "Гідравліка",
+    "armor": "Броня",
+    "body": "Кузов та рама",
+    "cooling": "Система охолодження",
+    "fuel": "Паливна система",
+    "exhaust": "Вихлоп"
+  },
+  "domains": {
+    "automotive": "Автомобільна техніка",
+    "heavy_equipment": "Важка техніка",
+    "engine": "Двигуни",
+    "electrical": "Електросистеми",
+    "hydraulics": "Гідравліка",
+    "armor": "Броня та захист"
+  },
+  "warnings": {
+    "safety_critical": "⚠️ Критичний для безпеки компонент",
+    "requires_certification": "Потрібен сертифікований технік для встановлення",
+    "check_compatibility": "Перевірте сумісність перед замовленням"
+  }
+}

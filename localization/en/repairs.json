@@ -1,0 +1,110 @@
+{
+  "title": "Repairs",
+  "list": {
+    "title": "Repair List",
+    "active": "Active",
+    "waiting": "Waiting",
+    "completed": "Completed",
+    "all": "All Repairs"
+  },
+  "status": {
+    "waiting": "Waiting",
+    "active": "In Progress",
+    "on_hold": "On Hold",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "priority": {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "level": {
+    "r1": "R1 - Field",
+    "r2": "R2 - Base",
+    "r3": "R3 - Depot",
+    "r4": "R4 - Factory",
+    "r1_short": "R1",
+    "r2_short": "R2",
+    "r3_short": "R3",
+    "r4_short": "R4",
+    "r1_desc": "Field-level maintenance",
+    "r2_desc": "Base workshop repair",
+    "r3_desc": "Depot-level overhaul",
+    "r4_desc": "Factory rebuild"
+  },
+  "details": {
+    "title": "Repair Details",
+    "ticket_number": "Ticket #",
+    "vehicle": "Vehicle",
+    "issue": "Issue",
+    "level": "Repair Level",
+    "priority": "Priority",
+    "status": "Status",
+    "progress": "Progress",
+    "workshop": "Workshop",
+    "assigned_to": "Assigned To",
+    "created": "Created",
+    "started": "Started",
+    "completed": "Completed",
+    "eta": "Estimated Completion",
+    "parts_used": "Parts Used",
+    "labor_hours": "Labor Hours",
+    "timeline": "Timeline",
+    "notes": "Notes",
+    "technician_notes": "Technician Notes"
+  },
+  "actions": {
+    "new_repair": "New Repair",
+    "start": "Start Repair",
+    "pause": "Pause",
+    "resume": "Resume",
+    "complete": "Complete",
+    "escalate": "Escalate",
+    "cancel": "Cancel Repair",
+    "add_parts": "Add Parts",
+    "update_progress": "Update Progress",
+    "add_notes": "Add Notes"
+  },
+  "form": {
+    "title_new": "Create Repair",
+    "title_edit": "Edit Repair",
+    "select_vehicle": "Select Vehicle",
+    "describe_issue": "Describe the issue",
+    "select_level": "Select Repair Level",
+    "select_priority": "Select Priority",
+    "select_workshop": "Select Workshop",
+    "notes_placeholder": "Additional notes...",
+    "submit": "Create Repair"
+  },
+  "escalate": {
+    "title": "Escalate Repair",
+    "reason": "Reason for escalation",
+    "new_level": "New Repair Level",
+    "new_priority": "New Priority",
+    "confirm": "Confirm Escalation"
+  },
+  "complete": {
+    "title": "Complete Repair",
+    "summary": "Repair Summary",
+    "parts_used": "Parts Used",
+    "labor_hours": "Total Labor Hours",
+    "final_notes": "Final Notes",
+    "confirm": "Confirm Completion"
+  },
+  "recommendations": {
+    "title": "AI Recommendations",
+    "recommended_level": "Recommended Level",
+    "estimated_time": "Estimated Time",
+    "required_parts": "Required Parts",
+    "required_tools": "Required Tools",
+    "procedure": "Procedure Summary",
+    "safety_warnings": "Safety Warnings"
+  },
+  "no_repairs": {
+    "active": "No active repairs",
+    "waiting": "No waiting repairs",
+    "completed": "No completed repairs"
+  }
+}

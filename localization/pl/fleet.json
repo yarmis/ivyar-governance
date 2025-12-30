@@ -1,0 +1,23 @@
+{
+  "title": "Flota",
+  "list": {
+    "title": "Lista pojazdów",
+    "all": "Wszystkie pojazdy"
+  },
+  "status": {
+    "operational": "Sprawny",
+    "in_repair": "W naprawie",
+    "pending": "Oczekuje",
+    "critical": "Krytyczny"
+  },
+  "readiness": {
+    "title": "Gotowość floty",
+    "overall": "Ogólna gotowość",
+    "target": "Cel"
+  },
+  "summary": {
+    "total": "Razem",
+    "operational": "Sprawne",
+    "in_repair": "W naprawie"
+  }
+}

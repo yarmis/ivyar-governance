@@ -1,0 +1,50 @@
+{
+  "search": {
+    "title": "Wyszukiwanie części",
+    "placeholder": "Szukaj po numerze, nazwie lub opisie...",
+    "placeholder_short": "Szukaj części...",
+    "scan_barcode": "Skanuj kod kreskowy",
+    "voice_search": "Wyszukiwanie głosowe",
+    "recent_searches": "Ostatnie wyszukiwania",
+    "clear_history": "Wyczyść historię",
+    "results_count": "{{count}} wyników",
+    "results_count_one": "{{count}} wynik",
+    "no_results": "Nie znaleziono części",
+    "no_results_hint": "Spróbuj innych słów kluczowych lub zmień filtry"
+  },
+  "details": {
+    "title": "Szczegóły części",
+    "part_number": "Numer części",
+    "brand": "Marka",
+    "description": "Opis",
+    "category": "Kategoria",
+    "domain": "Domena",
+    "nsn": "NSN",
+    "specifications": "Specyfikacje",
+    "fitment": "Kompatybilność",
+    "platforms": "Kompatybilne platformy",
+    "repair_coverage": "Pokrycie napraw",
+    "safety_warning": "Część krytyczna dla bezpieczeństwa",
+    "safety_warning_desc": "Ta część jest krytyczna dla bezpieczeństwa. Przestrzegaj wszystkich procedur bezpieczeństwa podczas instalacji."
+  },
+  "analogs": {
+    "title": "Zamienniki",
+    "find_analogs": "Znajdź zamienniki",
+    "original_part": "Oryginalna część",
+    "alternatives": "Alternatywy",
+    "confidence": "Pewność",
+    "type_oem": "OEM",
+    "type_aftermarket": "Aftermarket",
+    "no_analogs": "Nie znaleziono zamienników"
+  },
+  "categories": {
+    "brakes": "Hamulce",
+    "engine": "Silnik",
+    "transmission": "Skrzynia biegów",
+    "suspension": "Zawieszenie",
+    "electrical": "Elektryka",
+    "filters": "Filtry",
+    "hydraulics": "Hydraulika",
+    "armor": "Pancerz"
+  }
+}

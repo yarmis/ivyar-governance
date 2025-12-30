@@ -1,0 +1,50 @@
+{
+  "search": {
+    "title": "Teilesuche",
+    "placeholder": "Suche nach Nummer, Name oder Beschreibung...",
+    "placeholder_short": "Teile suchen...",
+    "scan_barcode": "Barcode scannen",
+    "voice_search": "Sprachsuche",
+    "recent_searches": "Letzte Suchen",
+    "clear_history": "Verlauf löschen",
+    "results_count": "{{count}} Ergebnisse",
+    "results_count_one": "{{count}} Ergebnis",
+    "no_results": "Keine Teile gefunden",
+    "no_results_hint": "Versuchen Sie andere Schlüsselwörter oder passen Sie die Filter an"
+  },
+  "details": {
+    "title": "Teiledetails",
+    "part_number": "Teilenummer",
+    "brand": "Marke",
+    "description": "Beschreibung",
+    "category": "Kategorie",
+    "domain": "Bereich",
+    "nsn": "NSN",
+    "specifications": "Spezifikationen",
+    "fitment": "Passform",
+    "platforms": "Kompatible Plattformen",
+    "repair_coverage": "Reparaturabdeckung",
+    "safety_warning": "Sicherheitskritisches Teil",
+    "safety_warning_desc": "Dieses Teil ist sicherheitskritisch. Befolgen Sie alle Sicherheitsverfahren bei der Installation."
+  },
+  "analogs": {
+    "title": "Ersatzteile",
+    "find_analogs": "Alternativen finden",
+    "original_part": "Originalteil",
+    "alternatives": "Alternativen",
+    "confidence": "Konfidenz",
+    "type_oem": "OEM",
+    "type_aftermarket": "Aftermarket",
+    "no_analogs": "Keine Alternativen gefunden"
+  },
+  "categories": {
+    "brakes": "Bremsen",
+    "engine": "Motor",
+    "transmission": "Getriebe",
+    "suspension": "Fahrwerk",
+    "electrical": "Elektrik",
+    "filters": "Filter",
+    "hydraulics": "Hydraulik",
+    "armor": "Panzerung"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "title": "Flotte",
+  "list": {
+    "title": "Fahrzeugliste",
+    "all": "Alle Fahrzeuge"
+  },
+  "status": {
+    "operational": "Einsatzbereit",
+    "in_repair": "In Reparatur",
+    "pending": "Ausstehend",
+    "critical": "Kritisch"
+  },
+  "readiness": {
+    "title": "Flottenbereitschaft",
+    "overall": "Gesamtbereitschaft",
+    "target": "Ziel"
+  },
+  "summary": {
+    "total": "Gesamt",
+    "operational": "Einsatzbereit",
+    "in_repair": "In Reparatur"
+  }
+}

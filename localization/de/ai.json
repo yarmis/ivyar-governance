@@ -1,0 +1,15 @@
+{
+  "title": "KI-Berater",
+  "chat": {
+    "placeholder": "Fragen Sie nach Teilen, Reparaturen oder Verfahren...",
+    "send": "Senden",
+    "thinking": "Denke nach...",
+    "error": "Entschuldigung, etwas ist schief gelaufen. Bitte versuchen Sie es erneut."
+  },
+  "feedback": {
+    "title": "War das hilfreich?",
+    "helpful": "Ja, hilfreich",
+    "not_helpful": "Nicht hilfreich",
+    "thanks": "Danke für Ihr Feedback!"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "title": "Naprawy",
+  "list": {
+    "title": "Lista napraw",
+    "active": "Aktywne",
+    "waiting": "Oczekujące",
+    "completed": "Zakończone"
+  },
+  "status": {
+    "waiting": "Oczekuje",
+    "active": "W trakcie",
+    "on_hold": "Wstrzymane",
+    "completed": "Zakończone",
+    "cancelled": "Anulowane"
+  },
+  "priority": {
+    "critical": "Krytyczny",
+    "high": "Wysoki",
+    "medium": "Średni",
+    "low": "Niski"
+  },
+  "level": {
+    "r1": "R1 - Polowy",
+    "r2": "R2 - Bazowy",
+    "r3": "R3 - Depot",
+    "r4": "R4 - Fabryczny"
+  },
+  "details": {
+    "title": "Szczegóły naprawy",
+    "ticket_number": "Nr zgłoszenia",
+    "vehicle": "Pojazd",
+    "issue": "Problem",
+    "status": "Status",
+    "progress": "Postęp"
+  },
+  "actions": {
+    "new_repair": "Nowa naprawa",
+    "start": "Rozpocznij",
+    "complete": "Zakończ",
+    "escalate": "Eskaluj"
+  }
+}
