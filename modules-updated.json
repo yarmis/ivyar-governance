@@ -1,0 +1,107 @@
+{
+  "platform": "IVYAR Governance",
+  "version": "2.1.0",
+  "updated": "2025-01-01",
+  "modules": [
+    {
+      "id": "dashboards",
+      "name": "Dashboards",
+      "path": "./dashboards/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "api-docs",
+      "name": "API Documentation",
+      "path": "./api-docs/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "deployment",
+      "name": "Deployment Guide",
+      "path": "./deployment/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "integration-tests",
+      "name": "Integration Tests",
+      "path": "./integration-tests/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "mobile-app",
+      "name": "Mobile App Specs",
+      "path": "./mobile-app-specs/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "localization",
+      "name": "Localization",
+      "path": "./localization/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "security-docs",
+      "name": "Security Documentation",
+      "path": "./security-docs/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "compliance-engine",
+      "name": "Compliance Engine",
+      "path": "./compliance-engine/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "ai-administrator",
+      "name": "AI Administrator",
+      "path": "./ai-administrator/",
+      "version": "1.0.0",
+      "status": "active"
+    },
+    {
+      "id": "pension-fund-engine",
+      "name": "Pension Fund Engine",
+      "path": "./pension-fund-engine/",
+      "version": "1.0.0",
+      "status": "active",
+      "integrations": ["fair-insurance-engine"]
+    },
+    {
+      "id": "fair-insurance-engine",
+      "name": "Fair Insurance Engine",
+      "path": "./fair-insurance-engine/",
+      "version": "1.0.0",
+      "status": "active",
+      "integrations": ["pension-fund-engine"]
+    },
+    {
+      "id": "integration-hub",
+      "name": "Integration Hub",
+      "path": "./integration-hub/",
+      "version": "1.0.0",
+      "status": "active",
+      "bridges": ["pension-insurance"]
+    }
+  ],
+  "integrations": {
+    "pension-insurance": {
+      "name": "Pension-Insurance Bridge",
+      "modules": ["pension-fund-engine", "fair-insurance-engine"],
+      "features": [
+        "profile-sync",
+        "premium-deduction",
+        "benefit-coordination",
+        "auto-enrollment",
+        "combined-statement"
+      ]
+    }
+  }
+}
