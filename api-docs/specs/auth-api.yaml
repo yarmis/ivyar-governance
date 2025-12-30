@@ -1,0 +1,235 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Auth API
+  version: 1.0.0
+  description: Authentication and authorization API
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+paths:
+  /auth/token:
+    post:
+      operationId: getToken
+      summary: Get access token
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [api_key, api_secret]
+                  properties:
+                    api_key:
+                      type: string
+                    api_secret:
+                      type: string
+                  title: API Key Auth
+                - type: object
+                  required: [email, password]
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                    mfa_code:
+                      type: string
+                  title: User Auth
+      responses:
+        200:
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    enum: [Bearer]
+                  expires_in:
+                    type: integer
+                    description: Seconds until expiration
+                  refresh_token:
+                    type: string
+                  scope:
+                    type: string
+        401:
+          description: Invalid credentials
+
+  /auth/refresh:
+    post:
+      operationId: refreshToken
+      summary: Refresh access token
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        200:
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  expires_in:
+                    type: integer
+
+  /auth/revoke:
+    post:
+      operationId: revokeToken
+      summary: Revoke token
+      tags: [Authentication]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token to revoke (defaults to current)
+      responses:
+        200:
+          description: Token revoked
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      summary: Get current user
+      tags: [User]
+      responses:
+        200:
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      role:
+                        type: string
+                      permissions:
+                        type: array
+                        items:
+                          type: string
+                      organization:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+
+  /auth/api-keys:
+    get:
+      operationId: listApiKeys
+      summary: List API keys
+      tags: [API Keys]
+      responses:
+        200:
+          description: API keys list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        prefix:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        last_used:
+                          type: string
+                          format: date-time
+                        expires_at:
+                          type: string
+                          format: date-time
+
+    post:
+      operationId: createApiKey
+      summary: Create API key
+      tags: [API Keys]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                expires_in_days:
+                  type: integer
+                  default: 365
+                scopes:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        201:
+          description: API key created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      api_key:
+                        type: string
+                        description: Only shown once
+                      api_secret:
+                        type: string
+                        description: Only shown once
+
+  /auth/api-keys/{keyId}:
+    delete:
+      operationId: revokeApiKey
+      summary: Revoke API key
+      tags: [API Keys]
+      parameters:
+        - name: keyId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: API key revoked

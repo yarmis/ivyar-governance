@@ -1,0 +1,276 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Fleet API
+  version: 1.0.0
+  description: Fleet management API
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+security:
+  - bearerAuth: []
+
+paths:
+  /fleet/vehicles:
+    get:
+      operationId: listVehicles
+      summary: List vehicles
+      tags: [Vehicles]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [operational, in_repair, pending, critical]
+        - name: platform
+          in: query
+          schema:
+            type: string
+        - name: unit
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Vehicles list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vehicle'
+                  summary:
+                    $ref: '#/components/schemas/FleetSummary'
+
+  /fleet/vehicles/{vehicleId}:
+    get:
+      operationId: getVehicle
+      summary: Get vehicle details
+      tags: [Vehicles]
+      parameters:
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Vehicle details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/VehicleDetailed'
+
+  /fleet/vehicles/{vehicleId}/history:
+    get:
+      operationId: getVehicleHistory
+      summary: Get vehicle repair history
+      tags: [Vehicles]
+      parameters:
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        200:
+          description: Repair history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RepairHistoryItem'
+
+  /fleet/readiness:
+    get:
+      operationId: getFleetReadiness
+      summary: Get fleet readiness metrics
+      tags: [Readiness]
+      parameters:
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum: [platform, unit, location]
+      responses:
+        200:
+          description: Readiness metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReadinessMetrics'
+
+  /fleet/locations:
+    get:
+      operationId: getVehicleLocations
+      summary: Get vehicle locations
+      tags: [Locations]
+      parameters:
+        - name: bbox
+          in: query
+          description: Bounding box (minLat,minLng,maxLat,maxLng)
+          schema:
+            type: string
+      responses:
+        200:
+          description: Vehicle locations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/VehicleLocation'
+
+components:
+  schemas:
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+        registration:
+          type: string
+        platform:
+          type: string
+        platform_type:
+          type: string
+          enum: [LTV, MTV, HTV, APC, IFV, MBT]
+        status:
+          type: string
+          enum: [operational, in_repair, pending, critical]
+        unit:
+          type: string
+        location:
+          type: string
+
+    VehicleDetailed:
+      allOf:
+        - $ref: '#/components/schemas/Vehicle'
+        - type: object
+          properties:
+            year:
+              type: integer
+            vin:
+              type: string
+            engine:
+              type: string
+            mileage_km:
+              type: integer
+            hours_operated:
+              type: integer
+            last_maintenance:
+              type: string
+              format: date-time
+            next_maintenance:
+              type: string
+              format: date-time
+            active_repairs:
+              type: array
+              items:
+                type: object
+
+    FleetSummary:
+      type: object
+      properties:
+        total:
+          type: integer
+        operational:
+          type: integer
+        in_repair:
+          type: integer
+        pending:
+          type: integer
+        critical:
+          type: integer
+        operational_rate:
+          type: number
+
+    ReadinessMetrics:
+      type: object
+      properties:
+        overall_rate:
+          type: number
+        target_rate:
+          type: number
+        trend:
+          type: string
+          enum: [up, down, stable]
+        by_group:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              total:
+                type: integer
+              operational:
+                type: integer
+              rate:
+                type: number
+
+    VehicleLocation:
+      type: object
+      properties:
+        vehicle_id:
+          type: string
+        coordinates:
+          type: object
+          properties:
+            lat:
+              type: number
+            lng:
+              type: number
+        location_name:
+          type: string
+        status:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+
+    RepairHistoryItem:
+      type: object
+      properties:
+        repair_id:
+          type: string
+        date:
+          type: string
+          format: date-time
+        issue:
+          type: string
+        level:
+          type: string
+        duration_hours:
+          type: number
+        cost:
+          type: number
+        parts_used:
+          type: array
+          items:
+            type: object

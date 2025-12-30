@@ -1,0 +1,468 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Repair API
+  version: 1.0.0
+  description: Repair operations management API
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Repairs
+    description: Repair ticket management
+  - name: Procedures
+    description: Repair procedures
+  - name: Recommendations
+    description: AI-powered recommendations
+
+paths:
+  /repairs:
+    get:
+      operationId: listRepairs
+      summary: List repairs
+      tags: [Repairs]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [waiting, active, on_hold, completed, cancelled]
+        - name: level
+          in: query
+          schema:
+            type: string
+            enum: [R1, R2, R3, R4]
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [critical, high, medium, low]
+        - name: workshop
+          in: query
+          schema:
+            type: string
+        - name: vehicle_id
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Repairs list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Repair'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+    post:
+      operationId: createRepair
+      summary: Create repair ticket
+      tags: [Repairs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepairCreate'
+      responses:
+        201:
+          description: Repair created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Repair'
+
+  /repairs/{repairId}:
+    get:
+      operationId: getRepair
+      summary: Get repair details
+      tags: [Repairs]
+      parameters:
+        - name: repairId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Repair details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RepairDetailed'
+
+    patch:
+      operationId: updateRepair
+      summary: Update repair
+      tags: [Repairs]
+      parameters:
+        - name: repairId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RepairUpdate'
+      responses:
+        200:
+          description: Repair updated
+
+  /repairs/{repairId}/escalate:
+    post:
+      operationId: escalateRepair
+      summary: Escalate repair priority
+      tags: [Repairs]
+      parameters:
+        - name: repairId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                new_priority:
+                  type: string
+                  enum: [critical, high]
+                new_level:
+                  type: string
+                  enum: [R2, R3, R4]
+      responses:
+        200:
+          description: Repair escalated
+
+  /repairs/{repairId}/complete:
+    post:
+      operationId: completeRepair
+      summary: Mark repair as complete
+      tags: [Repairs]
+      parameters:
+        - name: repairId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notes:
+                  type: string
+                parts_used:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      part_id:
+                        type: string
+                      quantity:
+                        type: integer
+                labor_hours:
+                  type: number
+                technician_notes:
+                  type: string
+      responses:
+        200:
+          description: Repair completed
+
+  /repairs/recommendations:
+    post:
+      operationId: getRepairRecommendation
+      summary: Get AI repair recommendation
+      tags: [Recommendations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [vehicle_id, issue]
+              properties:
+                vehicle_id:
+                  type: string
+                issue:
+                  type: string
+                  description: Problem description
+                symptoms:
+                  type: array
+                  items:
+                    type: string
+                damage_level:
+                  type: string
+                  enum: [minor, moderate, major, critical]
+                context:
+                  type: object
+                  properties:
+                    location:
+                      type: string
+                      enum: [field, base, depot]
+                    urgency:
+                      type: string
+                      enum: [routine, urgent, emergency]
+      responses:
+        200:
+          description: Repair recommendation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      recommended_level:
+                        type: string
+                        enum: [R1, R2, R3, R4]
+                      confidence:
+                        type: number
+                      estimated_time:
+                        type: object
+                        properties:
+                          min_hours:
+                            type: number
+                          max_hours:
+                            type: number
+                      required_parts:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            part_number:
+                              type: string
+                            description:
+                              type: string
+                            quantity:
+                              type: integer
+                            available:
+                              type: boolean
+                      required_tools:
+                        type: array
+                        items:
+                          type: string
+                      procedure_summary:
+                        type: string
+                      safety_warnings:
+                        type: array
+                        items:
+                          type: string
+                      escalation_criteria:
+                        type: array
+                        items:
+                          type: string
+
+  /repairs/procedures/{procedureId}:
+    get:
+      operationId: getProcedure
+      summary: Get repair procedure
+      tags: [Procedures]
+      parameters:
+        - name: procedureId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: language
+          in: query
+          schema:
+            type: string
+            enum: [en, uk, de, pl]
+            default: en
+      responses:
+        200:
+          description: Repair procedure
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RepairProcedure'
+
+components:
+  schemas:
+    Repair:
+      type: object
+      properties:
+        id:
+          type: string
+        ticket_number:
+          type: string
+        vehicle_id:
+          type: string
+        issue:
+          type: string
+        level:
+          type: string
+          enum: [R1, R2, R3, R4]
+        status:
+          type: string
+          enum: [waiting, active, on_hold, completed, cancelled]
+        priority:
+          type: string
+          enum: [critical, high, medium, low]
+        workshop:
+          type: string
+        assigned_to:
+          type: string
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+        estimated_completion:
+          type: string
+          format: date-time
+
+    RepairDetailed:
+      allOf:
+        - $ref: '#/components/schemas/Repair'
+        - type: object
+          properties:
+            vehicle:
+              type: object
+              properties:
+                id:
+                  type: string
+                platform:
+                  type: string
+                unit:
+                  type: string
+            parts_used:
+              type: array
+              items:
+                type: object
+            labor_hours:
+              type: number
+            timeline:
+              type: array
+              items:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  event:
+                    type: string
+                  user:
+                    type: string
+            procedure:
+              $ref: '#/components/schemas/RepairProcedure'
+
+    RepairCreate:
+      type: object
+      required: [vehicle_id, issue, level]
+      properties:
+        vehicle_id:
+          type: string
+        issue:
+          type: string
+        level:
+          type: string
+          enum: [R1, R2, R3, R4]
+        priority:
+          type: string
+          enum: [critical, high, medium, low]
+          default: medium
+        workshop:
+          type: string
+        notes:
+          type: string
+
+    RepairUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [waiting, active, on_hold]
+        progress:
+          type: integer
+        notes:
+          type: string
+        assigned_to:
+          type: string
+
+    RepairProcedure:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        platform:
+          type: string
+        level:
+          type: string
+        estimated_time:
+          type: string
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              order:
+                type: integer
+              instruction:
+                type: string
+              warning:
+                type: string
+              image_url:
+                type: string
+        required_tools:
+          type: array
+          items:
+            type: string
+        required_parts:
+          type: array
+          items:
+            type: object
+        safety_precautions:
+          type: array
+          items:
+            type: string
+        verification_checklist:
+          type: array
+          items:
+            type: string
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer

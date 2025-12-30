@@ -1,0 +1,218 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Analytics API
+  version: 1.0.0
+  description: Reporting and analytics API
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+security:
+  - bearerAuth: []
+
+paths:
+  /analytics/coverage:
+    get:
+      operationId: getCoverage
+      summary: Get catalog coverage analytics
+      tags: [Coverage]
+      parameters:
+        - name: domain
+          in: query
+          schema:
+            type: string
+        - name: platform
+          in: query
+          schema:
+            type: string
+        - name: group_by
+          in: query
+          schema:
+            type: string
+            enum: [domain, platform, category]
+      responses:
+        200:
+          description: Coverage metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      overall:
+                        type: number
+                      by_repair_level:
+                        type: object
+                        properties:
+                          r1:
+                            type: number
+                          r2:
+                            type: number
+                          r3:
+                            type: number
+                          r4:
+                            type: number
+                      by_group:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            coverage:
+                              type: number
+                            parts_available:
+                              type: integer
+                            parts_required:
+                              type: integer
+
+  /analytics/gaps:
+    get:
+      operationId: getGaps
+      summary: Get coverage gaps
+      tags: [Coverage]
+      parameters:
+        - name: platform
+          in: query
+          schema:
+            type: string
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [critical, high, medium, low]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        200:
+          description: Gap analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        platform:
+                          type: string
+                        category:
+                          type: string
+                        gap_percentage:
+                          type: number
+                        missing_parts:
+                          type: integer
+                        priority:
+                          type: string
+                        impact:
+                          type: string
+
+  /analytics/repairs:
+    get:
+      operationId: getRepairAnalytics
+      summary: Get repair analytics
+      tags: [Repairs]
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, quarter, year]
+            default: month
+        - name: workshop
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Repair analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total_repairs:
+                        type: integer
+                      completed:
+                        type: integer
+                      avg_mttr_hours:
+                        type: number
+                      first_time_fix_rate:
+                        type: number
+                      by_level:
+                        type: object
+                      by_category:
+                        type: array
+                        items:
+                          type: object
+                      trend:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            date:
+                              type: string
+                            count:
+                              type: integer
+
+  /analytics/reports:
+    post:
+      operationId: generateReport
+      summary: Generate custom report
+      tags: [Reports]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type]
+              properties:
+                type:
+                  type: string
+                  enum: [coverage, repairs, fleet, procurement, compliance]
+                parameters:
+                  type: object
+                format:
+                  type: string
+                  enum: [json, pdf, xlsx]
+                  default: json
+                schedule:
+                  type: object
+                  properties:
+                    frequency:
+                      type: string
+                      enum: [daily, weekly, monthly]
+                    recipients:
+                      type: array
+                      items:
+                        type: string
+                        format: email
+      responses:
+        200:
+          description: Report generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      report_id:
+                        type: string
+                      status:
+                        type: string
+                      download_url:
+                        type: string
+                        format: uri

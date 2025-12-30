@@ -1,0 +1,286 @@
+openapi: 3.1.0
+info:
+  title: IVYAR AI Advisor API
+  version: 1.0.0
+  description: AI-powered assistant API for parts and repairs
+
+servers:
+  - url: https://api.ivyar.org/v1
+
+security:
+  - bearerAuth: []
+
+paths:
+  /ai/ask:
+    post:
+      operationId: askAI
+      summary: Ask AI Advisor
+      description: Send natural language query to AI Advisor
+      tags: [AI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                  description: Natural language question
+                  maxLength: 1000
+                context:
+                  type: object
+                  properties:
+                    user_role:
+                      type: string
+                      enum: [operator, technician, logistics, analyst, manager, executive]
+                    platform:
+                      type: string
+                    repair_level:
+                      type: string
+                    language:
+                      type: string
+                      enum: [en, uk, de, pl, fr]
+                      default: en
+                stream:
+                  type: boolean
+                  default: false
+                  description: Enable streaming response
+            examples:
+              part_search:
+                summary: Part search query
+                value:
+                  query: "Find brake pads for Toyota Hilux 2019"
+                  context:
+                    user_role: "technician"
+                    platform: "hilux"
+              analog:
+                summary: Analog query
+                value:
+                  query: "What are alternatives to part 04465-0K380?"
+                  context:
+                    user_role: "logistics"
+              repair:
+                summary: Repair query
+                value:
+                  query: "How to replace fuel filter on HMMWV?"
+                  context:
+                    user_role: "operator"
+                    language: "uk"
+      responses:
+        200:
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+            text/event-stream:
+              schema:
+                type: string
+                description: SSE stream for streaming responses
+
+  /ai/stream:
+    get:
+      operationId: streamAI
+      summary: Stream AI response
+      description: SSE endpoint for streaming responses
+      tags: [AI]
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: language
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        200:
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /ai/feedback:
+    post:
+      operationId: submitFeedback
+      summary: Submit feedback on AI response
+      tags: [AI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [response_id, rating]
+              properties:
+                response_id:
+                  type: string
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                feedback:
+                  type: string
+                issue_type:
+                  type: string
+                  enum: [incorrect, incomplete, unclear, other]
+      responses:
+        200:
+          description: Feedback recorded
+
+  /ai/conversations:
+    get:
+      operationId: listConversations
+      summary: List user conversations
+      tags: [Conversations]
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        200:
+          description: Conversations list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        message_count:
+                          type: integer
+
+  /ai/conversations/{conversationId}:
+    get:
+      operationId: getConversation
+      summary: Get conversation history
+      tags: [Conversations]
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Conversation history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      messages:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            role:
+                              type: string
+                              enum: [user, assistant]
+                            content:
+                              type: string
+                            timestamp:
+                              type: string
+                              format: date-time
+
+components:
+  schemas:
+    AIResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+          description: AI response text
+        intent:
+          type: string
+          enum: [part_search, analog_finder, repair_advisor, compliance_check, cross_reference, report_request, general]
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        citations:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+              source:
+                type: string
+              title:
+                type: string
+              url:
+                type: string
+        warnings:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [safety, compliance, info]
+              message:
+                type: string
+              rule_id:
+                type: string
+        suggested_actions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+              action:
+                type: string
+              params:
+                type: object
+        related_parts:
+          type: array
+          items:
+            type: object
+            properties:
+              part_number:
+                type: string
+              brand:
+                type: string
+              description:
+                type: string
+        metadata:
+          type: object
+          properties:
+            processing_time_ms:
+              type: integer
+            model_version:
+              type: string
+            tokens_used:
+              type: integer

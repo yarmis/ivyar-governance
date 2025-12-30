@@ -1,0 +1,1235 @@
+openapi: 3.1.0
+info:
+  title: IVYAR Catalog API
+  version: 1.0.0
+  description: |
+    Parts catalog management API for IVYAR platform.
+    
+    ## Features
+    - Part search (full-text, semantic, filtered)
+    - Analog finding with confidence scores
+    - Cross-reference mapping (NSN ↔ OEM ↔ Aftermarket)
+    - Fitment verification
+    - Repair level coverage
+  contact:
+    name: IVYAR API Support
+    email: api-support@ivyar.io
+    url: https://docs.ivyar.org
+  license:
+    name: Proprietary
+    url: https://ivyar.org/terms
+
+servers:
+  - url: https://api.ivyar.org/v1
+    description: Production
+  - url: https://staging-api.ivyar.org/v1
+    description: Staging
+  - url: https://sandbox-api.ivyar.org/v1
+    description: Sandbox
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Parts
+    description: Part CRUD operations
+  - name: Search
+    description: Search and discovery
+  - name: Analogs
+    description: Analog finding
+  - name: Cross-Reference
+    description: Part number mapping
+  - name: Fitment
+    description: Vehicle compatibility
+  - name: Categories
+    description: Category management
+
+paths:
+  # ==========================================================================
+  # PARTS
+  # ==========================================================================
+  /catalog/parts:
+    get:
+      operationId: listParts
+      summary: List parts
+      description: Retrieve paginated list of parts with optional filtering
+      tags: [Parts]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/SortParam'
+        - name: brand
+          in: query
+          description: Filter by brand
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: array
+            items:
+              type: string
+        - name: domain
+          in: query
+          description: Filter by domain
+          schema:
+            type: string
+            enum: [automotive, heavy_equipment, engine, electrical, hydraulics, armor]
+        - name: safety_critical
+          in: query
+          description: Filter safety-critical parts only
+          schema:
+            type: boolean
+        - name: repair_level
+          in: query
+          description: Filter by repair level coverage
+          schema:
+            type: string
+            enum: [R1, R2, R3, R4]
+      responses:
+        200:
+          description: Parts list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Part'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  meta:
+                    $ref: '#/components/schemas/ResponseMeta'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        429:
+          $ref: '#/components/responses/RateLimited'
+
+    post:
+      operationId: createPart
+      summary: Create part
+      description: Create a new part in the catalog
+      tags: [Parts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartCreate'
+            examples:
+              basic:
+                summary: Basic part
+                value:
+                  part_number: "04465-0K380"
+                  brand: "Toyota"
+                  description: "Brake Pad Kit Front"
+                  category: "brakes"
+                  domain: "automotive"
+              with_specs:
+                summary: With specifications
+                value:
+                  part_number: "04465-0K380"
+                  brand: "Toyota"
+                  description: "Brake Pad Kit Front"
+                  category: "brakes"
+                  domain: "automotive"
+                  specifications:
+                    material: "Ceramic"
+                    thickness_mm: 12.5
+                    width_mm: 142
+                  safety_critical: true
+      responses:
+        201:
+          description: Part created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Part'
+                  meta:
+                    $ref: '#/components/schemas/ResponseMeta'
+        400:
+          $ref: '#/components/responses/ValidationError'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        409:
+          description: Part already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /catalog/parts/{partId}:
+    parameters:
+      - name: partId
+        in: path
+        required: true
+        description: Part ID (UUID) or part number
+        schema:
+          type: string
+        examples:
+          uuid:
+            value: "550e8400-e29b-41d4-a716-446655440000"
+          part_number:
+            value: "04465-0K380"
+
+    get:
+      operationId: getPart
+      summary: Get part details
+      description: Retrieve detailed information about a specific part
+      tags: [Parts]
+      parameters:
+        - name: include
+          in: query
+          description: Include related data
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [analogs, fitment, cross_references, repair_coverage, pricing]
+      responses:
+        200:
+          description: Part details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PartDetailed'
+                  meta:
+                    $ref: '#/components/schemas/ResponseMeta'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updatePart
+      summary: Update part
+      description: Partially update a part
+      tags: [Parts]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartUpdate'
+      responses:
+        200:
+          description: Part updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Part'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deletePart
+      summary: Delete part
+      description: Soft delete a part (can be restored)
+      tags: [Parts]
+      responses:
+        204:
+          description: Part deleted
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # ==========================================================================
+  # SEARCH
+  # ==========================================================================
+  /catalog/search:
+    post:
+      operationId: searchParts
+      summary: Search parts
+      description: |
+        Advanced part search with multiple search modes:
+        - **keyword**: Traditional keyword matching
+        - **semantic**: AI-powered semantic understanding
+        - **hybrid**: Combined keyword + semantic (default)
+      tags: [Search]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                  description: Search query (part number, description, or natural language)
+                  minLength: 2
+                  maxLength: 500
+                  examples:
+                    - "brake pads Toyota Hilux 2019"
+                    - "04465-0K380"
+                    - "oil filter for diesel engine"
+                mode:
+                  type: string
+                  enum: [keyword, semantic, hybrid]
+                  default: hybrid
+                  description: Search mode
+                filters:
+                  type: object
+                  properties:
+                    brand:
+                      type: array
+                      items:
+                        type: string
+                    category:
+                      type: array
+                      items:
+                        type: string
+                    platform:
+                      type: array
+                      items:
+                        type: string
+                    repair_level:
+                      type: array
+                      items:
+                        type: string
+                        enum: [R1, R2, R3, R4]
+                    safety_critical:
+                      type: boolean
+                    in_stock:
+                      type: boolean
+                    price_range:
+                      type: object
+                      properties:
+                        min:
+                          type: number
+                        max:
+                          type: number
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 25
+                offset:
+                  type: integer
+                  minimum: 0
+                  default: 0
+            examples:
+              simple:
+                summary: Simple search
+                value:
+                  query: "brake pads Hilux"
+              filtered:
+                summary: With filters
+                value:
+                  query: "oil filter"
+                  filters:
+                    brand: ["Toyota", "Bosch"]
+                    category: ["filters"]
+                  limit: 10
+              semantic:
+                summary: Semantic search
+                value:
+                  query: "what fits a 2019 pickup for front brakes"
+                  mode: semantic
+      responses:
+        200:
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                  facets:
+                    $ref: '#/components/schemas/SearchFacets'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  meta:
+                    allOf:
+                      - $ref: '#/components/schemas/ResponseMeta'
+                      - type: object
+                        properties:
+                          search_time_ms:
+                            type: integer
+                          mode_used:
+                            type: string
+        400:
+          $ref: '#/components/responses/ValidationError'
+
+  /catalog/search/suggest:
+    get:
+      operationId: searchSuggest
+      summary: Search suggestions
+      description: Get autocomplete suggestions for search query
+      tags: [Search]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Partial query
+          schema:
+            type: string
+            minLength: 2
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 20
+      responses:
+        200:
+          description: Suggestions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                        type:
+                          type: string
+                          enum: [part_number, brand, category, query]
+                        highlight:
+                          type: string
+
+  # ==========================================================================
+  # ANALOGS
+  # ==========================================================================
+  /catalog/analogs/{partNumber}:
+    get:
+      operationId: findAnalogs
+      summary: Find analog parts
+      description: |
+        Find alternative parts (analogs) for a given part number.
+        Returns OEM and aftermarket alternatives with confidence scores.
+      tags: [Analogs]
+      parameters:
+        - name: partNumber
+          in: path
+          required: true
+          description: Original part number
+          schema:
+            type: string
+          example: "04465-0K380"
+        - name: min_confidence
+          in: query
+          description: Minimum confidence threshold (0-1)
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+            default: 0.75
+        - name: include_aftermarket
+          in: query
+          description: Include aftermarket alternatives
+          schema:
+            type: boolean
+            default: true
+        - name: include_oem
+          in: query
+          description: Include OEM alternatives
+          schema:
+            type: boolean
+            default: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+      responses:
+        200:
+          description: Analog parts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      original:
+                        $ref: '#/components/schemas/Part'
+                      analogs:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Analog'
+                      best_match:
+                        $ref: '#/components/schemas/Analog'
+                  meta:
+                    $ref: '#/components/schemas/ResponseMeta'
+              example:
+                data:
+                  original:
+                    id: "550e8400-e29b-41d4-a716-446655440000"
+                    part_number: "04465-0K380"
+                    brand: "Toyota"
+                    description: "Brake Pad Kit Front"
+                  analogs:
+                    - part:
+                        part_number: "BP1234"
+                        brand: "Bosch"
+                        description: "Brake Pads Front"
+                      confidence: 0.95
+                      type: "aftermarket_certified"
+                      source: "TecDoc"
+                  best_match:
+                    part:
+                      part_number: "BP1234"
+                      brand: "Bosch"
+                    confidence: 0.95
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /catalog/analogs/compare:
+    post:
+      operationId: compareAnalogs
+      summary: Compare analog parts
+      description: Compare specifications between original and analog parts
+      tags: [Analogs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [original, analogs]
+              properties:
+                original:
+                  type: string
+                  description: Original part number
+                analogs:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 5
+                  description: Part numbers to compare
+      responses:
+        200:
+          description: Comparison result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      original:
+                        $ref: '#/components/schemas/Part'
+                      comparisons:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            part:
+                              $ref: '#/components/schemas/Part'
+                            match_score:
+                              type: number
+                            differences:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  field:
+                                    type: string
+                                  original_value:
+                                    type: string
+                                  analog_value:
+                                    type: string
+                                  significance:
+                                    type: string
+                                    enum: [low, medium, high, critical]
+
+  # ==========================================================================
+  # CROSS-REFERENCE
+  # ==========================================================================
+  /catalog/cross-reference:
+    post:
+      operationId: crossReference
+      summary: Cross-reference part numbers
+      description: |
+        Map between different part numbering systems:
+        - NSN (National Stock Number)
+        - OEM part numbers
+        - Aftermarket part numbers
+        - CAGE codes
+      tags: [Cross-Reference]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier]
+              properties:
+                identifier:
+                  type: string
+                  description: Part identifier to look up
+                  examples:
+                    - "2530-12-123-4567"
+                    - "04465-0K380"
+                type:
+                  type: string
+                  enum: [nsn, oem, aftermarket, cage, auto]
+                  default: auto
+                  description: Identifier type (auto-detect if not specified)
+            examples:
+              nsn:
+                summary: NSN lookup
+                value:
+                  identifier: "2530-12-123-4567"
+                  type: nsn
+              oem:
+                summary: OEM lookup
+                value:
+                  identifier: "04465-0K380"
+                  type: oem
+              auto:
+                summary: Auto-detect
+                value:
+                  identifier: "04465-0K380"
+      responses:
+        200:
+          description: Cross-reference results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CrossReference'
+                  meta:
+                    $ref: '#/components/schemas/ResponseMeta'
+
+  /catalog/cross-reference/batch:
+    post:
+      operationId: crossReferenceBatch
+      summary: Batch cross-reference
+      description: Cross-reference multiple part numbers in a single request
+      tags: [Cross-Reference]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifiers]
+              properties:
+                identifiers:
+                  type: array
+                  items:
+                    type: string
+                  maxItems: 100
+                type:
+                  type: string
+                  enum: [nsn, oem, aftermarket, auto]
+                  default: auto
+      responses:
+        200:
+          description: Batch results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrossReference'
+                  summary:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      found:
+                        type: integer
+                      not_found:
+                        type: integer
+
+  # ==========================================================================
+  # FITMENT
+  # ==========================================================================
+  /catalog/fitment/verify:
+    post:
+      operationId: verifyFitment
+      summary: Verify part fitment
+      description: Check if a part fits a specific vehicle
+      tags: [Fitment]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [part_number, vehicle]
+              properties:
+                part_number:
+                  type: string
+                vehicle:
+                  type: object
+                  required: [platform]
+                  properties:
+                    platform:
+                      type: string
+                      description: Vehicle platform (e.g., "hilux", "hmmwv")
+                    year:
+                      type: integer
+                    engine:
+                      type: string
+                    variant:
+                      type: string
+            example:
+              part_number: "04465-0K380"
+              vehicle:
+                platform: "hilux"
+                year: 2019
+                engine: "2.8D"
+      responses:
+        200:
+          description: Fitment verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      fits:
+                        type: boolean
+                      confidence:
+                        type: number
+                      fitment_details:
+                        $ref: '#/components/schemas/Fitment'
+                      warnings:
+                        type: array
+                        items:
+                          type: string
+                      alternatives:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Part'
+
+  /catalog/fitment/{partNumber}:
+    get:
+      operationId: getPartFitment
+      summary: Get part fitment data
+      description: Retrieve all vehicles this part fits
+      tags: [Fitment]
+      parameters:
+        - name: partNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Fitment data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Fitment'
+
+  # ==========================================================================
+  # CATEGORIES
+  # ==========================================================================
+  /catalog/categories:
+    get:
+      operationId: listCategories
+      summary: List categories
+      description: Get category tree
+      tags: [Categories]
+      parameters:
+        - name: domain
+          in: query
+          schema:
+            type: string
+        - name: flat
+          in: query
+          description: Return flat list instead of tree
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: Categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+
+# ============================================================================
+# COMPONENTS
+# ============================================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      description: Items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    SortParam:
+      name: sort
+      in: query
+      description: Sort field (prefix with - for descending)
+      schema:
+        type: string
+        default: "-updated_at"
+      examples:
+        desc:
+          value: "-created_at"
+        asc:
+          value: "part_number"
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "UNAUTHORIZED"
+              message: "Invalid or missing authentication token"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "NOT_FOUND"
+              message: "Part not found"
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error:
+              code: "RATE_LIMITED"
+              message: "Rate limit exceeded. Try again in 60 seconds."
+
+  schemas:
+    # --------------------------------------------------------------------------
+    # PART SCHEMAS
+    # --------------------------------------------------------------------------
+    Part:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        part_number:
+          type: string
+        brand:
+          type: string
+        description:
+          type: string
+        description_uk:
+          type: string
+        category:
+          type: string
+        domain:
+          type: string
+        nsn:
+          type: string
+          nullable: true
+        safety_critical:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    PartDetailed:
+      allOf:
+        - $ref: '#/components/schemas/Part'
+        - type: object
+          properties:
+            specifications:
+              type: object
+              additionalProperties: true
+            fitment:
+              type: array
+              items:
+                $ref: '#/components/schemas/Fitment'
+            repair_coverage:
+              $ref: '#/components/schemas/RepairCoverage'
+            cross_references:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  value:
+                    type: string
+                  brand:
+                    type: string
+            images:
+              type: array
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                  type:
+                    type: string
+                    enum: [primary, technical, packaging]
+            documents:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  type:
+                    type: string
+
+    PartCreate:
+      type: object
+      required: [part_number, brand, description, category]
+      properties:
+        part_number:
+          type: string
+          minLength: 3
+          maxLength: 50
+        brand:
+          type: string
+        description:
+          type: string
+          maxLength: 500
+        description_uk:
+          type: string
+        category:
+          type: string
+        domain:
+          type: string
+          enum: [automotive, heavy_equipment, engine, electrical, hydraulics, armor]
+        nsn:
+          type: string
+          pattern: '^\d{4}-\d{2}-\d{3}-\d{4}$'
+        specifications:
+          type: object
+        safety_critical:
+          type: boolean
+          default: false
+
+    PartUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+        description_uk:
+          type: string
+        specifications:
+          type: object
+        safety_critical:
+          type: boolean
+
+    # --------------------------------------------------------------------------
+    # SEARCH SCHEMAS
+    # --------------------------------------------------------------------------
+    SearchResult:
+      type: object
+      properties:
+        part:
+          $ref: '#/components/schemas/Part'
+        score:
+          type: number
+          description: Relevance score (0-1)
+        highlights:
+          type: object
+          properties:
+            description:
+              type: array
+              items:
+                type: string
+            part_number:
+              type: string
+
+    SearchFacets:
+      type: object
+      properties:
+        brand:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              count:
+                type: integer
+        category:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              count:
+                type: integer
+        domain:
+          type: array
+          items:
+            type: object
+            properties:
+              value:
+                type: string
+              count:
+                type: integer
+
+    # --------------------------------------------------------------------------
+    # ANALOG SCHEMAS
+    # --------------------------------------------------------------------------
+    Analog:
+      type: object
+      properties:
+        part:
+          $ref: '#/components/schemas/Part'
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score (0-1)
+        type:
+          type: string
+          enum: [oem, oem_reman, aftermarket_certified, aftermarket]
+        source:
+          type: string
+          description: Data source (TecDoc, FLIS, etc.)
+        differences:
+          type: array
+          items:
+            type: string
+          description: Key differences from original
+
+    # --------------------------------------------------------------------------
+    # CROSS-REFERENCE SCHEMAS
+    # --------------------------------------------------------------------------
+    CrossReference:
+      type: object
+      properties:
+        input:
+          type: string
+        input_type:
+          type: string
+          enum: [nsn, oem, aftermarket, cage]
+        mappings:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [nsn, oem, aftermarket]
+              value:
+                type: string
+              brand:
+                type: string
+              confidence:
+                type: number
+              source:
+                type: string
+              verified:
+                type: boolean
+        niin:
+          type: string
+          description: NATO Item Identification Number
+        fsc:
+          type: string
+          description: Federal Supply Class
+        cage:
+          type: string
+          description: CAGE code
+
+    # --------------------------------------------------------------------------
+    # FITMENT SCHEMAS
+    # --------------------------------------------------------------------------
+    Fitment:
+      type: object
+      properties:
+        platform:
+          type: string
+        platform_type:
+          type: string
+          enum: [LTV, MTV, HTV, APC, IFV, MBT]
+        brand:
+          type: string
+        model:
+          type: string
+        years:
+          type: object
+          properties:
+            from:
+              type: integer
+            to:
+              type: integer
+        engine:
+          type: string
+        position:
+          type: string
+          description: Installation position (front, rear, left, right)
+        quantity_required:
+          type: integer
+        notes:
+          type: string
+
+    RepairCoverage:
+      type: object
+      properties:
+        r1_field:
+          type: boolean
+          description: Field-level repair
+        r2_base:
+          type: boolean
+          description: Base workshop repair
+        r3_depot:
+          type: boolean
+          description: Depot-level repair
+        r4_factory:
+          type: boolean
+          description: Factory overhaul
+        minimum_level:
+          type: string
+          enum: [R1, R2, R3, R4]
+
+    # --------------------------------------------------------------------------
+    # CATEGORY SCHEMAS
+    # --------------------------------------------------------------------------
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        name_uk:
+          type: string
+        slug:
+          type: string
+        parent_id:
+          type: string
+          nullable: true
+        domain:
+          type: string
+        part_count:
+          type: integer
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+
+    # --------------------------------------------------------------------------
+    # COMMON SCHEMAS
+    # --------------------------------------------------------------------------
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+
+    ResponseMeta:
+      type: object
+      properties:
+        request_id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
