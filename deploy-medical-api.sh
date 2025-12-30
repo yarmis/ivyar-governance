@@ -1,0 +1,3723 @@
+#!/bin/bash
+# ============================================================================
+# IVYAR MEDICAL PROGRAM - API DOCUMENTATION
+# Complete API endpoints with OpenAPI specification
+# Version: 1.0.0
+# ============================================================================
+
+set -e
+
+echo "=============================================="
+echo "  IVYAR Medical Program API Documentation"
+echo "=============================================="
+
+mkdir -p medical-program/api/{docs,examples}
+
+# ============================================================================
+# OPENAPI SPECIFICATION
+# ============================================================================
+
+cat > medical-program/api/openapi.yaml << 'ENDFILE'
+openapi: 3.0.3
+info:
+  title: IVYAR Medical Program API
+  description: |
+    Comprehensive healthcare management API for military personnel, veterans, and pensioners.
+    
+    ## Authentication
+    All endpoints require Bearer token authentication.
+    
+    ## Rate Limiting
+    - Standard: 1000 requests/hour
+    - Bulk operations: 100 requests/hour
+    
+    ## Error Codes
+    | Code | Description |
+    |------|-------------|
+    | 400 | Bad Request - Invalid parameters |
+    | 401 | Unauthorized - Invalid or missing token |
+    | 403 | Forbidden - Insufficient permissions |
+    | 404 | Not Found - Resource doesn't exist |
+    | 409 | Conflict - Resource state conflict |
+    | 422 | Unprocessable - Validation failed |
+    | 429 | Too Many Requests - Rate limit exceeded |
+    | 500 | Internal Server Error |
+    
+  version: 1.0.0
+  contact:
+    name: IVYAR Medical Program Support
+    email: medical-api@ivyar.gov.ua
+  license:
+    name: Government Use
+
+servers:
+  - url: https://api.medical.ivyar.gov.ua/v1
+    description: Production
+  - url: https://staging-api.medical.ivyar.gov.ua/v1
+    description: Staging
+  - url: http://localhost:3000/v1
+    description: Development
+
+tags:
+  - name: Patients
+    description: Patient registration and profile management
+  - name: Appointments
+    description: Appointment scheduling and management
+  - name: Medical Records
+    description: Health records, lab results, imaging
+  - name: Prescriptions
+    description: Medication management and refills
+  - name: Programs
+    description: Health programs enrollment
+  - name: Disability
+    description: Disability assessment services
+  - name: Claims
+    description: Medical claims and billing
+  - name: Authorizations
+    description: Prior authorization requests
+  - name: Providers
+    description: Healthcare provider directory
+  - name: Integration
+    description: Pension and Insurance integration
+
+paths:
+  # ==========================================================================
+  # PATIENTS
+  # ==========================================================================
+  /patients:
+    get:
+      tags: [Patients]
+      summary: List patients
+      description: Retrieve paginated list of patients (admin only)
+      operationId: listPatients
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, suspended, disenrolled]
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [category_a, category_b, category_c, category_d]
+      responses:
+        '200':
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    
+    post:
+      tags: [Patients]
+      summary: Register new patient
+      description: Enroll a new patient in the Medical Program
+      operationId: createPatient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCreateRequest'
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Patient already enrolled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /patients/{patient_id}:
+    get:
+      tags: [Patients]
+      summary: Get patient by ID
+      operationId: getPatient
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+      responses:
+        '200':
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      tags: [Patients]
+      summary: Update patient
+      operationId: updatePatient
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientUpdateRequest'
+      responses:
+        '200':
+          description: Patient updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /patients/{patient_id}/eligibility:
+    get:
+      tags: [Patients]
+      summary: Check patient eligibility
+      description: Verify patient's eligibility for services and benefits
+      operationId: checkEligibility
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+      responses:
+        '200':
+          description: Eligibility status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EligibilityResponse'
+
+  /patients/{patient_id}/benefits:
+    get:
+      tags: [Patients]
+      summary: Get patient benefits
+      description: Retrieve patient's benefit summary including cost sharing
+      operationId: getPatientBenefits
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+      responses:
+        '200':
+          description: Benefits summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BenefitsResponse'
+
+  # ==========================================================================
+  # APPOINTMENTS
+  # ==========================================================================
+  /appointments:
+    get:
+      tags: [Appointments]
+      summary: List appointments
+      operationId: listAppointments
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+        - name: provider_id
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [scheduled, confirmed, checked_in, in_progress, completed, cancelled, no_show]
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentListResponse'
+    
+    post:
+      tags: [Appointments]
+      summary: Schedule new appointment
+      operationId: createAppointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentCreateRequest'
+      responses:
+        '201':
+          description: Appointment scheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Scheduling conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /appointments/available-slots:
+    get:
+      tags: [Appointments]
+      summary: Get available appointment slots
+      operationId: getAvailableSlots
+      parameters:
+        - name: service_type
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ServiceType'
+        - name: provider_id
+          in: query
+          schema:
+            type: string
+        - name: facility_id
+          in: query
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: appointment_type
+          in: query
+          schema:
+            type: string
+            enum: [in_person, telemedicine]
+      responses:
+        '200':
+          description: Available slots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableSlotsResponse'
+
+  /appointments/{appointment_id}:
+    get:
+      tags: [Appointments]
+      summary: Get appointment by ID
+      operationId: getAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentIdParam'
+      responses:
+        '200':
+          description: Appointment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      tags: [Appointments]
+      summary: Update appointment
+      operationId: updateAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentUpdateRequest'
+      responses:
+        '200':
+          description: Appointment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+    
+    delete:
+      tags: [Appointments]
+      summary: Cancel appointment
+      operationId: cancelAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentIdParam'
+        - name: reason
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Appointment cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+
+  /appointments/{appointment_id}/confirm:
+    post:
+      tags: [Appointments]
+      summary: Confirm appointment
+      operationId: confirmAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentIdParam'
+      responses:
+        '200':
+          description: Appointment confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+
+  /appointments/{appointment_id}/check-in:
+    post:
+      tags: [Appointments]
+      summary: Check in for appointment
+      operationId: checkInAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentIdParam'
+      responses:
+        '200':
+          description: Checked in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+
+  /appointments/{appointment_id}/reschedule:
+    post:
+      tags: [Appointments]
+      summary: Reschedule appointment
+      operationId: rescheduleAppointment
+      parameters:
+        - $ref: '#/components/parameters/AppointmentIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [new_date, new_time]
+              properties:
+                new_date:
+                  type: string
+                  format: date
+                new_time:
+                  type: string
+                  pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Appointment rescheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+
+  # ==========================================================================
+  # MEDICAL RECORDS
+  # ==========================================================================
+  /records:
+    get:
+      tags: [Medical Records]
+      summary: List medical records
+      operationId: listRecords
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: record_type
+          in: query
+          schema:
+            type: string
+            enum: [visit, lab, imaging, procedure, diagnosis, immunization]
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of medical records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordListResponse'
+
+  /records/{record_id}:
+    get:
+      tags: [Medical Records]
+      summary: Get medical record by ID
+      operationId: getRecord
+      parameters:
+        - name: record_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Medical record details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /records/{record_id}/download:
+    get:
+      tags: [Medical Records]
+      summary: Download medical record as PDF
+      operationId: downloadRecord
+      parameters:
+        - name: record_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  /patients/{patient_id}/health-summary:
+    get:
+      tags: [Medical Records]
+      summary: Get patient health summary
+      description: Comprehensive health summary including diagnoses, medications, allergies
+      operationId: getHealthSummary
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+      responses:
+        '200':
+          description: Health summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthSummaryResponse'
+
+  /patients/{patient_id}/lab-results:
+    get:
+      tags: [Medical Records]
+      summary: Get patient lab results
+      operationId: getLabResults
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, final, amended]
+      responses:
+        '200':
+          description: Lab results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultListResponse'
+
+  # ==========================================================================
+  # PRESCRIPTIONS
+  # ==========================================================================
+  /prescriptions:
+    get:
+      tags: [Prescriptions]
+      summary: List prescriptions
+      operationId: listPrescriptions
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, refill_needed, expired, discontinued, on_hold]
+      responses:
+        '200':
+          description: List of prescriptions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrescriptionListResponse'
+    
+    post:
+      tags: [Prescriptions]
+      summary: Create new prescription
+      description: Provider creates new prescription for patient
+      operationId: createPrescription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrescriptionCreateRequest'
+      responses:
+        '201':
+          description: Prescription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrescriptionResponse'
+
+  /prescriptions/{prescription_id}:
+    get:
+      tags: [Prescriptions]
+      summary: Get prescription by ID
+      operationId: getPrescription
+      parameters:
+        - name: prescription_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prescription details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrescriptionResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /prescriptions/{prescription_id}/refill:
+    post:
+      tags: [Prescriptions]
+      summary: Request prescription refill
+      operationId: requestRefill
+      parameters:
+        - name: prescription_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pharmacy_id:
+                  type: string
+                  description: Optional - defaults to patient's preferred pharmacy
+                delivery_method:
+                  type: string
+                  enum: [pickup, mail, delivery]
+                  default: pickup
+      responses:
+        '200':
+          description: Refill requested
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefillResponse'
+        '400':
+          description: Refill not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /prescriptions/check-interactions:
+    post:
+      tags: [Prescriptions]
+      summary: Check drug interactions
+      operationId: checkInteractions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id, medication_id]
+              properties:
+                patient_id:
+                  type: string
+                medication_id:
+                  type: string
+      responses:
+        '200':
+          description: Interaction check results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InteractionCheckResponse'
+
+  /formulary:
+    get:
+      tags: [Prescriptions]
+      summary: Search formulary
+      operationId: searchFormulary
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: tier
+          in: query
+          schema:
+            type: string
+            enum: [tier_1, tier_2, tier_3, tier_4, tier_5]
+      responses:
+        '200':
+          description: Formulary search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormularySearchResponse'
+
+  /pharmacies:
+    get:
+      tags: [Prescriptions]
+      summary: Find pharmacies
+      operationId: findPharmacies
+      parameters:
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+            default: 10
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [military, network, all]
+            default: all
+      responses:
+        '200':
+          description: List of pharmacies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PharmacyListResponse'
+
+  # ==========================================================================
+  # PROGRAMS
+  # ==========================================================================
+  /programs:
+    get:
+      tags: [Programs]
+      summary: List available programs
+      operationId: listPrograms
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [ptsd, substance_use, physical_rehab, vocational, wellness, caregiver]
+        - name: virtual_available
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of programs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramListResponse'
+
+  /programs/{program_id}:
+    get:
+      tags: [Programs]
+      summary: Get program details
+      operationId: getProgram
+      parameters:
+        - name: program_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Program details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramResponse'
+
+  /programs/{program_id}/enroll:
+    post:
+      tags: [Programs]
+      summary: Enroll in program
+      operationId: enrollInProgram
+      parameters:
+        - name: program_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id]
+              properties:
+                patient_id:
+                  type: string
+                preferred_start_date:
+                  type: string
+                  format: date
+                notes:
+                  type: string
+      responses:
+        '201':
+          description: Enrolled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+        '409':
+          description: Already enrolled or waitlisted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /patients/{patient_id}/enrollments:
+    get:
+      tags: [Programs]
+      summary: Get patient's program enrollments
+      operationId: getPatientEnrollments
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, active, completed, withdrawn, waitlist]
+      responses:
+        '200':
+          description: Patient enrollments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentListResponse'
+
+  # ==========================================================================
+  # DISABILITY
+  # ==========================================================================
+  /disability/assessments:
+    get:
+      tags: [Disability]
+      summary: List disability assessments
+      operationId: listAssessments
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [scheduled, in_progress, completed, cancelled]
+      responses:
+        '200':
+          description: List of assessments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentListResponse'
+    
+    post:
+      tags: [Disability]
+      summary: Schedule disability assessment
+      operationId: scheduleAssessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentCreateRequest'
+      responses:
+        '201':
+          description: Assessment scheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+
+  /disability/assessments/{assessment_id}:
+    get:
+      tags: [Disability]
+      summary: Get assessment details
+      operationId: getAssessment
+      parameters:
+        - name: assessment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Assessment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+
+  /disability/assessments/{assessment_id}/documents:
+    get:
+      tags: [Disability]
+      summary: Get assessment documents
+      operationId: getAssessmentDocuments
+      parameters:
+        - name: assessment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+    
+    post:
+      tags: [Disability]
+      summary: Upload assessment document
+      operationId: uploadAssessmentDocument
+      parameters:
+        - name: assessment_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file, document_type]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                document_type:
+                  type: string
+                  enum: [medical_record, military_service, identification, other]
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentResponse'
+
+  /patients/{patient_id}/disability-status:
+    get:
+      tags: [Disability]
+      summary: Get patient's disability status
+      operationId: getDisabilityStatus
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+      responses:
+        '200':
+          description: Disability status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisabilityStatusResponse'
+
+  # ==========================================================================
+  # CLAIMS
+  # ==========================================================================
+  /claims:
+    get:
+      tags: [Claims]
+      summary: List claims
+      operationId: listClaims
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [submitted, processing, approved, partially_approved, denied, paid, appealed]
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of claims
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimListResponse'
+    
+    post:
+      tags: [Claims]
+      summary: Submit claim
+      operationId: submitClaim
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimCreateRequest'
+      responses:
+        '201':
+          description: Claim submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+
+  /claims/{claim_id}:
+    get:
+      tags: [Claims]
+      summary: Get claim details
+      operationId: getClaim
+      parameters:
+        - name: claim_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Claim details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+
+  /claims/{claim_id}/appeal:
+    post:
+      tags: [Claims]
+      summary: Appeal claim decision
+      operationId: appealClaim
+      parameters:
+        - name: claim_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                supporting_documents:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Appeal submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppealResponse'
+
+  /patients/{patient_id}/cost-sharing:
+    get:
+      tags: [Claims]
+      summary: Get patient cost sharing summary
+      operationId: getCostSharingSummary
+      parameters:
+        - $ref: '#/components/parameters/PatientIdParam'
+        - name: year
+          in: query
+          schema:
+            type: integer
+            default: 2025
+      responses:
+        '200':
+          description: Cost sharing summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CostSharingResponse'
+
+  # ==========================================================================
+  # AUTHORIZATIONS
+  # ==========================================================================
+  /authorizations:
+    get:
+      tags: [Authorizations]
+      summary: List authorizations
+      operationId: listAuthorizations
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, approved_modified, denied, expired]
+      responses:
+        '200':
+          description: List of authorizations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationListResponse'
+    
+    post:
+      tags: [Authorizations]
+      summary: Request prior authorization
+      operationId: createAuthorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationCreateRequest'
+      responses:
+        '201':
+          description: Authorization request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationResponse'
+
+  /authorizations/{authorization_id}:
+    get:
+      tags: [Authorizations]
+      summary: Get authorization details
+      operationId: getAuthorization
+      parameters:
+        - name: authorization_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Authorization details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationResponse'
+
+  /authorizations/check-required:
+    post:
+      tags: [Authorizations]
+      summary: Check if authorization required
+      operationId: checkAuthorizationRequired
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service_type, procedure_code]
+              properties:
+                service_type:
+                  $ref: '#/components/schemas/ServiceType'
+                procedure_code:
+                  type: string
+                diagnosis_codes:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Authorization requirement check
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  required:
+                    type: boolean
+                  reason:
+                    type: string
+                  existing_authorization:
+                    type: string
+
+  # ==========================================================================
+  # PROVIDERS
+  # ==========================================================================
+  /providers:
+    get:
+      tags: [Providers]
+      summary: Search providers
+      operationId: searchProviders
+      parameters:
+        - name: specialty
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: facility_id
+          in: query
+          schema:
+            type: string
+        - name: accepting_patients
+          in: query
+          schema:
+            type: boolean
+        - name: telemedicine_available
+          in: query
+          schema:
+            type: boolean
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+            default: 25
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Provider search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderListResponse'
+
+  /providers/{provider_id}:
+    get:
+      tags: [Providers]
+      summary: Get provider details
+      operationId: getProvider
+      parameters:
+        - name: provider_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Provider details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderResponse'
+
+  /facilities:
+    get:
+      tags: [Providers]
+      summary: List facilities
+      operationId: listFacilities
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [military, network, all]
+        - name: lat
+          in: query
+          schema:
+            type: number
+        - name: lng
+          in: query
+          schema:
+            type: number
+        - name: radius_km
+          in: query
+          schema:
+            type: number
+            default: 50
+      responses:
+        '200':
+          description: Facility list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FacilityListResponse'
+
+  # ==========================================================================
+  # INTEGRATION
+  # ==========================================================================
+  /integration/pension/sync:
+    post:
+      tags: [Integration]
+      summary: Sync with Pension Fund
+      description: Synchronize patient data with Pension Fund Engine
+      operationId: syncPension
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id]
+              properties:
+                patient_id:
+                  type: string
+      responses:
+        '200':
+          description: Sync completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PensionSyncResponse'
+
+  /integration/pension/benefits:
+    get:
+      tags: [Integration]
+      summary: Get pension-based benefits
+      operationId: getPensionBenefits
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pension-based medical benefits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PensionBenefitsResponse'
+
+  /integration/insurance/coverage:
+    get:
+      tags: [Integration]
+      summary: Get insurance coverage
+      operationId: getInsuranceCoverage
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Insurance coverage details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceCoverageResponse'
+
+  /integration/insurance/coordinate-benefits:
+    post:
+      tags: [Integration]
+      summary: Coordinate benefits with insurance
+      operationId: coordinateBenefits
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [patient_id, claim_amount, service_type]
+              properties:
+                patient_id:
+                  type: string
+                claim_amount:
+                  type: number
+                service_type:
+                  $ref: '#/components/schemas/ServiceType'
+      responses:
+        '200':
+          description: Benefits coordination result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BenefitsCoordinationResponse'
+
+  /integration/combined-statement:
+    get:
+      tags: [Integration]
+      summary: Get combined benefits statement
+      description: Unified view of pension, medical, and insurance benefits
+      operationId: getCombinedStatement
+      parameters:
+        - name: patient_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Combined benefits statement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CombinedStatementResponse'
+
+# ============================================================================
+# COMPONENTS
+# ============================================================================
+components:
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    
+    PatientIdParam:
+      name: patient_id
+      in: path
+      required: true
+      schema:
+        type: string
+    
+    AppointmentIdParam:
+      name: appointment_id
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  schemas:
+    # Enums
+    ServiceType:
+      type: string
+      enum:
+        - primary_care
+        - specialty_care
+        - emergency
+        - mental_health
+        - rehabilitation
+        - preventive
+        - pharmacy
+        - dental
+        - vision
+        - hearing
+        - telemedicine
+    
+    BeneficiaryCategory:
+      type: string
+      enum:
+        - category_a
+        - category_b
+        - category_c
+        - category_d
+    
+    DisabilityGroup:
+      type: string
+      enum:
+        - group_i
+        - group_ii
+        - group_iii
+
+    # Common
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  message:
+                    type: string
+    
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        total_pages:
+          type: integer
+
+    # Patient Schemas
+    PatientCreateRequest:
+      type: object
+      required:
+        - personal_id
+        - first_name
+        - last_name
+        - date_of_birth
+        - gender
+        - phone
+        - address
+        - service_status
+        - emergency_contact
+      properties:
+        personal_id:
+          type: string
+        military_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        patronymic:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        gender:
+          type: string
+          enum: [male, female]
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          $ref: '#/components/schemas/Address'
+        service_status:
+          type: string
+          enum: [active, veteran, reserve, pensioner]
+        combat_veteran:
+          type: boolean
+          default: false
+        service_start_date:
+          type: string
+          format: date
+        service_end_date:
+          type: string
+          format: date
+        emergency_contact:
+          $ref: '#/components/schemas/EmergencyContact'
+    
+    PatientUpdateRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          $ref: '#/components/schemas/Address'
+        emergency_contact:
+          $ref: '#/components/schemas/EmergencyContact'
+        pcp_id:
+          type: string
+    
+    PatientResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        personal_id:
+          type: string
+        military_id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        patronymic:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        gender:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        service_status:
+          type: string
+        combat_veteran:
+          type: boolean
+        beneficiary_category:
+          $ref: '#/components/schemas/BeneficiaryCategory'
+        enrollment_date:
+          type: string
+          format: date
+        pcp_id:
+          type: string
+        pcp_name:
+          type: string
+        disability_group:
+          $ref: '#/components/schemas/DisabilityGroup'
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    
+    PatientListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatientResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    Address:
+      type: object
+      required: [country, region, city, street, building, postal_code]
+      properties:
+        country:
+          type: string
+        region:
+          type: string
+        city:
+          type: string
+        street:
+          type: string
+        building:
+          type: string
+        apartment:
+          type: string
+        postal_code:
+          type: string
+    
+    EmergencyContact:
+      type: object
+      required: [name, relationship, phone]
+      properties:
+        name:
+          type: string
+        relationship:
+          type: string
+        phone:
+          type: string
+        alternate_phone:
+          type: string
+    
+    EligibilityResponse:
+      type: object
+      properties:
+        eligible:
+          type: boolean
+        category:
+          $ref: '#/components/schemas/BeneficiaryCategory'
+        effective_date:
+          type: string
+          format: date
+        expiration_date:
+          type: string
+          format: date
+        services_available:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceType'
+        restrictions:
+          type: array
+          items:
+            type: string
+    
+    BenefitsResponse:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/BeneficiaryCategory'
+        cost_sharing:
+          type: object
+          properties:
+            annual_deductible:
+              type: number
+            deductible_met:
+              type: number
+            out_of_pocket_max:
+              type: number
+            out_of_pocket_spent:
+              type: number
+        copayments:
+          type: object
+          properties:
+            primary_care:
+              type: number
+            specialty_care:
+              type: number
+            emergency:
+              type: number
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                $ref: '#/components/schemas/ServiceType'
+              covered:
+                type: boolean
+              authorization_required:
+                type: boolean
+
+    # Appointment Schemas
+    AppointmentCreateRequest:
+      type: object
+      required:
+        - patient_id
+        - service_type
+        - appointment_type
+        - scheduled_date
+        - scheduled_time
+        - reason_for_visit
+      properties:
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        facility_id:
+          type: string
+        service_type:
+          $ref: '#/components/schemas/ServiceType'
+        appointment_type:
+          type: string
+          enum: [in_person, telemedicine, home_visit]
+        scheduled_date:
+          type: string
+          format: date
+        scheduled_time:
+          type: string
+          pattern: '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+        reason_for_visit:
+          type: string
+        referral_id:
+          type: string
+        urgent:
+          type: boolean
+          default: false
+    
+    AppointmentUpdateRequest:
+      type: object
+      properties:
+        reason_for_visit:
+          type: string
+        notes:
+          type: string
+    
+    AppointmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        patient_name:
+          type: string
+        provider_id:
+          type: string
+        provider_name:
+          type: string
+        facility_id:
+          type: string
+        facility_name:
+          type: string
+        service_type:
+          $ref: '#/components/schemas/ServiceType'
+        appointment_type:
+          type: string
+        scheduled_date:
+          type: string
+          format: date
+        scheduled_time:
+          type: string
+        duration_minutes:
+          type: integer
+        status:
+          type: string
+        reason_for_visit:
+          type: string
+        notes:
+          type: string
+        authorization_required:
+          type: boolean
+        authorization_status:
+          type: string
+        video_link:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    AppointmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AppointmentResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    AvailableSlotsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              time:
+                type: string
+              provider_id:
+                type: string
+              provider_name:
+                type: string
+              facility_id:
+                type: string
+              facility_name:
+                type: string
+              appointment_type:
+                type: string
+
+    # Record Schemas
+    RecordResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        record_type:
+          type: string
+        date:
+          type: string
+          format: date
+        provider_id:
+          type: string
+        provider_name:
+          type: string
+        facility_name:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        findings:
+          type: string
+        diagnoses:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              description:
+                type: string
+              type:
+                type: string
+              status:
+                type: string
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              test_name:
+                type: string
+              value:
+                type: string
+              unit:
+                type: string
+              reference_range:
+                type: string
+              status:
+                type: string
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              type:
+                type: string
+              url:
+                type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    RecordListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecordResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    HealthSummaryResponse:
+      type: object
+      properties:
+        patient_id:
+          type: string
+        last_updated:
+          type: string
+          format: date-time
+        active_diagnoses:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              description:
+                type: string
+              onset_date:
+                type: string
+        current_medications:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              dosage:
+                type: string
+              frequency:
+                type: string
+        allergies:
+          type: array
+          items:
+            type: object
+            properties:
+              allergen:
+                type: string
+              reaction:
+                type: string
+              severity:
+                type: string
+        immunizations:
+          type: array
+          items:
+            type: object
+            properties:
+              vaccine:
+                type: string
+              date:
+                type: string
+                format: date
+        recent_vitals:
+          type: object
+          properties:
+            blood_pressure:
+              type: string
+            heart_rate:
+              type: integer
+            weight_kg:
+              type: number
+            height_cm:
+              type: number
+            bmi:
+              type: number
+            recorded_date:
+              type: string
+              format: date
+    
+    LabResultListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecordResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    # Prescription Schemas
+    PrescriptionCreateRequest:
+      type: object
+      required:
+        - patient_id
+        - provider_id
+        - medication_name
+        - dosage
+        - instructions
+        - quantity
+        - days_supply
+        - refills_authorized
+      properties:
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        medication_name:
+          type: string
+        generic_name:
+          type: string
+        dosage:
+          type: string
+        form:
+          type: string
+        instructions:
+          type: string
+        quantity:
+          type: integer
+        days_supply:
+          type: integer
+        refills_authorized:
+          type: integer
+        pharmacy_id:
+          type: string
+        notes:
+          type: string
+    
+    PrescriptionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        provider_name:
+          type: string
+        medication_name:
+          type: string
+        generic_name:
+          type: string
+        dosage:
+          type: string
+        form:
+          type: string
+        instructions:
+          type: string
+        quantity:
+          type: integer
+        days_supply:
+          type: integer
+        refills_authorized:
+          type: integer
+        refills_remaining:
+          type: integer
+        prescribed_date:
+          type: string
+          format: date
+        expiration_date:
+          type: string
+          format: date
+        last_filled_date:
+          type: string
+          format: date
+        next_refill_date:
+          type: string
+          format: date
+        formulary_tier:
+          type: string
+        copayment:
+          type: number
+        status:
+          type: string
+        pharmacy_id:
+          type: string
+        pharmacy_name:
+          type: string
+    
+    PrescriptionListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PrescriptionResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    RefillResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        prescription_id:
+          type: string
+        refill_number:
+          type: integer
+        refills_remaining:
+          type: integer
+        estimated_pickup:
+          type: string
+          format: date-time
+        pharmacy:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            address:
+              type: string
+            phone:
+              type: string
+        copayment:
+          type: number
+        error:
+          type: string
+    
+    InteractionCheckResponse:
+      type: object
+      properties:
+        has_interactions:
+          type: boolean
+        severity:
+          type: string
+          enum: [none, minor, moderate, severe]
+        interactions:
+          type: array
+          items:
+            type: object
+            properties:
+              medication_1:
+                type: string
+              medication_2:
+                type: string
+              description:
+                type: string
+              severity:
+                type: string
+              recommendation:
+                type: string
+    
+    FormularySearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              medication_id:
+                type: string
+              name:
+                type: string
+              generic_name:
+                type: string
+              tier:
+                type: string
+              copayment:
+                type: number
+              prior_auth_required:
+                type: boolean
+              quantity_limit:
+                type: integer
+              alternatives:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    tier:
+                      type: string
+                    copayment:
+                      type: number
+    
+    PharmacyListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              type:
+                type: string
+              address:
+                $ref: '#/components/schemas/Address'
+              phone:
+                type: string
+              hours:
+                type: string
+              distance_km:
+                type: number
+              services:
+                type: array
+                items:
+                  type: string
+
+    # Program Schemas
+    ProgramResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        eligibility_criteria:
+          type: array
+          items:
+            type: string
+        duration_weeks:
+          type: integer
+        sessions_per_week:
+          type: integer
+        virtual_available:
+          type: boolean
+        facility_name:
+          type: string
+        max_participants:
+          type: integer
+        current_participants:
+          type: integer
+        available_spots:
+          type: integer
+        waitlist_count:
+          type: integer
+        active:
+          type: boolean
+    
+    ProgramListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgramResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    EnrollmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        program_id:
+          type: string
+        program_name:
+          type: string
+        enrolled_date:
+          type: string
+          format: date
+        start_date:
+          type: string
+          format: date
+        expected_end_date:
+          type: string
+          format: date
+        sessions_completed:
+          type: integer
+        sessions_total:
+          type: integer
+        progress_percentage:
+          type: number
+        status:
+          type: string
+    
+    EnrollmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnrollmentResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    # Disability Schemas
+    AssessmentCreateRequest:
+      type: object
+      required:
+        - patient_id
+        - assessment_type
+      properties:
+        patient_id:
+          type: string
+        assessment_type:
+          type: string
+          enum: [initial, review, appeal]
+        preferred_date:
+          type: string
+          format: date
+        preferred_location:
+          type: string
+        notes:
+          type: string
+    
+    AssessmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        assessment_type:
+          type: string
+        scheduled_date:
+          type: string
+          format: date
+        scheduled_time:
+          type: string
+        location:
+          type: string
+        status:
+          type: string
+        result:
+          type: object
+          properties:
+            disability_group:
+              $ref: '#/components/schemas/DisabilityGroup'
+            combat_related:
+              type: boolean
+            effective_date:
+              type: string
+              format: date
+            review_date:
+              type: string
+              format: date
+        documents_required:
+          type: array
+          items:
+            type: string
+        documents_submitted:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    AssessmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssessmentResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    DisabilityStatusResponse:
+      type: object
+      properties:
+        patient_id:
+          type: string
+        has_disability:
+          type: boolean
+        disability_group:
+          $ref: '#/components/schemas/DisabilityGroup'
+        combat_related:
+          type: boolean
+        established_date:
+          type: string
+          format: date
+        next_review_date:
+          type: string
+          format: date
+        permanent:
+          type: boolean
+        benefits:
+          type: array
+          items:
+            type: string
+        pending_assessment:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            scheduled_date:
+              type: string
+              format: date
+    
+    DocumentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        size:
+          type: integer
+        uploaded_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+    
+    DocumentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentResponse'
+
+    # Claims Schemas
+    ClaimCreateRequest:
+      type: object
+      required:
+        - patient_id
+        - provider_id
+        - service_date
+        - service_type
+        - billed_amount
+        - procedure_codes
+        - diagnosis_codes
+      properties:
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        service_date:
+          type: string
+          format: date
+        service_type:
+          $ref: '#/components/schemas/ServiceType'
+        billed_amount:
+          type: number
+        procedure_codes:
+          type: array
+          items:
+            type: string
+        diagnosis_codes:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+    
+    ClaimResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        provider_name:
+          type: string
+        service_date:
+          type: string
+          format: date
+        service_type:
+          $ref: '#/components/schemas/ServiceType'
+        billed_amount:
+          type: number
+        allowed_amount:
+          type: number
+        paid_amount:
+          type: number
+        patient_responsibility:
+          type: number
+        procedure_codes:
+          type: array
+          items:
+            type: string
+        diagnosis_codes:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+        submitted_date:
+          type: string
+          format: date
+        processed_date:
+          type: string
+          format: date
+        paid_date:
+          type: string
+          format: date
+        denial_reason:
+          type: string
+        appeal_deadline:
+          type: string
+          format: date
+        explanation_of_benefits:
+          type: string
+    
+    ClaimListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClaimResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    AppealResponse:
+      type: object
+      properties:
+        appeal_id:
+          type: string
+        claim_id:
+          type: string
+        submitted_date:
+          type: string
+          format: date
+        status:
+          type: string
+        level:
+          type: integer
+        expected_decision_date:
+          type: string
+          format: date
+    
+    CostSharingResponse:
+      type: object
+      properties:
+        patient_id:
+          type: string
+        year:
+          type: integer
+        category:
+          $ref: '#/components/schemas/BeneficiaryCategory'
+        deductible:
+          type: object
+          properties:
+            annual:
+              type: number
+            met:
+              type: number
+            remaining:
+              type: number
+        out_of_pocket:
+          type: object
+          properties:
+            maximum:
+              type: number
+            spent:
+              type: number
+            remaining:
+              type: number
+        claims_summary:
+          type: object
+          properties:
+            total_billed:
+              type: number
+            total_allowed:
+              type: number
+            plan_paid:
+              type: number
+            patient_paid:
+              type: number
+
+    # Authorization Schemas
+    AuthorizationCreateRequest:
+      type: object
+      required:
+        - patient_id
+        - provider_id
+        - service_type
+        - service_description
+        - diagnosis_codes
+        - clinical_notes
+      properties:
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        service_type:
+          $ref: '#/components/schemas/ServiceType'
+        service_description:
+          type: string
+        procedure_codes:
+          type: array
+          items:
+            type: string
+        diagnosis_codes:
+          type: array
+          items:
+            type: string
+        clinical_notes:
+          type: string
+        urgency:
+          type: string
+          enum: [standard, urgent]
+          default: standard
+        requested_units:
+          type: integer
+    
+    AuthorizationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        patient_id:
+          type: string
+        provider_id:
+          type: string
+        service_type:
+          $ref: '#/components/schemas/ServiceType'
+        service_description:
+          type: string
+        requested_date:
+          type: string
+          format: date
+        urgency:
+          type: string
+        status:
+          type: string
+        decision_date:
+          type: string
+          format: date
+        approved_units:
+          type: integer
+        valid_from:
+          type: string
+          format: date
+        valid_to:
+          type: string
+          format: date
+        denial_reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    
+    AuthorizationListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorizationResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    # Provider Schemas
+    ProviderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        npi:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        credentials:
+          type: array
+          items:
+            type: string
+        specialty:
+          type: string
+        subspecialties:
+          type: array
+          items:
+            type: string
+        facility_id:
+          type: string
+        facility_name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        accepting_patients:
+          type: boolean
+        telemedicine_available:
+          type: boolean
+        rating:
+          type: number
+        review_count:
+          type: integer
+        network_status:
+          type: string
+        languages:
+          type: array
+          items:
+            type: string
+        next_available:
+          type: string
+          format: date
+    
+    ProviderListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderResponse'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    
+    FacilityListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              type:
+                type: string
+              address:
+                $ref: '#/components/schemas/Address'
+              phone:
+                type: string
+              hours:
+                type: string
+              services:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceType'
+              distance_km:
+                type: number
+
+    # Integration Schemas
+    PensionSyncResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        patient_id:
+          type: string
+        pension_id:
+          type: string
+        synced_at:
+          type: string
+          format: date-time
+        updates:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              old_value:
+                type: string
+              new_value:
+                type: string
+    
+    PensionBenefitsResponse:
+      type: object
+      properties:
+        patient_id:
+          type: string
+        pension_type:
+          type: string
+        disability_group:
+          $ref: '#/components/schemas/DisabilityGroup'
+        combat_related:
+          type: boolean
+        medical_benefits:
+          type: object
+          properties:
+            category:
+              $ref: '#/components/schemas/BeneficiaryCategory'
+            cost_sharing_waived:
+              type: boolean
+            priority_access:
+              type: boolean
+            caregiver_allowance:
+              type: boolean
+            home_modification_eligible:
+              type: boolean
+    
+    InsuranceCoverageResponse:
+      type: object
+      properties:
+        patient_id:
+          type: string
+        policies:
+          type: array
+          items:
+            type: object
+            properties:
+              policy_id:
+                type: string
+              policy_type:
+                type: string
+              coverage_amount:
+                type: number
+              deductible:
+                type: number
+              deductible_met:
+                type: number
+    
+    BenefitsCoordinationResponse:
+      type: object
+      properties:
+        primary_payer:
+          type: string
+        medical_program_pays:
+          type: number
+        insurance_pays:
+          type: number
+        patient_pays:
+          type: number
+        total:
+          type: number
+    
+    CombinedStatementResponse:
+      type: object
+      properties:
+        patient_id:
+          type: string
+        period:
+          type: string
+        pension:
+          type: object
+          properties:
+            gross_amount:
+              type: number
+            deductions:
+              type: array
+              items:
+                type: object
+                properties:
+                  description:
+                    type: string
+                  amount:
+                    type: number
+            net_amount:
+              type: number
+        medical:
+          type: object
+          properties:
+            services_used:
+              type: integer
+            total_billed:
+              type: number
+            plan_paid:
+              type: number
+            patient_paid:
+              type: number
+            remaining_deductible:
+              type: number
+            remaining_oop:
+              type: number
+        insurance:
+          type: object
+          properties:
+            total_coverage:
+              type: number
+            claims_submitted:
+              type: integer
+            claims_paid:
+              type: number
+        disability:
+          type: object
+          properties:
+            group:
+              $ref: '#/components/schemas/DisabilityGroup'
+            benefits:
+              type: array
+              items:
+                type: string
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+ENDFILE
+
+echo "  ✅ OpenAPI specification created"
+
+# ============================================================================
+# API REFERENCE DOCUMENTATION
+# ============================================================================
+
+cat > medical-program/api/API_REFERENCE.md << 'ENDFILE'
+# IVYAR Medical Program API Reference
+
+## Base URL
+
+```
+Production: https://api.medical.ivyar.gov.ua/v1
+Staging:    https://staging-api.medical.ivyar.gov.ua/v1
+```
+
+## Authentication
+
+All API requests require Bearer token authentication:
+
+```http
+Authorization: Bearer <your_token>
+```
+
+## Rate Limits
+
+| Tier | Limit |
+|------|-------|
+| Standard | 1,000 requests/hour |
+| Bulk operations | 100 requests/hour |
+
+## API Endpoints Summary
+
+### Patients
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/patients` | List patients |
+| POST | `/patients` | Register new patient |
+| GET | `/patients/{id}` | Get patient by ID |
+| PUT | `/patients/{id}` | Update patient |
+| GET | `/patients/{id}/eligibility` | Check eligibility |
+| GET | `/patients/{id}/benefits` | Get benefits summary |
+
+### Appointments
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/appointments` | List appointments |
+| POST | `/appointments` | Schedule appointment |
+| GET | `/appointments/available-slots` | Get available slots |
+| GET | `/appointments/{id}` | Get appointment |
+| PUT | `/appointments/{id}` | Update appointment |
+| DELETE | `/appointments/{id}` | Cancel appointment |
+| POST | `/appointments/{id}/confirm` | Confirm appointment |
+| POST | `/appointments/{id}/check-in` | Check in |
+| POST | `/appointments/{id}/reschedule` | Reschedule |
+
+### Medical Records
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/records` | List records |
+| GET | `/records/{id}` | Get record |
+| GET | `/records/{id}/download` | Download as PDF |
+| GET | `/patients/{id}/health-summary` | Get health summary |
+| GET | `/patients/{id}/lab-results` | Get lab results |
+
+### Prescriptions
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/prescriptions` | List prescriptions |
+| POST | `/prescriptions` | Create prescription |
+| GET | `/prescriptions/{id}` | Get prescription |
+| POST | `/prescriptions/{id}/refill` | Request refill |
+| POST | `/prescriptions/check-interactions` | Check interactions |
+| GET | `/formulary` | Search formulary |
+| GET | `/pharmacies` | Find pharmacies |
+
+### Programs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/programs` | List programs |
+| GET | `/programs/{id}` | Get program details |
+| POST | `/programs/{id}/enroll` | Enroll in program |
+| GET | `/patients/{id}/enrollments` | Get enrollments |
+
+### Disability
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/disability/assessments` | List assessments |
+| POST | `/disability/assessments` | Schedule assessment |
+| GET | `/disability/assessments/{id}` | Get assessment |
+| GET | `/disability/assessments/{id}/documents` | Get documents |
+| POST | `/disability/assessments/{id}/documents` | Upload document |
+| GET | `/patients/{id}/disability-status` | Get disability status |
+
+### Claims
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/claims` | List claims |
+| POST | `/claims` | Submit claim |
+| GET | `/claims/{id}` | Get claim |
+| POST | `/claims/{id}/appeal` | Appeal claim |
+| GET | `/patients/{id}/cost-sharing` | Get cost sharing |
+
+### Authorizations
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/authorizations` | List authorizations |
+| POST | `/authorizations` | Request authorization |
+| GET | `/authorizations/{id}` | Get authorization |
+| POST | `/authorizations/check-required` | Check if required |
+
+### Providers
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/providers` | Search providers |
+| GET | `/providers/{id}` | Get provider |
+| GET | `/facilities` | List facilities |
+
+### Integration
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/integration/pension/sync` | Sync with pension |
+| GET | `/integration/pension/benefits` | Get pension benefits |
+| GET | `/integration/insurance/coverage` | Get insurance coverage |
+| POST | `/integration/insurance/coordinate-benefits` | Coordinate benefits |
+| GET | `/integration/combined-statement` | Combined statement |
+
+---
+
+## Examples
+
+### Schedule Appointment
+
+```bash
+curl -X POST https://api.medical.ivyar.gov.ua/v1/appointments \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "patient_id": "PAT-001",
+    "service_type": "cardiology",
+    "appointment_type": "in_person",
+    "scheduled_date": "2025-01-15",
+    "scheduled_time": "10:00",
+    "reason_for_visit": "Follow-up for hypertension"
+  }'
+```
+
+Response:
+```json
+{
+  "id": "APT-123456",
+  "patient_id": "PAT-001",
+  "provider_id": "PROV-001",
+  "provider_name": "Dr. Koval, Oleksandr",
+  "facility_name": "Military Clinic A",
+  "service_type": "cardiology",
+  "appointment_type": "in_person",
+  "scheduled_date": "2025-01-15",
+  "scheduled_time": "10:00",
+  "duration_minutes": 45,
+  "status": "scheduled",
+  "authorization_required": false
+}
+```
+
+### Request Prescription Refill
+
+```bash
+curl -X POST https://api.medical.ivyar.gov.ua/v1/prescriptions/RX-001/refill \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pharmacy_id": "PHARM-001",
+    "delivery_method": "pickup"
+  }'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "prescription_id": "RX-001",
+  "refill_number": 2,
+  "refills_remaining": 3,
+  "estimated_pickup": "2025-01-05T14:00:00Z",
+  "pharmacy": {
+    "id": "PHARM-001",
+    "name": "Military Pharmacy #12",
+    "address": "15 Khreshchatyk St., Kyiv",
+    "phone": "+380 44 123 4567"
+  },
+  "copayment": 0
+}
+```
+
+### Get Combined Benefits Statement
+
+```bash
+curl -X GET "https://api.medical.ivyar.gov.ua/v1/integration/combined-statement?patient_id=PAT-001&month=1&year=2025" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Response:
+```json
+{
+  "patient_id": "PAT-001",
+  "period": "January 2025",
+  "pension": {
+    "gross_amount": 45000,
+    "deductions": [
+      {"description": "Life Insurance", "amount": 1500},
+      {"description": "Health Insurance", "amount": 600}
+    ],
+    "net_amount": 42900
+  },
+  "medical": {
+    "services_used": 3,
+    "total_billed": 15000,
+    "plan_paid": 15000,
+    "patient_paid": 0,
+    "remaining_deductible": 0,
+    "remaining_oop": 0
+  },
+  "insurance": {
+    "total_coverage": 800000,
+    "claims_submitted": 1,
+    "claims_paid": 5000
+  },
+  "disability": {
+    "group": "group_ii",
+    "benefits": [
+      "No cost sharing",
+      "Priority healthcare access",
+      "Home modification support"
+    ]
+  }
+}
+```
+
+---
+
+## Error Handling
+
+### Error Response Format
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request parameters",
+    "details": [
+      {
+        "field": "scheduled_date",
+        "message": "Date must be in the future"
+      }
+    ]
+  }
+}
+```
+
+### Common Error Codes
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `VALIDATION_ERROR` | 400 | Invalid request parameters |
+| `UNAUTHORIZED` | 401 | Invalid or missing token |
+| `FORBIDDEN` | 403 | Insufficient permissions |
+| `NOT_FOUND` | 404 | Resource not found |
+| `CONFLICT` | 409 | Resource state conflict |
+| `RATE_LIMIT_EXCEEDED` | 429 | Too many requests |
+| `INTERNAL_ERROR` | 500 | Server error |
+
+---
+
+## Service Types
+
+| Code | Description |
+|------|-------------|
+| `primary_care` | General medicine |
+| `specialty_care` | Specialist consultations |
+| `emergency` | Emergency services |
+| `mental_health` | Psychological/psychiatric |
+| `rehabilitation` | Physical/occupational therapy |
+| `preventive` | Screenings, immunizations |
+| `pharmacy` | Prescription drugs |
+| `dental` | Oral health |
+| `vision` | Eye care |
+| `hearing` | Audiology |
+| `telemedicine` | Video consultations |
+
+## Beneficiary Categories
+
+| Category | Cost Sharing | Description |
+|----------|--------------|-------------|
+| `category_a` | None | Combat veterans, disabled |
+| `category_b` | Minimal | Veterans, pensioners |
+| `category_c` | Standard | Dependents |
+| `category_d` | Full | Extended family |
+
+---
+
+*API Version 1.0.0 | IVYAR Medical Program*
+ENDFILE
+
+echo "  ✅ API Reference created"
+
+# ============================================================================
+# CURL EXAMPLES
+# ============================================================================
+
+cat > medical-program/api/examples/curl-examples.sh << 'ENDFILE'
+#!/bin/bash
+# IVYAR Medical Program API - cURL Examples
+# Usage: Set TOKEN environment variable before running
+
+BASE_URL="${BASE_URL:-https://api.medical.ivyar.gov.ua/v1}"
+
+# ============================================================================
+# PATIENTS
+# ============================================================================
+
+# Register new patient
+register_patient() {
+  curl -X POST "$BASE_URL/patients" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "personal_id": "1234567890",
+      "military_id": "MIL-12345",
+      "first_name": "Ivan",
+      "last_name": "Petrenko",
+      "patronymic": "Oleksandrovych",
+      "date_of_birth": "1985-03-15",
+      "gender": "male",
+      "phone": "+380501234567",
+      "email": "ivan.petrenko@example.com",
+      "address": {
+        "country": "Ukraine",
+        "region": "Kyiv Oblast",
+        "city": "Kyiv",
+        "street": "Khreshchatyk",
+        "building": "1",
+        "apartment": "10",
+        "postal_code": "01001"
+      },
+      "service_status": "veteran",
+      "combat_veteran": true,
+      "service_start_date": "2010-01-15",
+      "service_end_date": "2022-06-30",
+      "emergency_contact": {
+        "name": "Maria Petrenko",
+        "relationship": "spouse",
+        "phone": "+380507654321"
+      }
+    }'
+}
+
+# Get patient
+get_patient() {
+  curl -X GET "$BASE_URL/patients/$1" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Check eligibility
+check_eligibility() {
+  curl -X GET "$BASE_URL/patients/$1/eligibility" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Get benefits
+get_benefits() {
+  curl -X GET "$BASE_URL/patients/$1/benefits" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# APPOINTMENTS
+# ============================================================================
+
+# Get available slots
+get_available_slots() {
+  curl -X GET "$BASE_URL/appointments/available-slots?service_type=cardiology&date_from=2025-01-10&date_to=2025-01-20" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Schedule appointment
+schedule_appointment() {
+  curl -X POST "$BASE_URL/appointments" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "provider_id": "PROV-001",
+      "service_type": "cardiology",
+      "appointment_type": "in_person",
+      "scheduled_date": "2025-01-15",
+      "scheduled_time": "10:00",
+      "reason_for_visit": "Follow-up for hypertension management"
+    }'
+}
+
+# Confirm appointment
+confirm_appointment() {
+  curl -X POST "$BASE_URL/appointments/$1/confirm" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Check in
+check_in() {
+  curl -X POST "$BASE_URL/appointments/$1/check-in" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Reschedule
+reschedule_appointment() {
+  curl -X POST "$BASE_URL/appointments/$1/reschedule" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "new_date": "2025-01-20",
+      "new_time": "14:00",
+      "reason": "Schedule conflict"
+    }'
+}
+
+# Cancel appointment
+cancel_appointment() {
+  curl -X DELETE "$BASE_URL/appointments/$1?reason=Personal%20emergency" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# MEDICAL RECORDS
+# ============================================================================
+
+# Get health summary
+get_health_summary() {
+  curl -X GET "$BASE_URL/patients/$1/health-summary" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Get lab results
+get_lab_results() {
+  curl -X GET "$BASE_URL/patients/$1/lab-results?status=final" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Download record as PDF
+download_record() {
+  curl -X GET "$BASE_URL/records/$1/download" \
+    -H "Authorization: Bearer $TOKEN" \
+    -o "medical_record_$1.pdf"
+}
+
+# ============================================================================
+# PRESCRIPTIONS
+# ============================================================================
+
+# List active prescriptions
+list_prescriptions() {
+  curl -X GET "$BASE_URL/prescriptions?patient_id=$1&status=active" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Request refill
+request_refill() {
+  curl -X POST "$BASE_URL/prescriptions/$1/refill" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "pharmacy_id": "PHARM-001",
+      "delivery_method": "pickup"
+    }'
+}
+
+# Check drug interactions
+check_interactions() {
+  curl -X POST "$BASE_URL/prescriptions/check-interactions" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "medication_id": "MED-123"
+    }'
+}
+
+# Search formulary
+search_formulary() {
+  curl -X GET "$BASE_URL/formulary?query=metformin" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Find nearby pharmacies
+find_pharmacies() {
+  curl -X GET "$BASE_URL/pharmacies?lat=50.4501&lng=30.5234&radius_km=5&type=network" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# PROGRAMS
+# ============================================================================
+
+# List programs
+list_programs() {
+  curl -X GET "$BASE_URL/programs?type=ptsd&virtual_available=true" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Enroll in program
+enroll_program() {
+  curl -X POST "$BASE_URL/programs/$1/enroll" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "preferred_start_date": "2025-02-01",
+      "notes": "Referred by primary care provider"
+    }'
+}
+
+# ============================================================================
+# DISABILITY
+# ============================================================================
+
+# Schedule assessment
+schedule_assessment() {
+  curl -X POST "$BASE_URL/disability/assessments" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "assessment_type": "initial",
+      "preferred_date": "2025-02-15",
+      "notes": "Combat-related injuries from service"
+    }'
+}
+
+# Upload document
+upload_document() {
+  curl -X POST "$BASE_URL/disability/assessments/$1/documents" \
+    -H "Authorization: Bearer $TOKEN" \
+    -F "file=@/path/to/document.pdf" \
+    -F "document_type=medical_record" \
+    -F "description=Hospital discharge summary"
+}
+
+# Get disability status
+get_disability_status() {
+  curl -X GET "$BASE_URL/patients/$1/disability-status" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# CLAIMS
+# ============================================================================
+
+# Submit claim
+submit_claim() {
+  curl -X POST "$BASE_URL/claims" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "provider_id": "PROV-001",
+      "service_date": "2025-01-05",
+      "service_type": "specialty_care",
+      "billed_amount": 5000,
+      "procedure_codes": ["99214"],
+      "diagnosis_codes": ["I10"]
+    }'
+}
+
+# Appeal claim
+appeal_claim() {
+  curl -X POST "$BASE_URL/claims/$1/appeal" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "reason": "Service was medically necessary for condition management"
+    }'
+}
+
+# Get cost sharing summary
+get_cost_sharing() {
+  curl -X GET "$BASE_URL/patients/$1/cost-sharing?year=2025" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# AUTHORIZATIONS
+# ============================================================================
+
+# Request authorization
+request_authorization() {
+  curl -X POST "$BASE_URL/authorizations" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "provider_id": "PROV-001",
+      "service_type": "specialty_care",
+      "service_description": "MRI of lumbar spine",
+      "procedure_codes": ["72148"],
+      "diagnosis_codes": ["M54.5"],
+      "clinical_notes": "Patient has chronic lower back pain not responding to conservative treatment",
+      "urgency": "standard"
+    }'
+}
+
+# Check if authorization required
+check_auth_required() {
+  curl -X POST "$BASE_URL/authorizations/check-required" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "service_type": "specialty_care",
+      "procedure_code": "72148",
+      "diagnosis_codes": ["M54.5"]
+    }'
+}
+
+# ============================================================================
+# PROVIDERS
+# ============================================================================
+
+# Search providers
+search_providers() {
+  curl -X GET "$BASE_URL/providers?specialty=cardiology&accepting_patients=true&telemedicine_available=true" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Find facilities
+find_facilities() {
+  curl -X GET "$BASE_URL/facilities?type=military&lat=50.4501&lng=30.5234&radius_km=25" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# INTEGRATION
+# ============================================================================
+
+# Sync with pension
+sync_pension() {
+  curl -X POST "$BASE_URL/integration/pension/sync" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001"
+    }'
+}
+
+# Get pension-based benefits
+get_pension_benefits() {
+  curl -X GET "$BASE_URL/integration/pension/benefits?patient_id=PAT-001" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# Coordinate benefits
+coordinate_benefits() {
+  curl -X POST "$BASE_URL/integration/insurance/coordinate-benefits" \
+    -H "Authorization: Bearer $TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "patient_id": "PAT-001",
+      "claim_amount": 10000,
+      "service_type": "specialty_care"
+    }'
+}
+
+# Get combined statement
+get_combined_statement() {
+  curl -X GET "$BASE_URL/integration/combined-statement?patient_id=PAT-001&month=1&year=2025" \
+    -H "Authorization: Bearer $TOKEN"
+}
+
+# ============================================================================
+# USAGE
+# ============================================================================
+
+echo "IVYAR Medical Program API Examples"
+echo "==================================="
+echo ""
+echo "Set your token: export TOKEN=your_token_here"
+echo ""
+echo "Available functions:"
+echo "  Patients:       register_patient, get_patient, check_eligibility, get_benefits"
+echo "  Appointments:   get_available_slots, schedule_appointment, confirm_appointment, check_in"
+echo "  Records:        get_health_summary, get_lab_results, download_record"
+echo "  Prescriptions:  list_prescriptions, request_refill, check_interactions, search_formulary"
+echo "  Programs:       list_programs, enroll_program"
+echo "  Disability:     schedule_assessment, upload_document, get_disability_status"
+echo "  Claims:         submit_claim, appeal_claim, get_cost_sharing"
+echo "  Authorizations: request_authorization, check_auth_required"
+echo "  Providers:      search_providers, find_facilities"
+echo "  Integration:    sync_pension, get_pension_benefits, coordinate_benefits, get_combined_statement"
+ENDFILE
+
+chmod +x medical-program/api/examples/curl-examples.sh
+
+echo "  ✅ cURL examples created"
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+
+echo ""
+echo "=============================================="
+echo "  MEDICAL PROGRAM API DOCUMENTATION COMPLETE"
+echo "=============================================="
+echo ""
+echo "Created files:"
+echo "  ✅ medical-program/api/openapi.yaml (~2500 lines)"
+echo "  ✅ medical-program/api/API_REFERENCE.md"
+echo "  ✅ medical-program/api/examples/curl-examples.sh"
+echo ""
+echo "API Endpoints Summary:"
+echo "  • Patients:        6 endpoints"
+echo "  • Appointments:    9 endpoints"
+echo "  • Medical Records: 5 endpoints"
+echo "  • Prescriptions:   7 endpoints"
+echo "  • Programs:        4 endpoints"
+echo "  • Disability:      6 endpoints"
+echo "  • Claims:          5 endpoints"
+echo "  • Authorizations:  4 endpoints"
+echo "  • Providers:       3 endpoints"
+echo "  • Integration:     5 endpoints"
+echo "  ─────────────────────────"
+echo "  TOTAL:            54 endpoints"
+echo ""
+echo "Next steps:"
+echo "  git add -A"
+echo "  git commit -m 'Add Medical Program API documentation with 54 endpoints'"
+echo "  git push origin main"
+echo ""
