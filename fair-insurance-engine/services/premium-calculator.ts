@@ -1,71 +1,111 @@
 /**
- * Premium Calculator
+ * Insurance Premium Calculator
  */
 
-import { Insured, PremiumCalculation, PensionIntegrationData } from '../models/types';
-import { InsuranceConfig } from '../config/insurance-config';
+import { InsuranceConfig, defaultConfig } from '../config/insurance-config';
 
-export interface PremiumCalculationInput {
-  productCode: string;
-  coverageAmount: number;
-  insured: Insured;
-  pensionData?: PensionIntegrationData;
+export interface PremiumInput {
+  product_code: string;
+  coverage_amount: number;
+  age: number;
+  is_military: boolean;
+  is_pensioner: boolean;
+  is_combat_veteran: boolean;
+  existing_policies: number;
+  risk_category: 'low' | 'medium' | 'high';
+}
+
+export interface PremiumResult {
+  base_premium: number;
+  age_adjustment: number;
+  risk_adjustment: number;
+  military_discount: number;
+  pensioner_discount: number;
+  multi_policy_discount: number;
+  combat_loading: number;
+  annual_premium: number;
+  monthly_premium: number;
+  breakdown: PremiumBreakdown[];
+}
+
+export interface PremiumBreakdown {
+  item: string;
+  amount: number;
+  type: 'base' | 'adjustment' | 'discount' | 'loading';
 }
 
 export class PremiumCalculator {
   private config: InsuranceConfig;
 
-  constructor(config: InsuranceConfig) {
+  constructor(config: InsuranceConfig = defaultConfig) {
     this.config = config;
   }
 
-  /**
-   * Calculate premium
-   */
-  calculate(input: PremiumCalculationInput): PremiumCalculation {
-    const { productCode, coverageAmount, insured, pensionData } = input;
-    
+  calculate(input: PremiumInput): PremiumResult {
+    const breakdown: PremiumBreakdown[] = [];
+
     // Base premium
-    const basePremium = this.calculateBasePremium(productCode, coverageAmount);
-    
+    const basePremium = this.calculateBasePremium(input.product_code, input.coverage_amount);
+    breakdown.push({ item: 'Base Premium', amount: basePremium, type: 'base' });
+
     // Age adjustment
-    const ageAdjustment = this.calculateAgeAdjustment(insured.date_of_birth, basePremium);
-    
+    const ageFactor = this.getAgeFactor(input.age);
+    const ageAdjustment = basePremium * (ageFactor - 1);
+    if (ageAdjustment !== 0) {
+      breakdown.push({ item: `Age Factor (${ageFactor})`, amount: ageAdjustment, type: 'adjustment' });
+    }
+
     // Risk adjustment
-    const riskAdjustment = this.calculateRiskAdjustment(insured.risk_category, basePremium);
-    
+    const riskFactor = this.getRiskFactor(input.risk_category);
+    const riskAdjustment = basePremium * (riskFactor - 1);
+    if (riskAdjustment !== 0) {
+      breakdown.push({ item: `Risk Factor (${input.risk_category})`, amount: riskAdjustment, type: 'adjustment' });
+    }
+
     // Military discount
-    const militaryDiscount = this.calculateMilitaryDiscount(insured, basePremium);
-    
+    let militaryDiscount = 0;
+    if (input.is_military) {
+      militaryDiscount = basePremium * this.config.discounts.military;
+      breakdown.push({ item: 'Military Discount (15%)', amount: -militaryDiscount, type: 'discount' });
+    }
+
     // Pensioner discount
-    const pensionerDiscount = pensionData 
-      ? basePremium * this.config.products.life.pensioner_discount
-      : 0;
-    
+    let pensionerDiscount = 0;
+    if (input.is_pensioner) {
+      pensionerDiscount = basePremium * this.config.discounts.pensioner;
+      breakdown.push({ item: 'Pensioner Discount (10%)', amount: -pensionerDiscount, type: 'discount' });
+    }
+
+    // Multi-policy discount
+    let multiPolicyDiscount = 0;
+    if (input.existing_policies >= 1) {
+      multiPolicyDiscount = basePremium * this.config.discounts.multi_policy;
+      breakdown.push({ item: 'Multi-Policy Discount (5%)', amount: -multiPolicyDiscount, type: 'discount' });
+    }
+
     // Combat loading
-    const combatLoading = insured.combat_service 
-      ? basePremium * this.config.products.life.combat_loading
-      : 0;
-    
-    // Multi-policy discount (mock)
-    const multiPolicyDiscount = 0;
-    
-    // Calculate annual premium
+    let combatLoading = 0;
+    if (input.is_combat_veteran) {
+      combatLoading = basePremium * this.config.loadings.combat_veteran;
+      breakdown.push({ item: 'Combat Veteran Loading (25%)', amount: combatLoading, type: 'loading' });
+    }
+
+    // Calculate total
     const annualPremium = Math.round(
-      basePremium + 
-      ageAdjustment + 
-      riskAdjustment + 
-      combatLoading - 
-      militaryDiscount - 
-      pensionerDiscount - 
+      basePremium +
+      ageAdjustment +
+      riskAdjustment +
+      combatLoading -
+      militaryDiscount -
+      pensionerDiscount -
       multiPolicyDiscount
     );
-    
+
     const monthlyPremium = Math.round(annualPremium / 12);
 
+    breakdown.push({ item: 'Annual Total', amount: annualPremium, type: 'base' });
+
     return {
-      product_code: productCode,
-      coverage_amount: coverageAmount,
       base_premium: basePremium,
       age_adjustment: ageAdjustment,
       risk_adjustment: riskAdjustment,
@@ -75,53 +115,41 @@ export class PremiumCalculator {
       combat_loading: combatLoading,
       annual_premium: annualPremium,
       monthly_premium: monthlyPremium,
-      calculation_date: new Date().toISOString(),
+      breakdown,
     };
   }
 
   private calculateBasePremium(productCode: string, coverage: number): number {
-    const rate = this.config.products.life.base_rate_per_1000;
-    return (coverage / 1000) * rate;
-  }
-
-  private calculateAgeAdjustment(dateOfBirth: string, basePremium: number): number {
-    const age = this.calculateAge(dateOfBirth);
-    let factor = 1.0;
-    
-    if (age <= 30) factor = 0.8;
-    else if (age <= 40) factor = 1.0;
-    else if (age <= 50) factor = 1.3;
-    else if (age <= 60) factor = 1.6;
-    else if (age <= 70) factor = 2.0;
-    else factor = 2.5;
-    
-    return basePremium * (factor - 1);
-  }
-
-  private calculateRiskAdjustment(riskCategory: string, basePremium: number): number {
-    const factors = this.config.underwriting.risk_factors;
-    const factor = factors[riskCategory as keyof typeof factors] || 1.0;
-    return basePremium * (factor - 1);
-  }
-
-  private calculateMilitaryDiscount(insured: Insured, basePremium: number): number {
-    if (insured.military_status === 'active_duty' || 
-        insured.military_status === 'veteran' ||
-        insured.military_status === 'retired') {
-      return basePremium * this.config.products.life.military_discount;
+    if (productCode.startsWith('LIFE')) {
+      return (coverage / 1000) * this.config.products.life.base_rate_per_1000;
     }
-    return 0;
+    
+    if (productCode.startsWith('HEALTH')) {
+      const plan = this.config.products.health.plans.find(p => 
+        productCode.includes(p.code)
+      );
+      return plan?.annual_premium || 3600;
+    }
+
+    return coverage * 0.005; // Default 0.5% of coverage
   }
 
-  private calculateAge(dateOfBirth: string): number {
-    const birth = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
+  private getAgeFactor(age: number): number {
+    if (age <= 30) return 0.80;
+    if (age <= 40) return 1.00;
+    if (age <= 50) return 1.30;
+    if (age <= 60) return 1.60;
+    if (age <= 70) return 2.00;
+    return 2.50;
+  }
+
+  private getRiskFactor(category: string): number {
+    switch (category) {
+      case 'low': return 0.90;
+      case 'medium': return 1.00;
+      case 'high': return 1.50;
+      default: return 1.00;
     }
-    return age;
   }
 }
 

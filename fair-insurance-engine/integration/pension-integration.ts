@@ -1,223 +1,159 @@
 /**
- * Pension Fund Integration
+ * Pension Fund Integration Service
  */
 
-import {
-  PensionIntegrationData,
-  PremiumDeductionRequest,
-  BenefitCoordinationResult,
-} from '../models/types';
-import { PensionIntegrationConfig } from '../config/insurance-config';
+export interface PensionData {
+  pensioner_id: string;
+  pension_amount: number;
+  pension_type: string;
+  service_years: number;
+  combat_years: number;
+  rank: string;
+  disability_group?: string;
+}
+
+export interface DeductionRequest {
+  pensioner_id: string;
+  policy_id: string;
+  amount: number;
+  description: string;
+}
+
+export interface DeductionResult {
+  success: boolean;
+  deduction_id?: string;
+  error?: string;
+}
 
 export class PensionIntegration {
-  private config: PensionIntegrationConfig;
+  private apiEndpoint: string;
+  private maxDeductionPct: number;
 
-  constructor(config: PensionIntegrationConfig) {
-    this.config = config;
+  constructor(apiEndpoint: string = '/api/pension/v1', maxDeductionPct: number = 10) {
+    this.apiEndpoint = apiEndpoint;
+    this.maxDeductionPct = maxDeductionPct;
   }
 
   /**
-   * Get pensioner data from Pension Fund
+   * Get pensioner data
    */
-  async getPensionerData(pensionerId: string): Promise<PensionIntegrationData> {
-    if (!this.config.enabled) {
-      throw new Error('Pension integration is disabled');
-    }
-
-    // Call Pension Fund API
-    const response = await this.callPensionAPI(`/registry/${pensionerId}`);
-    
+  async getPensionerData(pensionerId: string): Promise<PensionData> {
+    // In production, call Pension Fund API
+    // Mock implementation
     return {
-      pensioner_id: response.id,
-      pension_amount: response.current_pension_amount,
-      pension_type: response.pension_type,
-      disability_group: response.disability_group,
-      service_years: response.total_service_years,
-      combat_years: response.combat_service_years,
-      rank: response.military_rank,
-    };
-  }
-
-  /**
-   * Register premium deduction from pension
-   */
-  async registerPremiumDeduction(request: PremiumDeductionRequest): Promise<{
-    success: boolean;
-    deduction_id: string;
-  }> {
-    if (!this.config.premium_deduction_enabled) {
-      throw new Error('Premium deduction is disabled');
-    }
-
-    // Call Pension Fund API to register deduction
-    const response = await this.callPensionAPI('/deductions/register', 'POST', {
-      pensioner_id: request.pensioner_id,
-      type: 'insurance_premium',
-      amount: request.amount,
-      policy_id: request.policy_id,
-      recurring: true,
-      start_month: request.period_month,
-      start_year: request.period_year,
-    });
-
-    return {
-      success: true,
-      deduction_id: response.deduction_id,
-    };
-  }
-
-  /**
-   * Cancel premium deduction
-   */
-  async cancelPremiumDeduction(policyId: string, pensionerId: string): Promise<boolean> {
-    await this.callPensionAPI('/deductions/cancel', 'POST', {
       pensioner_id: pensionerId,
-      policy_id: policyId,
-    });
-    return true;
+      pension_amount: 45000,
+      pension_type: 'military',
+      service_years: 25,
+      combat_years: 5,
+      rank: 'colonel',
+    };
   }
 
   /**
-   * Check eligibility for auto-enrollment
+   * Check if premium deduction is allowed
    */
-  async checkAutoEnrollmentEligibility(pensionerId: string): Promise<{
+  async checkDeductionEligibility(pensionerId: string, premiumAmount: number): Promise<{
     eligible: boolean;
-    recommended_products: string[];
-    max_premium: number;
+    max_deduction: number;
+    reason?: string;
   }> {
-    const pensionerData = await this.getPensionerData(pensionerId);
-    
-    const maxPremium = pensionerData.pension_amount * 
-      (this.config.max_deduction_percentage / 100);
+    const data = await this.getPensionerData(pensionerId);
+    const maxDeduction = data.pension_amount * (this.maxDeductionPct / 100);
 
-    const recommendedProducts: string[] = [];
-    
-    // Recommend life insurance for all pensioners
-    recommendedProducts.push('LIFE-VET');
-    
-    // Recommend health insurance
-    if (pensionerData.pension_amount > 20000) {
-      recommendedProducts.push('HEALTH-STD');
-    } else {
-      recommendedProducts.push('HEALTH-BASIC');
-    }
-    
-    // Recommend disability coverage if not already disabled
-    if (!pensionerData.disability_group) {
-      recommendedProducts.push('DIS-INCOME');
+    if (premiumAmount > maxDeduction) {
+      return {
+        eligible: false,
+        max_deduction: maxDeduction,
+        reason: `Premium ${premiumAmount} exceeds maximum deduction ${maxDeduction} (${this.maxDeductionPct}% of pension)`,
+      };
     }
 
     return {
       eligible: true,
-      recommended_products: recommendedProducts,
-      max_premium: maxPremium,
+      max_deduction: maxDeduction,
     };
   }
 
   /**
-   * Coordinate benefits between insurance and pension
+   * Register premium deduction
    */
-  async coordinateBenefits(claimId: string): Promise<{
-    insurance_payout: number;
-    pension_benefit: number;
-    total: number;
-  }> {
-    if (!this.config.benefit_coordination) {
+  async registerDeduction(request: DeductionRequest): Promise<DeductionResult> {
+    const eligibility = await this.checkDeductionEligibility(
+      request.pensioner_id,
+      request.amount
+    );
+
+    if (!eligibility.eligible) {
       return {
-        insurance_payout: 0,
-        pension_benefit: 0,
-        total: 0,
+        success: false,
+        error: eligibility.reason,
       };
     }
 
-    // Mock implementation
-    // In production, would coordinate with Pension Fund
-    // to prevent duplicate benefits and maximize total payout
-    
+    // In production, call Pension Fund API
     return {
-      insurance_payout: 50000,
-      pension_benefit: 30000,
-      total: 80000,
+      success: true,
+      deduction_id: `DED-${Date.now()}`,
     };
   }
 
   /**
-   * Sync insured profile with pension data
+   * Cancel deduction
    */
-  async syncWithPensionProfile(pensionerId: string): Promise<{
-    synced: boolean;
-    updates: Record<string, any>;
+  async cancelDeduction(deductionId: string): Promise<boolean> {
+    // In production, call Pension Fund API
+    return true;
+  }
+
+  /**
+   * Get recommended products for pensioner
+   */
+  async getRecommendedProducts(pensionerId: string): Promise<string[]> {
+    const data = await this.getPensionerData(pensionerId);
+    const products: string[] = [];
+
+    // Life insurance for all
+    products.push('LIFE-VET');
+
+    // Health based on pension amount
+    if (data.pension_amount > 30000) {
+      products.push('HEALTH-STD');
+    } else {
+      products.push('HEALTH-BASIC');
+    }
+
+    // Disability if no existing disability
+    if (!data.disability_group) {
+      products.push('DIS-INCOME');
+    }
+
+    return products;
+  }
+
+  /**
+   * Coordinate benefits for claim
+   */
+  async coordinateBenefits(claimId: string, pensionerId: string, claimType: string): Promise<{
+    insurance_benefit: number;
+    pension_benefit: number;
+    total: number;
+    coordination_type: string;
   }> {
-    const pensionData = await this.getPensionerData(pensionerId);
-    
-    return {
-      synced: true,
-      updates: {
-        service_years: pensionData.service_years,
-        combat_years: pensionData.combat_years,
-        rank: pensionData.rank,
-        disability_group: pensionData.disability_group,
-      },
-    };
-  }
-
-  /**
-   * Get combined pension and insurance statement
-   */
-  async getCombinedStatement(pensionerId: string): Promise<{
-    pension: {
-      monthly_amount: number;
-      annual_amount: number;
-    };
-    insurance: {
-      policies: number;
-      total_coverage: number;
-      monthly_premiums: number;
-    };
-    net_monthly: number;
-  }> {
-    const pensionData = await this.getPensionerData(pensionerId);
-    
-    // Mock insurance data
-    const insuranceData = {
-      policies: 2,
-      total_coverage: 1000000,
-      monthly_premiums: 1500,
-    };
-
-    return {
-      pension: {
-        monthly_amount: pensionData.pension_amount,
-        annual_amount: pensionData.pension_amount * 12,
-      },
-      insurance: insuranceData,
-      net_monthly: pensionData.pension_amount - insuranceData.monthly_premiums,
-    };
-  }
-
-  /**
-   * Call Pension Fund API
-   */
-  private async callPensionAPI(
-    endpoint: string,
-    method: string = 'GET',
-    body?: any
-  ): Promise<any> {
-    const url = `${this.config.api_endpoint}${endpoint}`;
-    
     // Mock implementation
-    // In production, would make actual HTTP request
-    console.log(`Calling Pension API: ${method} ${url}`);
-    
-    // Return mock data
+    const insuranceBenefit = 50000;
+    let pensionBenefit = 0;
+
+    // Pension may provide additional benefit for disability/death
+    if (claimType === 'disability' || claimType === 'death') {
+      pensionBenefit = 100000; // One-time pension benefit
+    }
+
     return {
-      id: 'PEN-2025-000001',
-      current_pension_amount: 45000,
-      pension_type: 'military',
-      disability_group: null,
-      total_service_years: 25,
-      combat_service_years: 5,
-      military_rank: 'colonel',
+      insurance_benefit: insuranceBenefit,
+      pension_benefit: pensionBenefit,
+      total: insuranceBenefit + pensionBenefit,
+      coordination_type: pensionBenefit > 0 ? 'supplemental' : 'insurance_primary',
     };
   }
 }

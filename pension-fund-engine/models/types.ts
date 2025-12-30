@@ -1,5 +1,6 @@
 /**
  * Pension Fund Engine - Type Definitions
+ * IVYAR Governance Platform
  */
 
 // ============================================================================
@@ -16,7 +17,7 @@ export enum PensionType {
 }
 
 export enum MilitaryRank {
-  // Enlisted
+  // Enlisted (E-1 to E-9)
   SOLDIER = 'soldier',
   SENIOR_SOLDIER = 'senior_soldier',
   JUNIOR_SERGEANT = 'junior_sergeant',
@@ -25,7 +26,8 @@ export enum MilitaryRank {
   CHIEF_SERGEANT = 'chief_sergeant',
   STAFF_SERGEANT = 'staff_sergeant',
   MASTER_SERGEANT = 'master_sergeant',
-  // Officers
+  SENIOR_MASTER_SERGEANT = 'senior_master_sergeant',
+  // Officers (O-1 to O-7)
   JUNIOR_LIEUTENANT = 'junior_lieutenant',
   LIEUTENANT = 'lieutenant',
   SENIOR_LIEUTENANT = 'senior_lieutenant',
@@ -33,6 +35,7 @@ export enum MilitaryRank {
   MAJOR = 'major',
   LIEUTENANT_COLONEL = 'lieutenant_colonel',
   COLONEL = 'colonel',
+  // Generals (G-1 to G-4)
   BRIGADIER_GENERAL = 'brigadier_general',
   MAJOR_GENERAL = 'major_general',
   LIEUTENANT_GENERAL = 'lieutenant_general',
@@ -48,9 +51,17 @@ export enum ServiceStatus {
 }
 
 export enum DisabilityGroup {
-  GROUP_1 = 'group_1', // Most severe
-  GROUP_2 = 'group_2',
-  GROUP_3 = 'group_3', // Least severe
+  GROUP_1 = 'group_1', // Most severe (100% incapacity)
+  GROUP_2 = 'group_2', // Significant (75% incapacity)
+  GROUP_3 = 'group_3', // Partial (50% incapacity)
+}
+
+export enum DisabilityCause {
+  COMBAT = 'combat',           // Direct combat injury
+  COMBAT_ILLNESS = 'combat_illness', // Illness from combat conditions
+  SERVICE = 'service',         // Service-related injury
+  SERVICE_ILLNESS = 'service_illness', // Service-related illness
+  GENERAL = 'general',         // Not service-related
 }
 
 export enum PaymentStatus {
@@ -59,6 +70,7 @@ export enum PaymentStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
+  RETRY_SCHEDULED = 'retry_scheduled',
 }
 
 export enum PaymentMethod {
@@ -68,24 +80,16 @@ export enum PaymentMethod {
   INTERNATIONAL = 'international',
 }
 
-export enum ContributionSource {
-  STATE = 'state',
-  EMPLOYER = 'employer',
-  EMPLOYEE = 'employee',
-  DONOR = 'donor',
-  MILITARY_BONUS = 'military_bonus',
-}
-
 // ============================================================================
 // INTERFACES
 // ============================================================================
 
 export interface Pensioner {
   id: string;
-  personal_id: string; // National ID
+  personal_id: string;
   tax_id: string;
   
-  // Personal Info
+  // Personal
   first_name: string;
   last_name: string;
   patronymic?: string;
@@ -97,29 +101,25 @@ export interface Pensioner {
   phone: string;
   address: Address;
   
-  // Service Info
+  // Military Service
   pension_type: PensionType;
   service_status: ServiceStatus;
   military_rank?: MilitaryRank;
-  
-  // Service History
   service_start_date: string;
   service_end_date?: string;
   total_service_years: number;
   combat_service_years: number;
   special_conditions_years: number;
   
-  // Disability (if applicable)
+  // Disability
   disability_group?: DisabilityGroup;
-  disability_cause?: 'combat' | 'service' | 'general';
+  disability_cause?: DisabilityCause;
   disability_date?: string;
   
-  // Pension Details
-  pension_start_date?: string;
+  // Financial
   base_salary_at_retirement: number;
-  current_pension_amount: number;
-  
-  // Account
+  current_pension_amount?: number;
+  pension_start_date?: string;
   bank_account?: BankAccount;
   
   // Status
@@ -140,90 +140,56 @@ export interface Address {
 
 export interface BankAccount {
   bank_name: string;
-  bank_code: string; // MFO in Ukraine
-  account_number: string;
-  iban?: string;
+  bank_code: string;
+  iban: string;
   swift?: string;
   currency: string;
-}
-
-export interface Contribution {
-  id: string;
-  pensioner_id: string;
-  source: ContributionSource;
-  amount: number;
-  currency: string;
-  period_start: string;
-  period_end: string;
-  employer_id?: string;
-  donor_program_id?: string;
-  notes?: string;
-  created_at: string;
 }
 
 export interface PensionBenefit {
   id: string;
   pensioner_id: string;
   calculation_date: string;
+  effective_from: string;
+  effective_to?: string;
   
-  // Base Calculation
+  // Calculation Breakdown
+  base_salary: number;
+  pension_percentage: number;
   base_amount: number;
+  
+  // Coefficients
   service_coefficient: number;
   rank_coefficient: number;
   
-  // Additions
+  // Bonuses
   combat_bonus: number;
   disability_bonus: number;
   special_conditions_bonus: number;
   dependents_bonus: number;
+  awards_bonus: number;
   
   // Adjustments
   indexation_amount: number;
-  one_time_payments: number;
   deductions: number;
   
-  // Final
+  // Totals
   gross_amount: number;
   tax_amount: number;
   net_amount: number;
   
   // Metadata
   formula_version: string;
-  calculation_details: CalculationDetails;
-  effective_from: string;
-  effective_to?: string;
+  calculation_steps: CalculationStep[];
 }
 
-export interface CalculationDetails {
-  base_salary: number;
-  years_of_service: number;
-  combat_years: number;
-  rank_at_retirement: MilitaryRank;
-  disability_group?: DisabilityGroup;
-  dependents_count: number;
-  special_status: string[];
-  applied_coefficients: CoefficientBreakdown[];
-  applied_bonuses: BonusBreakdown[];
-  indexation_history: IndexationEntry[];
-}
-
-export interface CoefficientBreakdown {
+export interface CalculationStep {
+  step: number;
   name: string;
-  value: number;
+  formula: string;
+  inputs: Record<string, number>;
+  result: number;
   description: string;
-}
-
-export interface BonusBreakdown {
-  type: string;
-  amount: number;
-  reason: string;
-}
-
-export interface IndexationEntry {
-  date: string;
-  rate: number;
-  type: 'inflation' | 'special' | 'government';
-  amount_change: number;
 }
 
 export interface Payment {
@@ -233,58 +199,66 @@ export interface Payment {
   
   amount: number;
   currency: string;
-  
-  payment_date: string;
   period_month: number;
   period_year: number;
   
-  method: PaymentMethod;
+  payment_method: PaymentMethod;
   status: PaymentStatus;
-  
-  bank_reference?: string;
-  transaction_id?: string;
-  
-  retry_count: number;
-  failure_reason?: string;
-  
-  created_at: string;
+  scheduled_date: string;
   processed_at?: string;
   completed_at?: string;
+  
+  transaction_id?: string;
+  bank_reference?: string;
+  
+  retry_count: number;
+  error_message?: string;
+  
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EligibilityResult {
+  eligible: boolean;
+  pension_type: PensionType;
+  reasons: string[];
+  missing_requirements: string[];
+  warnings: string[];
+  earliest_retirement_date?: string;
+  estimated_pension?: number;
 }
 
 export interface ActuarialForecast {
   id: string;
   forecast_date: string;
-  forecast_horizon_years: number;
+  forecast_years: number;
   
-  // Current State
-  current_beneficiaries: number;
-  current_monthly_liability: number;
-  current_fund_balance: number;
+  current_state: {
+    beneficiaries: number;
+    monthly_liability: number;
+    fund_balance: number;
+    funding_ratio: number;
+  };
   
-  // Projections
-  yearly_projections: YearlyProjection[];
+  projections: YearlyProjection[];
   
-  // Risk Metrics
-  funding_ratio: number;
-  deficit_risk: number;
-  sustainability_score: number;
+  risk_metrics: {
+    funding_ratio: number;
+    deficit_risk: number;
+    sustainability_score: number;
+  };
   
-  // Assumptions
   assumptions: ForecastAssumptions;
-  
-  created_by: string;
-  created_at: string;
 }
 
 export interface YearlyProjection {
   year: number;
-  expected_beneficiaries: number;
-  expected_new_retirees: number;
-  expected_deaths: number;
-  projected_monthly_payment: number;
-  projected_annual_liability: number;
-  projected_fund_balance: number;
+  beneficiaries: number;
+  new_retirees: number;
+  deaths: number;
+  monthly_payment: number;
+  annual_liability: number;
+  fund_balance: number;
   funding_ratio: number;
 }
 
@@ -295,26 +269,4 @@ export interface ForecastAssumptions {
   new_entrants_rate: number;
   salary_growth_rate: number;
   investment_return_rate: number;
-}
-
-export interface EligibilityResult {
-  eligible: boolean;
-  pension_type: PensionType;
-  earliest_retirement_date?: string;
-  reasons: string[];
-  missing_requirements: string[];
-  warnings: string[];
-}
-
-export interface AuditEntry {
-  id: string;
-  timestamp: string;
-  entity_type: string;
-  entity_id: string;
-  action: string;
-  user_id: string;
-  old_value?: any;
-  new_value?: any;
-  ip_address?: string;
-  details: Record<string, any>;
 }

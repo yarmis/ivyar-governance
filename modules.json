@@ -1,120 +1,101 @@
 {
   "platform": "IVYAR Governance",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "updated": "2025-01-01",
   "modules": [
     {
       "id": "dashboards",
       "name": "Dashboards",
-      "description": "Interactive monitoring dashboards",
       "path": "./dashboards/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "visualization"
+      "status": "active"
     },
     {
       "id": "api-docs",
       "name": "API Documentation",
-      "description": "OpenAPI 3.1 specifications",
       "path": "./api-docs/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "documentation"
+      "status": "active"
     },
     {
       "id": "deployment",
       "name": "Deployment Guide",
-      "description": "Docker, Kubernetes, CI/CD configurations",
       "path": "./deployment/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "infrastructure"
+      "status": "active"
     },
     {
       "id": "integration-tests",
       "name": "Integration Tests",
-      "description": "End-to-end test suites with Playwright",
       "path": "./integration-tests/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "testing"
+      "status": "active"
     },
     {
       "id": "mobile-app",
       "name": "Mobile App Specs",
-      "description": "React Native mobile application specifications",
       "path": "./mobile-app-specs/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "mobile"
+      "status": "active"
     },
     {
       "id": "localization",
       "name": "Localization",
-      "description": "Multi-language support (EN, UK, DE, PL)",
       "path": "./localization/",
-      "version": "1.0.0",
       "status": "active",
-      "category": "i18n",
       "languages": ["en", "uk", "de", "pl"]
     },
     {
       "id": "security-docs",
       "name": "Security Documentation",
-      "description": "Threat models, incident response, security policies",
       "path": "./security-docs/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "security"
+      "status": "active"
     },
     {
       "id": "compliance-engine",
       "name": "Compliance Engine",
-      "description": "Regulatory validation and compliance checking",
       "path": "./compliance-engine/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "compliance",
-      "standards": ["STANAG", "MIL-STD", "ISO"]
+      "status": "active"
     },
     {
       "id": "ai-administrator",
       "name": "AI Administrator",
-      "description": "AI-powered assistance and automation",
       "path": "./ai-administrator/",
-      "version": "1.0.0",
-      "status": "active",
-      "category": "ai",
-      "providers": ["anthropic", "openai"]
+      "status": "active"
     },
     {
       "id": "pension-fund-engine",
       "name": "Pension Fund Engine",
-      "description": "Military pension administration system",
       "path": "./pension-fund-engine/",
-      "version": "1.0.0",
       "status": "active",
-      "category": "pension",
+      "version": "1.0.0",
       "features": [
         "benefit-calculator",
         "eligibility-engine",
         "payment-processing",
         "actuarial-forecast",
-        "indexation",
-        "compliance"
+        "indexation"
       ],
-      "api": {
-        "base_url": "/pension/v1",
-        "endpoints": 40,
-        "openapi": "./pension-fund-engine/api/docs/pension-api-openapi.yaml"
-      }
+      "integrations": ["fair-insurance-engine"]
+    },
+    {
+      "id": "fair-insurance-engine",
+      "name": "Fair Insurance Engine",
+      "path": "./fair-insurance-engine/",
+      "status": "active",
+      "version": "1.0.0",
+      "products": [
+        "LIFE-MIL",
+        "LIFE-VET",
+        "HEALTH-BASIC",
+        "HEALTH-STD",
+        "HEALTH-PREM",
+        "DIS-INCOME"
+      ],
+      "integrations": ["pension-fund-engine"]
+    },
+    {
+      "id": "integration-hub",
+      "name": "Integration Hub",
+      "path": "./integration-hub/",
+      "status": "active",
+      "version": "1.0.0",
+      "bridges": ["pension-insurance"]
     }
-  ],
-  "categories": {
-    "core": ["dashboards", "api-docs"],
-    "infrastructure": ["deployment", "integration-tests"],
-    "frontend": ["mobile-app", "localization"],
-    "security": ["security-docs", "compliance-engine"],
-    "services": ["ai-administrator", "pension-fund-engine"]
-  }
+  ]
 }

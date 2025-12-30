@@ -2,108 +2,65 @@
 
 **Integrated Vehicle Yard & Asset Registry**
 
-Military logistics, fleet management, and pension administration platform for Ukraine's Armed Forces.
+Military logistics, fleet management, pension administration, and insurance platform.
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
-![License](https://img.shields.io/badge/license-Government-green)
-![Status](https://img.shields.io/badge/status-Production-success)
-
----
-
-## 🎯 Overview
-
-IVYAR is a comprehensive governance platform providing:
-
-- **Fleet Management** — Vehicle tracking, maintenance, parts inventory
-- **Repair Coverage** — Warranty management, service contracts
-- **Compliance** — STANAG, MIL-STD, NATO standards
-- **AI Administrator** — Intelligent assistance for logistics
-- **Pension Fund** — Military pension administration
+![Version](https://img.shields.io/badge/version-2.1.0-blue)
+![Modules](https://img.shields.io/badge/modules-12-green)
+![License](https://img.shields.io/badge/license-Government-orange)
 
 ---
 
-## 📦 Platform Modules
+## Platform Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       IVYAR GOVERNANCE PLATFORM                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                        CORE MODULES                                   │  │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │  │
+│  │  │  Fleet  │ │  Parts  │ │ Repairs │ │Compliance│ │   AI    │       │  │
+│  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘       │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                    FINANCIAL MODULES                                  │  │
+│  │  ┌─────────────────────┐     ┌─────────────────────┐                │  │
+│  │  │   PENSION FUND      │◄───►│   FAIR INSURANCE    │                │  │
+│  │  │   • Registry        │     │   • Life/Health     │                │  │
+│  │  │   • Benefits        │     │   • Claims          │                │  │
+│  │  │   • Payments        │     │   • Underwriting    │                │  │
+│  │  │   • Forecasting     │     │   • Premium Calc    │                │  │
+│  │  └─────────────────────┘     └─────────────────────┘                │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                    INTEGRATION HUB                                    │  │
+│  │            Pension-Insurance Bridge | Unified APIs                    │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+## Modules
 
 | Module | Description | Status |
 |--------|-------------|--------|
-| [Dashboards](./dashboards/) | Interactive monitoring dashboards | ✅ Active |
-| [API Documentation](./api-docs/) | OpenAPI 3.1 specifications | ✅ Active |
-| [Deployment Guide](./deployment/) | Docker, K8s, CI/CD | ✅ Active |
+| [Dashboards](./dashboards/) | Interactive monitoring | ✅ Active |
+| [API Documentation](./api-docs/) | OpenAPI specs | ✅ Active |
+| [Deployment](./deployment/) | Docker, K8s, CI/CD | ✅ Active |
 | [Integration Tests](./integration-tests/) | E2E test suites | ✅ Active |
-| [Mobile App](./mobile-app-specs/) | React Native specifications | ✅ Active |
+| [Mobile App](./mobile-app-specs/) | React Native specs | ✅ Active |
 | [Localization](./localization/) | EN, UK, DE, PL | ✅ Active |
-| [Security](./security-docs/) | Threat models, incident response | ✅ Active |
+| [Security](./security-docs/) | Threat models | ✅ Active |
 | [Compliance Engine](./compliance-engine/) | Regulatory validation | ✅ Active |
-| [AI Administrator](./ai-administrator/) | AI-powered assistance | ✅ Active |
-| [**Pension Fund**](./pension-fund-engine/) | **Military pension system** | ✅ **NEW** |
+| [AI Administrator](./ai-administrator/) | AI assistance | ✅ Active |
+| [**Pension Fund**](./pension-fund-engine/) | Pension administration | ✅ Active |
+| [**Fair Insurance**](./fair-insurance-engine/) | Insurance management | ✅ Active |
+| [**Integration Hub**](./integration-hub/) | Module integration | ✅ Active |
 
----
-
-## 🏛️ Pension Fund Engine
-
-### Overview
-
-Complete military pension administration system:
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    PENSION FUND ENGINE                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  📋 Registry        💰 Benefits       💳 Payments               │
-│  125,430 pensioners  Formula-based    Monthly batch              │
-│                      calculations     processing                 │
-│                                                                  │
-│  📊 Forecasting     🔒 Compliance     📈 Analytics              │
-│  30-year actuarial  GDPR, SOC2       Real-time                  │
-│  projections        ISO 27001        dashboards                  │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Key Features
-
-| Feature | Description |
-|---------|-------------|
-| **Benefit Calculator** | Base + Combat + Disability + Rank coefficients |
-| **Eligibility Engine** | Military, Government, Disability, Survivor |
-| **Payment Processing** | Bank transfer, Postal, International |
-| **Indexation** | Automatic inflation adjustments |
-| **Actuarial Forecast** | Long-term fund sustainability |
-| **Fraud Detection** | AI-powered anomaly detection |
-
-### Pension Formula
-
-```
-PENSION = BASE_SALARY × (50% + 2% × EXTRA_YEARS) × RANK_COEF + BONUSES
-
-Where:
-- Combat years count 3× (1 combat year = 3 regular years)
-- Rank coefficients: 1.00 (Soldier) → 2.60 (General)
-- Disability bonus: 15-75% based on group and cause
-- Maximum: 90% of base salary, capped at 150,000 ₴
-```
-
-### Quick Links
-
-- [📘 Governance Policy](./pension-fund-engine/policies/pension-governance-policy.md)
-- [🔢 Calculation Formulas](./pension-fund-engine/docs/pension-calculation-formulas.md)
-- [🎨 UI Design System](./pension-fund-engine/ui/pension-portal-ui-design.md)
-- [🔌 API Reference](./pension-fund-engine/api/docs/pension-api-reference.md)
-- [📄 OpenAPI Spec](./pension-fund-engine/api/docs/pension-api-openapi.yaml)
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 20+
-- PostgreSQL 15+
-- Redis 7+
-- Docker (optional)
-
-### Installation
+## Quick Start
 
 ```bash
 # Clone repository
@@ -113,105 +70,59 @@ cd ivyar-governance
 # Install dependencies
 npm install
 
-# Configure environment
-cp .env.example .env
-
-# Run migrations
-npm run db:migrate
-
-# Start development server
+# Run development
 npm run dev
+
+# Run tests
+npm test
 ```
 
-### Docker Deployment
+## Pension-Insurance Integration
 
-```bash
-docker-compose up -d
+### Key Features
+
+- **Premium Deduction**: Auto-deduct insurance premiums from pension (max 10%)
+- **Benefit Coordination**: Coordinated payouts for disability/death claims
+- **Auto-Enrollment**: Pensioners auto-enrolled in recommended coverage
+- **Unified Profile**: Single view of pension and insurance status
+
+### Example: Pension Calculation
+
+```typescript
+const result = calculator.calculate({
+  pensioner: {
+    total_service_years: 25,
+    combat_service_years: 5,
+    military_rank: 'colonel',
+    base_salary_at_retirement: 65000,
+  }
+});
+
+// Result:
+// - Effective Years: 35 (25 + 5×2)
+// - Pension %: 80% (50 + 15×2)
+// - Base: 52,000 ₴
+// - With coefficients: ~115,000 ₴
 ```
 
----
+## Documentation
 
-## 🏗️ Architecture
+- [Pension Calculation Formulas](./pension-fund-engine/docs/pension-calculation-formulas.md)
+- [Pension Governance Policy](./pension-fund-engine/policies/pension-governance-policy.md)
+- [Insurance API Reference](./fair-insurance-engine/api/README.md)
+- [Integration Guide](./integration-hub/README.md)
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           IVYAR GOVERNANCE PLATFORM                          │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                         PRESENTATION LAYER                            │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │  │
-│  │  │   Web App   │  │ Mobile App  │  │   Admin     │  │  Pension    │ │  │
-│  │  │  (React)    │  │   (RN)      │  │  Portal     │  │  Portal     │ │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘ │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-│                                      │                                      │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                           API GATEWAY                                 │  │
-│  │              Authentication │ Rate Limiting │ Routing                 │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-│                                      │                                      │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                          SERVICE LAYER                                │  │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐  │  │
-│  │  │  Fleet   │ │  Parts   │ │ Repairs  │ │Compliance│ │ Pension  │  │  │
-│  │  │ Service  │ │ Service  │ │ Service  │ │ Engine   │ │ Engine   │  │  │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘  │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-│                                      │                                      │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                          DATA LAYER                                   │  │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐               │  │
-│  │  │PostgreSQL│ │  Redis   │ │   S3     │ │Elasticsearch│            │  │
-│  │  │  (Main)  │ │ (Cache)  │ │ (Files)  │ │ (Search)   │             │  │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘               │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 📊 Module Statistics
+## Statistics
 
 | Metric | Value |
 |--------|-------|
-| Total Modules | 10 |
-| Total Files | ~170+ |
+| Total Modules | 12 |
 | API Endpoints | 100+ |
 | Test Coverage | 85%+ |
-| Languages | EN, UK, DE, PL |
+| Languages | 4 (EN, UK, DE, PL) |
 
 ---
 
-## 🔐 Security
-
-- JWT + mTLS authentication
-- Role-based access control (RBAC)
-- Encryption at rest (AES-256)
-- Encryption in transit (TLS 1.3)
-- Audit logging
-- GDPR compliant
-
----
-
-## 📞 Support
-
-| Channel | Contact |
-|---------|---------|
-| Documentation | [docs.ivyar.gov.ua](https://docs.ivyar.gov.ua) |
-| API Support | api-support@ivyar.gov.ua |
-| Security | security@ivyar.gov.ua |
-| General | support@ivyar.gov.ua |
-
----
-
-## 📜 License
-
-Government Use License — Ministry of Defense of Ukraine
-
----
-
-*IVYAR Governance Platform v2.0.0*  
-*Serving Ukraine's Armed Forces*  
-🇺🇦 **Слава Україні!**
+**IVYAR Governance Platform v2.1.0**  
+*Ministry of Defense of Ukraine*  
+🇺🇦 Slava Ukraini!
