@@ -1,0 +1,229 @@
+{
+  "version": "1.0.0",
+  "description": "Golden Rules Engine - Policy rules for IVYAR AI Administrator",
+  
+  "rule_categories": [
+    {"id": "safety", "name": "Safety Rules", "priority_range": [90, 100], "enforcement": "strict"},
+    {"id": "compliance", "name": "Compliance Rules", "priority_range": [80, 89], "enforcement": "strict"},
+    {"id": "business", "name": "Business Rules", "priority_range": [50, 79], "enforcement": "normal"},
+    {"id": "domain", "name": "Domain Rules", "priority_range": [30, 49], "enforcement": "normal"},
+    {"id": "quality", "name": "Quality Rules", "priority_range": [10, 29], "enforcement": "advisory"}
+  ],
+
+  "rules": {
+    "safety": [
+      {
+        "id": "SAFETY-001",
+        "name": "Safety Critical Part Warning",
+        "priority": 100,
+        "enabled": true,
+        "condition": {"and": [{"==": [{"var": "part.safety_critical"}, true]}]},
+        "action": "warn",
+        "message": "⚠️ SAFETY-CRITICAL PART: Ensure proper verification before installation."
+      },
+      {
+        "id": "SAFETY-002",
+        "name": "Brake System Verification",
+        "priority": 99,
+        "enabled": true,
+        "condition": {"==": [{"var": "part.category"}, "brakes"]},
+        "action": "modify",
+        "message": "⚠️ BRAKE SYSTEM: Verify pad material and friction coefficient."
+      },
+      {
+        "id": "SAFETY-003",
+        "name": "Prevent Unsafe Repair Downgrade",
+        "priority": 98,
+        "enabled": true,
+        "condition": {"and": [{"==": [{"var": "part.safety_critical"}, true]}, {"<": [{"var": "requested_level"}, {"var": "minimum_level"}]}]},
+        "action": "block",
+        "message": "❌ BLOCKED: Safety-critical part requires minimum R{minimum_level}."
+      },
+      {
+        "id": "SAFETY-004",
+        "name": "Fuel System Precautions",
+        "priority": 97,
+        "enabled": true,
+        "condition": {"==": [{"var": "part.category"}, "fuel_system"]},
+        "action": "modify",
+        "message": "🔥 FUEL SYSTEM: Ensure de-pressurized. No ignition sources."
+      },
+      {
+        "id": "SAFETY-005",
+        "name": "High Voltage Warning",
+        "priority": 96,
+        "enabled": true,
+        "condition": {"and": [{"==": [{"var": "part.category"}, "electrical"]}, {">": [{"var": "part.voltage"}, 48]}]},
+        "action": "warn",
+        "message": "⚡ HIGH VOLTAGE: Qualified personnel only."
+      }
+    ],
+    "compliance": [
+      {
+        "id": "COMPL-001",
+        "name": "Export Control Check",
+        "priority": 89,
+        "enabled": true,
+        "condition": {"or": [{"!=": [{"var": "part.eccn"}, null]}, {"==": [{"var": "part.dual_use"}, true]}]},
+        "action": "warn",
+        "message": "🛃 EXPORT CONTROL: Verify end-user compliance."
+      },
+      {
+        "id": "COMPL-002",
+        "name": "Sanctioned Entity Block",
+        "priority": 88,
+        "enabled": true,
+        "condition": {"in": [{"var": "destination_country"}, ["RU", "BY", "IR", "KP", "SY"]]},
+        "action": "block",
+        "message": "🚫 SANCTIONED: Transaction blocked."
+      },
+      {
+        "id": "COMPL-003",
+        "name": "Military Spec Verification",
+        "priority": 87,
+        "enabled": true,
+        "condition": {"==": [{"var": "part.mil_spec"}, true]},
+        "action": "escalate",
+        "message": "🔐 VERIFICATION REQUIRED: Military-spec part."
+      },
+      {
+        "id": "COMPL-004",
+        "name": "Hazmat Classification",
+        "priority": 85,
+        "enabled": true,
+        "condition": {"!=": [{"var": "part.hazmat_class"}, null]},
+        "action": "warn",
+        "message": "☣️ HAZMAT: Special handling required."
+      },
+      {
+        "id": "COMPL-005",
+        "name": "End User Certificate Required",
+        "priority": 84,
+        "enabled": true,
+        "condition": {"and": [{"==": [{"var": "part.euc_required"}, true]}, {"!": [{"var": "euc_on_file"}]}]},
+        "action": "block",
+        "message": "📋 EUC REQUIRED: End User Certificate must be on file."
+      }
+    ],
+    "business": [
+      {
+        "id": "BIZ-001",
+        "name": "Confidence Threshold",
+        "priority": 75,
+        "enabled": true,
+        "condition": {"<": [{"var": "analog.confidence"}, 0.75]},
+        "action": "modify",
+        "message": "Results filtered to >75% confidence."
+      },
+      {
+        "id": "BIZ-002",
+        "name": "Prioritize OEM for Safety",
+        "priority": 74,
+        "enabled": true,
+        "condition": {"==": [{"var": "part.safety_critical"}, true]},
+        "action": "modify",
+        "message": "OEM parts listed first for safety-critical components."
+      },
+      {
+        "id": "BIZ-003",
+        "name": "Include Pricing",
+        "priority": 70,
+        "enabled": true,
+        "condition": {"==": [{"var": "user.show_pricing"}, true]},
+        "action": "modify",
+        "message": "Pricing information included."
+      },
+      {
+        "id": "BIZ-004",
+        "name": "Escalation Path",
+        "priority": 65,
+        "enabled": true,
+        "condition": {"==": [{"var": "intent"}, "repair_advisor"]},
+        "action": "modify",
+        "message": "Escalation path included."
+      },
+      {
+        "id": "BIZ-005",
+        "name": "Platform Verification",
+        "priority": 60,
+        "enabled": true,
+        "condition": {"!=": [{"var": "context.platform"}, null]},
+        "action": "modify",
+        "message": "Results filtered by platform."
+      }
+    ],
+    "domain": [
+      {
+        "id": "DOM-001",
+        "name": "Engine-Category Validation",
+        "priority": 45,
+        "enabled": true,
+        "condition": {"and": [{"==": [{"var": "domain"}, "engine"]}, {"in": [{"var": "category"}, ["brakes", "suspension"]]}]},
+        "action": "warn",
+        "message": "Category mismatch for engine domain."
+      },
+      {
+        "id": "DOM-002",
+        "name": "Tracked Vehicle Alert",
+        "priority": 44,
+        "enabled": true,
+        "condition": {"in": [{"var": "platform.type"}, ["APC", "IFV", "MBT"]]},
+        "action": "modify",
+        "message": "🔧 Specialist required for tracked vehicle."
+      },
+      {
+        "id": "DOM-003",
+        "name": "Service Interval Info",
+        "priority": 43,
+        "enabled": true,
+        "condition": {"in": [{"var": "category"}, ["filters", "fluids"]]},
+        "action": "modify",
+        "message": "Service interval information included."
+      },
+      {
+        "id": "DOM-004",
+        "name": "Show Confidence",
+        "priority": 40,
+        "enabled": true,
+        "condition": {"==": [{"var": "analog.source"}, "cross_reference"]},
+        "action": "modify",
+        "message": "Confidence level displayed."
+      }
+    ],
+    "quality": [
+      {
+        "id": "QUAL-001",
+        "name": "Missing NSN Warning",
+        "priority": 25,
+        "enabled": true,
+        "condition": {"and": [{"==": [{"var": "part.mil_spec"}, true]}, {"==": [{"var": "part.nsn"}, null]}]},
+        "action": "log",
+        "message": "Military-spec part missing NSN."
+      },
+      {
+        "id": "QUAL-002",
+        "name": "Incomplete Fitment",
+        "priority": 24,
+        "enabled": true,
+        "condition": {"<": [{"var": "fitment_completeness"}, 0.8]},
+        "action": "modify",
+        "message": "ℹ️ Fitment data may be incomplete."
+      },
+      {
+        "id": "QUAL-003",
+        "name": "Stale Data Warning",
+        "priority": 20,
+        "enabled": true,
+        "condition": {">": [{"var": "days_since_update"}, 180]},
+        "action": "modify",
+        "message": "ℹ️ Data last updated {days_ago} days ago."
+      }
+    ]
+  },
+
+  "execution": {
+    "order": "priority_desc",
+    "stop_on_block": true,
+    "max_modifications": 5
+  }
+}

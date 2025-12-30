@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "IVYAR AI Knowledge Structure",
+  "version": "1.0.0",
+  
+  "definitions": {
+    "Domain": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "name_uk": {"type": "string"},
+        "categories": {"type": "array", "items": {"$ref": "#/definitions/Category"}},
+        "platforms": {"type": "array", "items": {"$ref": "#/definitions/Platform"}}
+      },
+      "required": ["id", "name"]
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "name_uk": {"type": "string"},
+        "synonyms": {"type": "array", "items": {"type": "string"}},
+        "typical_repair_level": {"type": "string", "enum": ["R1", "R2", "R3", "R4"]},
+        "safety_critical": {"type": "boolean"}
+      }
+    },
+    "Platform": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "type": {"type": "string", "enum": ["LTV", "MTV", "HTV", "APC", "IFV", "MBT"]},
+        "brand": {"type": "string"},
+        "model": {"type": "string"},
+        "aliases": {"type": "array", "items": {"type": "string"}},
+        "years": {"type": "object", "properties": {"from": {"type": "integer"}, "to": {"type": "integer"}}}
+      }
+    },
+    "RepairLevel": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "enum": ["R1", "R2", "R3", "R4"]},
+        "name": {"type": "string"},
+        "name_uk": {"type": "string"},
+        "time_range": {"type": "object", "properties": {"min_minutes": {"type": "integer"}, "max_minutes": {"type": "integer"}}},
+        "location": {"type": "string"}
+      }
+    },
+    "Rule": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "priority": {"type": "integer", "minimum": 1, "maximum": 100},
+        "condition": {"type": "object"},
+        "action": {"type": "string", "enum": ["block", "warn", "modify", "log"]},
+        "message": {"type": "string"},
+        "enabled": {"type": "boolean"}
+      }
+    }
+  },
+  
+  "examples": [{
+    "domains": [{
+      "id": "automotive",
+      "name": "Automotive",
+      "name_uk": "Автомобільний",
+      "categories": [{
+        "id": "brakes",
+        "name": "Brakes",
+        "name_uk": "Гальма",
+        "synonyms": ["brake system"],
+        "typical_repair_level": "R2",
+        "safety_critical": true
+      }],
+      "platforms": [{
+        "id": "hilux-an120",
+        "type": "LTV",
+        "brand": "Toyota",
+        "model": "Hilux",
+        "aliases": ["Хайлюкс", "Revo"],
+        "years": {"from": 2016, "to": 2020}
+      }]
+    }],
+    "repair_levels": [
+      {"id": "R1", "name": "Field Repair", "name_uk": "Польовий ремонт", "time_range": {"min_minutes": 15, "max_minutes": 30}},
+      {"id": "R2", "name": "Base Repair", "name_uk": "Базовий ремонт", "time_range": {"min_minutes": 120, "max_minutes": 480}},
+      {"id": "R3", "name": "Deep Repair", "name_uk": "Глибокий ремонт", "time_range": {"min_minutes": 1440, "max_minutes": 7200}},
+      {"id": "R4", "name": "Capital Repair", "name_uk": "Капітальний ремонт", "time_range": {"min_minutes": 10080, "max_minutes": 40320}}
+    ]
+  }]
+}
